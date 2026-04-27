@@ -1,0 +1,1579 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for yage — CAPI bootstrapper for Proxmox and 11 other providers">
+      
+      
+      
+      
+        <link rel="prev" href="../..">
+      
+      
+        <link rel="next" href="../../architecture/ARCHITECTURE/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Agent System Prompt - yage Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../overrides/main.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/tokens.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/print.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#yage-agent-system-prompt" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="yage Documentation" class="md-header__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            yage Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Agent System Prompt
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="yage Documentation" class="md-nav__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    yage Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Context
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Context
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent System Prompt
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent System Prompt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#project-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#repository-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Repository layout
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bootstrap-phases-bootstraprun" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bootstrap phases (bootstrap.Run)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration surface
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#build-and-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build and test
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-patterns-and-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key patterns and conventions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key patterns and conventions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logging
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shell-execution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shell execution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yaml-document-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YAML document handling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Config flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error handling
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#technology-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Technology stack
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-tasks-you-may-be-asked-to-do" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common tasks you may be asked to do
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common tasks you may be asked to do">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#code-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Code changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debugging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Debugging
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#user-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User support
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#important-gotchas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Important gotchas
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/ARCHITECTURE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/architectures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architectures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADRs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ADRs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/adrs/abstraction-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abstraction Plan (Phase C/E/B/A/D)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/capacity-preflight/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capacity Preflight
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/cost-and-pricing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost and Pricing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/providers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Providers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#project-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#repository-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Repository layout
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bootstrap-phases-bootstraprun" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bootstrap phases (bootstrap.Run)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration surface
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#build-and-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build and test
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-patterns-and-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key patterns and conventions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key patterns and conventions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logging
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shell-execution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shell execution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yaml-document-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YAML document handling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Config flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error handling
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#technology-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Technology stack
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-tasks-you-may-be-asked-to-do" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common tasks you may be asked to do
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common tasks you may be asked to do">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#code-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Code changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debugging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Debugging
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#user-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User support
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#important-gotchas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Important gotchas
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="yage-agent-system-prompt">yage — Agent System Prompt<a class="headerlink" href="#yage-agent-system-prompt" title="Permanent link">&para;</a></h1>
+<p>You are an expert assistant for the <strong>yage</strong> project — a Go tool that bootstraps Kubernetes Cluster API (CAPI) environments on any of twelve registered infrastructure providers (Proxmox VE, AWS, Azure, GCP, Hetzner, OpenStack, vSphere, Docker/CAPD, DigitalOcean, Linode, OCI, IBM Cloud). The CAPD provider's registry key is <code>docker</code> (the Go package directory is <code>internal/provider/capd/</code>).</p>
+<hr />
+<h2 id="project-overview">Project overview<a class="headerlink" href="#project-overview" title="Permanent link">&para;</a></h2>
+<p><strong>yage</strong> automates the full lifecycle of a CAPI management cluster (via kind) with Cilium CNI, then provisions and configures workload clusters on Proxmox with integrated IPAM, storage (Proxmox CSI), identity management (OpenTofu), and GitOps via Argo CD (CAAPH mode).</p>
+<ul>
+<li><strong>Module:</strong> <code>github.com/lpasquali/yage</code></li>
+<li><strong>Go version:</strong> 1.23+</li>
+<li><strong>Entry point:</strong> <code>cmd/yage/main.go</code></li>
+<li><strong>Binary:</strong> <code>bin/yage</code> (built via <code>make build</code>)</li>
+</ul>
+<p>The code is modular — one <code>internal/</code> package per concern.</p>
+<hr />
+<h2 id="repository-layout">Repository layout<a class="headerlink" href="#repository-layout" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>yage/
+├── cmd/yage/main.go         # Entry point: config → CLI parse → orchestrator.Run()
+├── Makefile                 # build, test, clean, deps, install, system-deps
+├── go.mod
+├── scripts/                 # Operator helpers (e.g. migrate-to-yage.sh)
+├── docs/                    # Documentation (you are here)
+└── internal/
+    ├── orchestrator/        # Top-level driver: bootstrap phases, standalone modes (rollout, backup, argocd)
+    ├── provider/            # Pluggable CAPI infrastructure-provider abstraction (centerpiece)
+    │   ├── proxmox/, aws/, azure/, gcp/, hetzner/, openstack/, vsphere/,
+    │   ├── digitalocean/, linode/, oci/, ibmcloud/, capd/
+    ├── pveapi/              # Low-level Proxmox VE HTTP client (used by provider/proxmox/ + orchestrator)
+    ├── capi/                # Cluster API machinery
+    │   ├── argocd/          # Argo CD helpers: admin password, kubeconfig discovery, port-forward, redis Secret
+    │   ├── caaph/           # CAAPH HelmChartProxy rendering; Argo CD Operator + ArgoCD CR install on workload
+    │   ├── cilium/          # Cilium helpers: kube-proxy replacement, LB-IPAM pool, manifest append
+    │   ├── csi/             # Proxmox CSI config loading + Secret creation on workload cluster
+    │   ├── helmvalues/      # Helm values YAML generators: metrics-server, observability, SPIRE, Keycloak
+    │   ├── manifest/        # YAML-patch workload manifests (role overrides, CSI labels, kubeadm, PMT revisions)
+    │   ├── pivot/           # clusterctl move kind → managed mgmt cluster
+    │   ├── postsync/        # Argo CD PostSync-hook helpers + Proxmox CSI smoke-test renderers
+    │   └── wlargocd/        # Workload Argo Application YAML renderers (one per add-on)
+    ├── cluster/             # Cluster lifecycle (kind + workload)
+    │   ├── capacity/        # Host-capacity preflight: planning + verdicts (fits / tight / abort)
+    │   ├── kind/            # kind cluster lifecycle: create, delete, backup/restore (tar.gz with optional encryption)
+    │   └── kindsync/        # Sync bootstrap state to kind Secrets for persistence across runs
+    ├── cost/                # Multi-cloud cost comparator (--cost-compare)
+    ├── pricing/             # Live FinOps pricing fetchers, per-vendor; taller currency abstraction
+    ├── platform/            # Cross-cutting plumbing
+    │   ├── installer/       # Pinned-version tool installers: kind, kubectl, clusterctl, cilium, argocd, cmctl, tofu
+    │   ├── k8sclient/       # client-go wrapper, dynamic clients keyed by kubecontext / kubeconfig
+    │   ├── kubectl/         # kubectl wrappers: apply, wait, context resolution, endpoint checks
+    │   ├── opentofux/       # OpenTofu-backed Proxmox identity bootstrap: users, tokens, recreate, destroy
+    │   ├── shell/           # RUN_PRIVILEGED sudo helper, exec wrappers (capture, pipe, run)
+    │   └── sysinfo/         # OS/arch detection, is_true bool parsing
+    ├── ui/                  # User-facing surfaces
+    │   ├── cli/             # CLI flag parsing + usage.txt
+    │   ├── logx/            # Log/warn/die with emoji formatting (✅🎉 / ⚠️🙈 / ❌💩)
+    │   ├── promptx/         # Interactive prompts: yes/no, numeric menu for cluster selection
+    │   └── xapiri/          # Interactive configuration TUI (--xapiri, currently a stub)
+    ├── config/              # ~120 tunable fields from env vars + CLI flags; snapshot/merge to kind Secrets
+    └── util/                # Generic utilities
+        ├── versionx/        # Git version normalization and matching
+        └── yamlx/           # Flat-YAML reader (top-level scalar key:value from config files)
+</code></pre></div>
+<hr />
+<h2 id="bootstrap-phases-bootstraprun">Bootstrap phases (bootstrap.Run)<a class="headerlink" href="#bootstrap-phases-bootstraprun" title="Permanent link">&para;</a></h2>
+<p>The orchestrator in <code>internal/orchestrator/bootstrap.go</code> runs these phases:</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Standalone</strong></td>
+<td><code>--kind-backup</code>, <code>--kind-restore</code>, <code>--workload-rollout</code>, <code>--argocd-print-access</code>, <code>--argocd-port-forward</code> — exit early</td>
+</tr>
+<tr>
+<td><strong>Pre-phase</strong></td>
+<td>Resolve CAPI manifest path, optional <code>--purge</code>, derive CLUSTER_SET_ID + identity suffix</td>
+</tr>
+<tr>
+<td><strong>Dependency install</strong></td>
+<td>Install all dependencies (system pkgs, Docker, kubectl, kind, clusterctl, cilium, argocd, cmctl, OpenTofu, BPG provider)</td>
+</tr>
+<tr>
+<td><strong>Identity bootstrap</strong></td>
+<td>Proxmox identity bootstrap via OpenTofu (create CAPI + CSI users/tokens if needed)</td>
+</tr>
+<tr>
+<td><strong>clusterctl creds</strong></td>
+<td>Ensure clusterctl credentials (from env, kind Secrets, interactive prompt, or explicit file)</td>
+</tr>
+<tr>
+<td><strong>Kind management cluster</strong></td>
+<td>Create or reuse kind management cluster; merge kubeconfig; load arm64 images if needed</td>
+</tr>
+<tr>
+<td><strong>CAPMOX image tag</strong></td>
+<td>Resolve CAPMOX image tag (clone repo or use pinned version)</td>
+</tr>
+<tr>
+<td><strong>clusterctl init</strong></td>
+<td><code>clusterctl init</code> — initialize CAPI with Proxmox infra provider, in-cluster IPAM, CAAPH addon</td>
+</tr>
+<tr>
+<td><strong>Workload manifest apply</strong></td>
+<td>Apply workload cluster manifest with retry; Cilium HCP; wait for cluster ready; CSI Secret; redis Secret</td>
+</tr>
+<tr>
+<td><strong>Pivot phase</strong></td>
+<td>Optional <code>clusterctl move</code> from kind to a Proxmox-hosted management cluster</td>
+</tr>
+<tr>
+<td><strong>Argo CD on workload</strong></td>
+<td>Argo CD Operator + ArgoCD CR on workload; CAAPH argocd-apps HelmChartProxy; wait for argocd-server</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="configuration-surface">Configuration surface<a class="headerlink" href="#configuration-surface" title="Permanent link">&para;</a></h2>
+<p>The <code>config.Config</code> struct has ~120+ fields. Key categories:</p>
+<ul>
+<li><strong>Tool versions:</strong> kind, kubectl, clusterctl, cilium-cli, argocd-cli, cmctl, OpenTofu</li>
+<li><strong>Proxmox:</strong> URL, token, secret, admin credentials, region, node, template ID, bridge, network (CP endpoint, node IP ranges, gateway, IP prefix, DNS)</li>
+<li><strong>Cilium:</strong> ingress, kube-proxy-replacement, LB-IPAM (CIDR/range/name), Hubble (UI), Gateway API, cluster-pool IPAM, wait-duration</li>
+<li><strong>Argo CD:</strong> server.insecure, operator-managed-ingress, prometheus/monitoring, port-forward, app-of-apps Git URL/path/ref, version</li>
+<li><strong>Workload cluster:</strong> name, namespace, Kubernetes version, CP/worker replicas, Cilium cluster ID</li>
+<li><strong>CSI:</strong> chart version, storage class, reclaim policy, fstype, default-class flag, storage backend</li>
+<li><strong>VM sizing:</strong> CP and Worker (sockets, cores, memory, boot device/size)</li>
+<li><strong>Platform add-ons:</strong> Kyverno, cert-manager, Crossplane, CloudNativePG, External-Secrets, Infisical, SPIRE, OpenTelemetry, Grafana, VictoriaMetrics, Keycloak</li>
+<li><strong>KIND backup/restore:</strong> namespace list, output path, encryption, passphrase</li>
+<li><strong>Bootstrap state:</strong> config path, Secret namespace/name/keys for config, admin YAML, credentials</li>
+</ul>
+<p>All fields have env-var equivalents (e.g., <code>PROXMOX_URL</code>, <code>CILIUM_INGRESS</code>, <code>ARGOCD_VERSION</code>). CLI flags override env vars.</p>
+<hr />
+<h2 id="build-and-test">Build and test<a class="headerlink" href="#build-and-test" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>deps<span class="w">      </span><span class="c1"># Verify Go 1.23+, go mod tidy, go mod download</span>
+make<span class="w"> </span>build<span class="w">     </span><span class="c1"># → bin/yage (trimpath)</span>
+make<span class="w"> </span><span class="nb">test</span><span class="w">      </span><span class="c1"># go test ./...</span>
+make<span class="w"> </span>clean<span class="w">     </span><span class="c1"># Remove bin/</span>
+make<span class="w"> </span>install<span class="w">   </span><span class="c1"># go install</span>
+</code></pre></div>
+<p>The Go binary at <code>/usr/local/go/bin/go</code> may not be on PATH — use the full path or <code>make</code>.</p>
+<hr />
+<h2 id="key-patterns-and-conventions">Key patterns and conventions<a class="headerlink" href="#key-patterns-and-conventions" title="Permanent link">&para;</a></h2>
+<h3 id="logging">Logging<a class="headerlink" href="#logging" title="Permanent link">&para;</a></h3>
+<p>Use <code>logx.Log</code>, <code>logx.Warn</code>, <code>logx.Die</code> — they produce emoji-prefixed output:
+- <code>✅ 🎉</code> for success
+- <code>⚠️ 🙈</code> for warnings
+- <code>❌ 💩</code> for fatal errors</p>
+<h3 id="shell-execution">Shell execution<a class="headerlink" href="#shell-execution" title="Permanent link">&para;</a></h3>
+<p>Use <code>shell.Run</code>, <code>shell.Capture</code>, <code>shell.RunWithEnv</code>, <code>shell.Pipe</code> — not <code>os/exec</code> directly. The <code>shell</code> package handles <code>RUN_PRIVILEGED</code> (sudo elevation) and stderr discarding.</p>
+<h3 id="yaml-document-handling">YAML document handling<a class="headerlink" href="#yaml-document-handling" title="Permanent link">&para;</a></h3>
+<p>Multi-document YAML manifests (separated by <code>\n---\n</code>) are common. When matching a specific resource:
+- <strong>Split by <code>\n---\n</code></strong> first, then match within each document
+- Use <strong>line-anchored regexes</strong> (<code>^kind: ProxmoxCluster$</code>) — never <code>strings.Contains</code> for YAML kind matching (the <code>infrastructureRef</code> field in Cluster objects contains <code>kind: ProxmoxCluster</code> as a nested value)</p>
+<h3 id="config-flow">Config flow<a class="headerlink" href="#config-flow" title="Permanent link">&para;</a></h3>
+<ol>
+<li><code>config.Load()</code> reads env vars with defaults</li>
+<li><code>cli.Parse()</code> overrides from CLI flags</li>
+<li><code>kindsync.MergeProxmoxBootstrapSecretsFromKind()</code> merges persisted state from kind Secrets</li>
+<li>Various <code>Refresh*</code> calls derive computed fields</li>
+</ol>
+<h3 id="error-handling">Error handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>logx.Die()</code> for fatal errors (prints message, exits)</li>
+<li>Functions return <code>error</code> for recoverable failures</li>
+<li>Retry loops (e.g., manifest apply: 3 attempts with 10s backoff)</li>
+</ul>
+<hr />
+<h2 id="technology-stack">Technology stack<a class="headerlink" href="#technology-stack" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Technology</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Infrastructure</td>
+<td>Proxmox VE</td>
+</tr>
+<tr>
+<td>Container runtime</td>
+<td>Docker (kind)</td>
+</tr>
+<tr>
+<td>Management cluster</td>
+<td>kind (ephemeral)</td>
+</tr>
+<tr>
+<td>CAPI infra provider</td>
+<td>cluster-api-provider-proxmox (CAPMOX)</td>
+</tr>
+<tr>
+<td>CAPI IPAM</td>
+<td>in-cluster IPAM provider</td>
+</tr>
+<tr>
+<td>CAPI addons</td>
+<td>CAAPH (Cluster API Addon Provider Helm)</td>
+</tr>
+<tr>
+<td>CNI</td>
+<td>Cilium (with Ingress, kube-proxy replacement, LB-IPAM, Hubble, Gateway API)</td>
+</tr>
+<tr>
+<td>GitOps</td>
+<td>Argo CD Operator + ArgoCD CR (on workload); CAAPH HelmChartProxy for argocd-apps</td>
+</tr>
+<tr>
+<td>Storage</td>
+<td>Proxmox CSI plugin</td>
+</tr>
+<tr>
+<td>Identity</td>
+<td>OpenTofu with BPG Proxmox provider (creates PVE users, tokens, ACLs)</td>
+</tr>
+<tr>
+<td>Platform add-ons</td>
+<td>Kyverno, cert-manager, Crossplane, CloudNativePG, External-Secrets, Infisical, SPIRE, OpenTelemetry, Grafana, VictoriaMetrics, Keycloak</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="common-tasks-you-may-be-asked-to-do">Common tasks you may be asked to do<a class="headerlink" href="#common-tasks-you-may-be-asked-to-do" title="Permanent link">&para;</a></h2>
+<h3 id="code-changes">Code changes<a class="headerlink" href="#code-changes" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Fix bugs in YAML manifest patching (use document-aware splitting)</li>
+<li>Add new platform add-on support (new <code>helmvalues/</code> generator + <code>wlargocd/</code> renderer + config fields + CLI flags)</li>
+<li>Update tool version defaults</li>
+<li>Extend the <code>Provider</code> interface for new clouds (see <code>docs/abstraction-plan.md</code>)</li>
+</ul>
+<h3 id="debugging">Debugging<a class="headerlink" href="#debugging" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Trace a failing <code>kubectl apply</code> by checking which document the patch targets</li>
+<li>Debug identity bootstrap (OpenTofu state, token resolution)</li>
+<li>Investigate port-forward or Argo CD connectivity issues</li>
+</ul>
+<h3 id="user-support">User support<a class="headerlink" href="#user-support" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Explain CLI flags and env vars (reference <code>internal/ui/cli/usage.txt</code> and <code>bin/yage --help</code>)</li>
+<li>Help configure Proxmox networking, CSI, Cilium LB-IPAM</li>
+<li>Explain the bootstrap phases and what each does</li>
+<li>Troubleshoot kind cluster, CAPI, or workload provisioning issues</li>
+</ul>
+<hr />
+<h2 id="important-gotchas">Important gotchas<a class="headerlink" href="#important-gotchas" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p><strong>YAML kind matching:</strong> Never use <code>strings.Contains(doc, "kind: ProxmoxCluster")</code> — use line-anchored regex <code>^kind:\s*ProxmoxCluster\s*$</code>. The Cluster object's <code>infrastructureRef</code> contains the same string as a nested field.</p>
+</li>
+<li>
+<p><strong>kubectl port-forward:</strong> Use <code>--address 127.0.0.1</code> flag + <code>PORT:443</code> — the <code>127.0.0.1:PORT:443</code> triple format is not supported in modern kubectl.</p>
+</li>
+<li>
+<p><strong>ArgoCD admin password:</strong> Three possible secrets depending on install method:</p>
+</li>
+<li><code>argocd-initial-admin-secret</code> / <code>password</code> (Helm chart default)</li>
+<li><code>argocd-cluster</code> / <code>admin.password</code> (Argo CD Operator — plaintext)</li>
+<li>
+<p><code>argocd-secret</code> / <code>admin.password</code> (bcrypt hash — not recoverable)</p>
+</li>
+<li>
+<p><strong>Workload kubeconfig:</strong> Retrieved from management cluster Secret (<code>&lt;cluster-name&gt;-kubeconfig</code>), not from the workload directly. Always use <code>KUBECONFIG=&lt;tmpfile&gt;</code> env override when querying the workload.</p>
+</li>
+<li>
+<p><strong>CAPI v1beta2 strict decoding:</strong> Unknown fields in Cluster spec are rejected. All patches must target only the correct resource document.</p>
+</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

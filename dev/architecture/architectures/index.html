@@ -1,0 +1,1572 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for yage — CAPI bootstrapper for Proxmox and 11 other providers">
+      
+      
+      
+      
+        <link rel="prev" href="../ARCHITECTURE/">
+      
+      
+        <link rel="next" href="../adrs/abstraction-plan/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Architectures - yage Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../overrides/main.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/tokens.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/print.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#per-architecture-diagrams" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="yage Documentation" class="md-header__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            yage Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Architectures
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="yage Documentation" class="md-nav__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    yage Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Context
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Context
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../context/AGENT_SYSTEM_PROMPT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent System Prompt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ARCHITECTURE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architectures
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architectures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-three-cluster-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The three-cluster model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloud-architectures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cloud architectures
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cloud architectures">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aws-capa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AWS (CAPA)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#azure-capz" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Azure (CAPZ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gcp-capg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GCP (CAPG)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hetzner-cloud-caphv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hetzner Cloud (CAPHV)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#digitalocean-capdo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DigitalOcean (CAPDO)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linode-akamai-capl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Linode / Akamai (CAPL)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oracle-cloud-capoci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Oracle Cloud (CAPOCI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ibm-cloud-capibm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IBM Cloud (CAPIBM)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#on-prem-architectures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        On-prem architectures
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="On-prem architectures">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#proxmox-ve-capmox-the-most-mature-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Proxmox VE (CAPMOX) — the most-mature path
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vsphere-capv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vSphere (CAPV)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#openstack-capo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OpenStack (CAPO)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker-capd-ephemeral-test-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Docker (CAPD) — ephemeral test path
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADRs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ADRs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adrs/abstraction-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abstraction Plan (Phase C/E/B/A/D)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/capacity-preflight/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capacity Preflight
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/cost-and-pricing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost and Pricing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/providers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Providers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-three-cluster-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The three-cluster model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloud-architectures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cloud architectures
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cloud architectures">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aws-capa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AWS (CAPA)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#azure-capz" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Azure (CAPZ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gcp-capg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GCP (CAPG)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hetzner-cloud-caphv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hetzner Cloud (CAPHV)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#digitalocean-capdo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DigitalOcean (CAPDO)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linode-akamai-capl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Linode / Akamai (CAPL)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oracle-cloud-capoci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Oracle Cloud (CAPOCI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ibm-cloud-capibm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IBM Cloud (CAPIBM)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#on-prem-architectures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        On-prem architectures
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="On-prem architectures">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#proxmox-ve-capmox-the-most-mature-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Proxmox VE (CAPMOX) — the most-mature path
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vsphere-capv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vSphere (CAPV)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#openstack-capo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OpenStack (CAPO)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker-capd-ephemeral-test-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Docker (CAPD) — ephemeral test path
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="per-architecture-diagrams">Per-architecture diagrams<a class="headerlink" href="#per-architecture-diagrams" title="Permanent link">&para;</a></h1>
+<p>One diagram per registered provider. Every diagram follows the same
+shape so cross-provider differences read at a glance.</p>
+<h2 id="the-three-cluster-model">The three-cluster model<a class="headerlink" href="#the-three-cluster-model" title="Permanent link">&para;</a></h2>
+<p>yage always involves three clusters at different points in the run:</p>
+<ol>
+<li><strong>transient kind cluster on the operator host</strong> — a launcher.
+   Hosts CAPI core + the chosen CAPI infrastructure provider + CAAPH
+   long enough for <code>clusterctl init</code> and the management-cluster
+   provision step.</li>
+<li><strong>management cluster on the target provider</strong> — the long-lived
+   CAPI control plane. After <code>clusterctl move</code> pivots state from
+   kind, kind is torn down and the management cluster takes over.
+   Day-2 operations (machine reconciles, manifest apply, addon
+   rollouts) hit this cluster.</li>
+<li><strong>workload cluster on the target provider</strong> — what user
+   workloads land on. Always provisioned BY the management cluster,
+   never directly by kind.</li>
+</ol>
+<p><code>--no-pivot</code> keeps the single-cluster shape (kind stays as the
+management plane forever); <code>--stop-before-workload</code> exits after the
+pivot, before the workload manifest is applied — useful for
+integration tests against a clean managed CAPI plane.</p>
+<div class="highlight"><pre><span></span><code>LEGEND
+  ┌──┐  on the operator host              ─→  control flow / clusterctl
+  ╔══╗  on the target provider            ⇢  GitOps reconcile (Argo CD)
+  •     phase the diagram emphasises
+</code></pre></div>
+<hr />
+<h2 id="cloud-architectures">Cloud architectures<a class="headerlink" href="#cloud-architectures" title="Permanent link">&para;</a></h2>
+<h3 id="aws-capa">AWS (CAPA)<a class="headerlink" href="#aws-capa" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>operator host                           AWS account
+┌──────────────────────────┐            ╓──────────────────────────────────╖
+│ transient kind launcher  │            ║ VPC + subnets                     ║
+│   • CAPI · CAPA · CAAPH  │ clusterctl ║                                   ║
+│   • bootstrap-only       │ init       ║   ╔══════════════════════╗        ║
+│                          │ ─────────→ ║   ║ management cluster   ║        ║
+│ yage drives: clusterctl, │            ║   ║   CAPI · CAPA · CAAPH║        ║
+│ kubectl, helm, argocd    │  pivot     ║   ║   (post-pivot)       ║        ║
+└──────────────────────────┘ ─────────→ ║   ╚════════╤═════════════╝        ║
+       (kind torn down)                 ║            │ provisions           ║
+                                        ║            ▼                      ║
+                                        ║   ╔══════════════════════╗        ║
+                                        ║   ║ workload cluster     ║        ║
+                                        ║   ║   N × EC2 (kubeadm)  ║        ║
+                                        ║   ║   or EKS managed CP  ║        ║
+                                        ║   ║   M × EC2 workers    ║        ║
+                                        ║   ║   Cilium · aws-ebs   ║        ║
+                                        ║   ║   Argo CD            ║ ⇢ apps ║
+                                        ║   ╚══════════════════════╝        ║
+                                        ║   NAT GW · ALB/NLB · Route53     ║
+                                        ║   CloudWatch · Internet egress   ║
+                                        ╙──────────────────────────────────╜
+        Modes: unmanaged (EC2) | eks (managed CP) | eks-fargate (CP+pods)
+        Cost overhead tiers: dev | prod | enterprise (NAT, ALB, egress, CW logs)
+</code></pre></div>
+<h3 id="azure-capz">Azure (CAPZ)<a class="headerlink" href="#azure-capz" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>operator host                           Azure subscription
+┌──────────────────────────┐            ╓──────────────────────────────────╖
+│ transient kind launcher  │ clusterctl ║ VNet + subnets                    ║
+│   CAPI · CAPZ · CAAPH    │ init       ║                                   ║
+└──────────────────────────┘ ─────────→ ║   ╔══════════════════════╗        ║
+       (kind torn down)      pivot      ║   ║ management cluster   ║        ║
+                             ─────────→ ║   ║   CAPI · CAPZ · CAAPH║        ║
+                                        ║   ╚════════╤═════════════╝        ║
+                                        ║            ▼                      ║
+                                        ║   ╔══════════════════════╗        ║
+                                        ║   ║ workload cluster     ║        ║
+                                        ║   ║   N × VM (kubeadm)   ║        ║
+                                        ║   ║   or AKS managed CP  ║        ║
+                                        ║   ║   workers VMSS       ║        ║
+                                        ║   ║   Cilium · azure-disk║        ║
+                                        ║   ║   Argo CD            ║ ⇢ apps ║
+                                        ║   ╚══════════════════════╝        ║
+                                        ║   NAT · LB · CDN · DNS            ║
+                                        ╙──────────────────────────────────╜
+        Modes: unmanaged | aks
+        Currency: Retail Prices API exposes 24 ISO codes via ?currencyCode=
+</code></pre></div>
+<h3 id="gcp-capg">GCP (CAPG)<a class="headerlink" href="#gcp-capg" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>operator host                           GCP project
+┌──────────────────────────┐            ╓──────────────────────────────────╖
+│ transient kind launcher  │ clusterctl ║ VPC + subnets                     ║
+│   CAPI · CAPG · CAAPH    │ init       ║                                   ║
+└──────────────────────────┘ ─────────→ ║   ╔══════════════════════╗        ║
+       (kind torn down)      pivot      ║   ║ management cluster   ║        ║
+                             ─────────→ ║   ║   CAPI · CAPG · CAAPH║        ║
+                                        ║   ╚════════╤═════════════╝        ║
+                                        ║            ▼                      ║
+                                        ║   ╔══════════════════════╗        ║
+                                        ║   ║ workload cluster     ║        ║
+                                        ║   ║   GCE VMs (kubeadm)  ║        ║
+                                        ║   ║   or GKE managed CP  ║        ║
+                                        ║   ║   workers (MIG)      ║        ║
+                                        ║   ║   Cilium · pd-csi    ║        ║
+                                        ║   ║   Argo CD            ║ ⇢ apps ║
+                                        ║   ╚══════════════════════╝        ║
+                                        ║   Cloud NAT · Cloud LB · DNS     ║
+                                        ║   Internet egress                ║
+                                        ╙──────────────────────────────────╜
+        Modes: unmanaged | gke
+</code></pre></div>
+<h3 id="hetzner-cloud-caphv">Hetzner Cloud (CAPHV)<a class="headerlink" href="#hetzner-cloud-caphv" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>operator host                           Hetzner project
+┌──────────────────────────┐            ╓──────────────────────────────────╖
+│ transient kind launcher  │ clusterctl ║                                   ║
+│   CAPI · CAPHV · CAAPH   │ init       ║   ╔══════════════════════╗        ║
+└──────────────────────────┘ ─────────→ ║   ║ management cluster   ║        ║
+       (kind torn down)      pivot      ║   ║   CAPI · CAPHV · CAAPH        ║
+                             ─────────→ ║   ╚════════╤═════════════╝        ║
+                                        ║            ▼                      ║
+                                        ║   ╔══════════════════════╗        ║
+                                        ║   ║ workload cluster     ║        ║
+                                        ║   ║   cx-/cpx- VMs       ║        ║
+                                        ║   ║   (kubeadm)          ║        ║
+                                        ║   ║   Cilium · hcloud-csi║        ║
+                                        ║   ║   Hetzner Volumes    ║        ║
+                                        ║   ║   Argo CD            ║ ⇢ apps ║
+                                        ║   ╚══════════════════════╝        ║
+                                        ║   Hetzner Load Balancer           ║
+                                        ║   Floating IP                     ║
+                                        ╙──────────────────────────────────╜
+        Datacenter currency: EUR — yage shows the published EUR price
+        directly when taller=EUR, FX-converts otherwise.
+        Modes: unmanaged only.
+</code></pre></div>
+<h3 id="digitalocean-capdo">DigitalOcean (CAPDO)<a class="headerlink" href="#digitalocean-capdo" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>operator host                           DO team
+┌──────────────────────────┐            ╓──────────────────────────────────╖
+│ transient kind launcher  │ clusterctl ║                                   ║
+│   CAPI · CAPDO · CAAPH   │ init       ║   ╔══════════════════════╗        ║
+└──────────────────────────┘ ─────────→ ║   ║ management cluster   ║        ║
+       (kind torn down)      pivot      ║   ║   CAPI · CAPDO · CAAPH        ║
+                             ─────────→ ║   ╚════════╤═════════════╝        ║
+                                        ║            ▼                      ║
+                                        ║   ╔══════════════════════╗        ║
+                                        ║   ║ workload cluster     ║        ║
+                                        ║   ║   Droplets           ║        ║
+                                        ║   ║   Cilium · do-csi    ║        ║
+                                        ║   ║   DO Volumes / Spaces║        ║
+                                        ║   ║   Argo CD            ║ ⇢ apps ║
+                                        ║   ╚══════════════════════╝        ║
+                                        ║   DO Load Balancer                ║
+                                        ╙──────────────────────────────────╜
+</code></pre></div>
+<h3 id="linode-akamai-capl">Linode / Akamai (CAPL)<a class="headerlink" href="#linode-akamai-capl" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>operator host                           Akamai/Linode account
+┌──────────────────────────┐            ╓──────────────────────────────────╖
+│ transient kind launcher  │ clusterctl ║                                   ║
+│   CAPI · CAPL · CAAPH    │ init       ║   ╔══════════════════════╗        ║
+└──────────────────────────┘ ─────────→ ║   ║ management cluster   ║        ║
+       (kind torn down)      pivot      ║   ║   CAPI · CAPL · CAAPH║        ║
+                             ─────────→ ║   ╚════════╤═════════════╝        ║
+                                        ║            ▼                      ║
+                                        ║   ╔══════════════════════╗        ║
+                                        ║   ║ workload cluster     ║        ║
+                                        ║   ║   Linode VMs         ║        ║
+                                        ║   ║   Cilium · linode-csi║        ║
+                                        ║   ║   Block / Object Sto.║        ║
+                                        ║   ║   Argo CD            ║ ⇢ apps ║
+                                        ║   ╚══════════════════════╝        ║
+                                        ║   NodeBalancer · DNS              ║
+                                        ╙──────────────────────────────────╜
+</code></pre></div>
+<h3 id="oracle-cloud-capoci">Oracle Cloud (CAPOCI)<a class="headerlink" href="#oracle-cloud-capoci" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>operator host                           OCI tenancy
+┌──────────────────────────┐            ╓──────────────────────────────────╖
+│ transient kind launcher  │ clusterctl ║ VCN + subnets                     ║
+│   CAPI · CAPOCI · CAAPH  │ init       ║                                   ║
+└──────────────────────────┘ ─────────→ ║   ╔══════════════════════╗        ║
+       (kind torn down)      pivot      ║   ║ management cluster   ║        ║
+                             ─────────→ ║   ║   CAPI · CAPOCI · CAAPH       ║
+                                        ║   ╚════════╤═════════════╝        ║
+                                        ║            ▼                      ║
+                                        ║   ╔══════════════════════╗        ║
+                                        ║   ║ workload cluster     ║        ║
+                                        ║   ║   Compute VMs        ║        ║
+                                        ║   ║   E4.Flex (OCPU+mem) ║        ║
+                                        ║   ║   Cilium · oci-bv-csi║        ║
+                                        ║   ║   Block Volumes      ║        ║
+                                        ║   ║   Argo CD            ║ ⇢ apps ║
+                                        ║   ╚══════════════════════╝        ║
+                                        ║   OCI Load Balancer               ║
+                                        ╙──────────────────────────────────╜
+        Currency: cetools API supports ?currencyCode= for ~15 ISO codes;
+        yage asks in active taller when supported, falls back to USD.
+</code></pre></div>
+<h3 id="ibm-cloud-capibm">IBM Cloud (CAPIBM)<a class="headerlink" href="#ibm-cloud-capibm" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>operator host                           IBM Cloud account
+┌──────────────────────────┐            ╓──────────────────────────────────╖
+│ transient kind launcher  │ clusterctl ║ VPC Gen2                          ║
+│   CAPI · CAPIBM · CAAPH  │ init       ║                                   ║
+└──────────────────────────┘ ─────────→ ║   ╔══════════════════════╗        ║
+       (kind torn down)      pivot      ║   ║ management cluster   ║        ║
+                             ─────────→ ║   ║   CAPI · CAPIBM · CAAPH       ║
+                                        ║   ╚════════╤═════════════╝        ║
+                                        ║            ▼                      ║
+                                        ║   ╔══════════════════════╗        ║
+                                        ║   ║ workload cluster     ║        ║
+                                        ║   ║   bx2-/cx2- VSI      ║        ║
+                                        ║   ║   Cilium · ibm-vpc-csi        ║
+                                        ║   ║   Block · COS        ║        ║
+                                        ║   ║   Argo CD            ║ ⇢ apps ║
+                                        ║   ╚══════════════════════╝        ║
+                                        ║   ALB / NLB · DNS Svc             ║
+                                        ╙──────────────────────────────────╜
+        Auth: IAM API key → bearer token (pricing.ibmExchangeAPIKey).
+        Currency: amounts[] rows per ISO code; yage reads active taller&#39;s row.
+</code></pre></div>
+<hr />
+<h2 id="on-prem-architectures">On-prem architectures<a class="headerlink" href="#on-prem-architectures" title="Permanent link">&para;</a></h2>
+<h3 id="proxmox-ve-capmox-the-most-mature-path">Proxmox VE (CAPMOX) — the most-mature path<a class="headerlink" href="#proxmox-ve-capmox-the-most-mature-path" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>operator host                           Proxmox cluster (LAN)
+┌──────────────────────────┐            ╓──────────────────────────────────╖
+│ transient kind launcher  │            ║ Datacenter / nodes                ║
+│   CAPI · CAPMOX · CAAPH  │            ║                                   ║
+│   in-cluster IPAM        │ identity   ║   pveapi: HA / HW info            ║
+│   OpenTofu (BPG)         │ flow:      ║                                   ║
+│     · CAPI user/token    │ create     ║   ╔══════════════════════╗        ║
+│     · CSI user/token     │ users +    ║   ║ management cluster VM║        ║
+│                          │ tokens     ║   ║   CAPI · CAPMOX      ║        ║
+│   yage drives: clusterctl, kubectl,   ║   ║   CAAPH              ║        ║
+│   helm, argocd, OpenTofu              ║   ╚════════╤═════════════╝        ║
+└──────────────────────────┘            ║            ▼                      ║
+       (kind torn down post-pivot)      ║   ╔══════════════════════╗        ║
+                                        ║   ║ workload cluster VMs ║        ║
+                                        ║   ║   N × CP (cloud-init)║        ║
+                                        ║   ║   M × workers        ║        ║
+                                        ║   ║   Cilium (kpr+L2 LB) ║        ║
+                                        ║   ║   Proxmox CSI →      ║        ║
+                                        ║   ║   PVE storage        ║        ║
+                                        ║   ║   Argo CD            ║ ⇢ apps ║
+                                        ║   ╚══════════════════════╝        ║
+                                        ║   bridge net (vmbr0)              ║
+                                        ║   IPAM CIDR · gateway             ║
+                                        ╙──────────────────────────────────╜
+        TCO: --hardware-cost-usd / --hardware-watts /
+             --hardware-kwh-rate-usd / --hardware-support-usd-month —
+             capex amortized + power + flat support.
+</code></pre></div>
+<h3 id="vsphere-capv">vSphere (CAPV)<a class="headerlink" href="#vsphere-capv" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>operator host                           vCenter
+┌──────────────────────────┐            ╓──────────────────────────────────╖
+│ transient kind launcher  │ clusterctl ║ Datacenter / cluster              ║
+│   CAPI · CAPV · CAAPH    │ init       ║                                   ║
+└──────────────────────────┘ ─────────→ ║   ╔══════════════════════╗        ║
+       (kind torn down)      pivot      ║   ║ management cluster VM║        ║
+                             ─────────→ ║   ║   CAPI · CAPV · CAAPH║        ║
+                                        ║   ╚════════╤═════════════╝        ║
+                                        ║            ▼                      ║
+                                        ║   ╔══════════════════════╗        ║
+                                        ║   ║ workload cluster VMs ║        ║
+                                        ║   ║   from VM template   ║        ║
+                                        ║   ║   Cilium · vsphere-csi        ║
+                                        ║   ║   vSAN / VMFS        ║        ║
+                                        ║   ║   Argo CD            ║ ⇢ apps ║
+                                        ║   ╚══════════════════════╝        ║
+                                        ║   NSX / portgroups                ║
+                                        ╙──────────────────────────────────╜
+        TCO: same flags as Proxmox; surface vSphere licensing via
+             --hardware-support-usd-month.
+</code></pre></div>
+<h3 id="openstack-capo">OpenStack (CAPO)<a class="headerlink" href="#openstack-capo" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>operator host                           OpenStack tenant
+┌──────────────────────────┐            ╓──────────────────────────────────╖
+│ transient kind launcher  │ clusterctl ║ Project / network                 ║
+│   CAPI · CAPO · CAAPH    │ init       ║                                   ║
+└──────────────────────────┘ ─────────→ ║   ╔══════════════════════╗        ║
+       (kind torn down)      pivot      ║   ║ management cluster   ║        ║
+                             ─────────→ ║   ║   Nova VM            ║        ║
+                                        ║   ║   CAPI · CAPO · CAAPH║        ║
+                                        ║   ╚════════╤═════════════╝        ║
+                                        ║            ▼                      ║
+                                        ║   ╔══════════════════════╗        ║
+                                        ║   ║ workload cluster     ║        ║
+                                        ║   ║   Nova VMs           ║        ║
+                                        ║   ║   Cilium · cinder-csi║        ║
+                                        ║   ║   Argo CD            ║ ⇢ apps ║
+                                        ║   ╚══════════════════════╝        ║
+                                        ║   Octavia LB · Neutron            ║
+                                        ╙──────────────────────────────────╜
+        Pricing: operator-dependent. Each public OpenStack publishes its
+        own catalog; the cost path returns ErrNotApplicable until users
+        wire a per-operator fetcher under internal/pricing/os-&lt;operator&gt;.go.
+</code></pre></div>
+<h3 id="docker-capd-ephemeral-test-path">Docker (CAPD) — ephemeral test path<a class="headerlink" href="#docker-capd-ephemeral-test-path" title="Permanent link">&para;</a></h3>
+<p>CAPD is the one provider that does NOT pivot. The whole point is an
+ephemeral, in-memory test cluster on the operator host — there's no
+target provider to move state to. The kind cluster is the management
+cluster forever; the "workload" is a sibling kindest/node container
+on the same Docker daemon.</p>
+<div class="highlight"><pre><span></span><code>operator host
+┌────────────────────────────────────────────────────────────────┐
+│ kind (mgmt) ──────────────────→ ╔══════════════════════════╗   │
+│   CAPI · CAPD · CAAPH           ║ workload cluster          ║   │
+│                                 ║   N × kindest/node        ║   │
+│                                 ║   containers (CP+wk)      ║   │
+│                                 ║   Cilium                  ║   │
+│                                 ║   no real CSI             ║   │
+│                                 ║   Argo CD (in-memory)     ║   │
+│                                 ╚══════════════════════════╝   │
+└────────────────────────────────────────────────────────────────┘
+        Free; ErrNotApplicable on the cost path. Excluded from
+        cost-compare. Useful for demos and CI where Docker is the
+        only available substrate.
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

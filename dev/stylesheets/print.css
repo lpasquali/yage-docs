@@ -1,0 +1,201 @@
+/*
+ * RUNE Print Stylesheet
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Optimizes printed output from the RUNE documentation site.
+ * Hides navigation chrome, ensures readable text, and shows
+ * link URLs inline for offline reference.
+ */
+
+@media print {
+  /* ==========================================================
+   * Hide non-content elements
+   * ========================================================== */
+
+  /* Navigation sidebar */
+  .md-sidebar,
+  .md-sidebar--primary,
+  .md-sidebar--secondary {
+    display: none !important;
+  }
+
+  /* Site header and search */
+  .md-header,
+  .md-search,
+  .md-search__overlay {
+    display: none !important;
+  }
+
+  /* Footer */
+  .md-footer,
+  .md-footer-meta {
+    display: none !important;
+  }
+
+  /* Table of contents sidebar */
+  .md-nav--secondary,
+  .md-nav__title[for="__toc"] {
+    display: none !important;
+  }
+
+  /* Theme toggle and other controls */
+  .md-header__button,
+  .md-toggle,
+  label[for="__palette"],
+  .md-top {
+    display: none !important;
+  }
+
+  /* Tabs and navigation tabs */
+  .md-tabs {
+    display: none !important;
+  }
+
+  /* ==========================================================
+   * Typography and colors
+   * ========================================================== */
+
+  body,
+  .md-typeset {
+    color: #000000 !important;
+    background: #ffffff !important;
+    font-size: 11pt;
+    line-height: 1.5;
+  }
+
+  /* Headings */
+  .md-typeset h1,
+  .md-typeset h2,
+  .md-typeset h3,
+  .md-typeset h4,
+  .md-typeset h5,
+  .md-typeset h6 {
+    color: #000000 !important;
+    page-break-after: avoid;
+  }
+
+  /* ==========================================================
+   * Links — show URLs after link text
+   * ========================================================== */
+
+  .md-typeset a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    font-style: italic;
+    color: #444444;
+    word-break: break-all;
+  }
+
+  /* Do not show URL for anchor links or javascript: */
+  .md-typeset a[href^="#"]::after,
+  .md-typeset a[href^="javascript:"]::after {
+    content: "";
+  }
+
+  .md-typeset a {
+    color: #000000 !important;
+    text-decoration: underline;
+  }
+
+  /* ==========================================================
+   * Code blocks
+   * ========================================================== */
+
+  .md-typeset code,
+  .md-typeset pre {
+    border: 1px solid #cccccc !important;
+    background: #f8f8f8 !important;
+    color: #000000 !important;
+    font-size: 9pt;
+  }
+
+  .md-typeset pre {
+    padding: 0.5em;
+    overflow-x: visible !important;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+  }
+
+  /* ==========================================================
+   * Tables
+   * ========================================================== */
+
+  .md-typeset table {
+    border-collapse: collapse;
+    page-break-inside: avoid;
+  }
+
+  .md-typeset table th,
+  .md-typeset table td {
+    border: 1px solid #999999 !important;
+    padding: 0.3em 0.6em;
+    color: #000000 !important;
+    background: #ffffff !important;
+  }
+
+  .md-typeset table th {
+    background: #eeeeee !important;
+    font-weight: bold;
+  }
+
+  /* ==========================================================
+   * Page break handling
+   * ========================================================== */
+
+  /* Avoid breaking inside these elements */
+  .md-typeset pre,
+  .md-typeset blockquote,
+  .md-typeset table,
+  .md-typeset img,
+  .md-typeset figure,
+  .admonition {
+    page-break-inside: avoid;
+  }
+
+  /* Always break before top-level headings */
+  .md-typeset h1 {
+    page-break-before: always;
+  }
+
+  /* First h1 should not force a page break */
+  .md-content .md-typeset h1:first-child {
+    page-break-before: auto;
+  }
+
+  /* ==========================================================
+   * Layout — use full page width
+   * ========================================================== */
+
+  .md-content {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .md-main__inner {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .md-grid {
+    max-width: 100% !important;
+  }
+
+  /* ==========================================================
+   * Admonitions — printable
+   * ========================================================== */
+
+  .admonition,
+  .md-typeset .admonition {
+    border: 1px solid #999999 !important;
+    background: #f8f8f8 !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+  }
+
+  .admonition-title {
+    background: #eeeeee !important;
+    color: #000000 !important;
+    font-weight: bold;
+  }
+}

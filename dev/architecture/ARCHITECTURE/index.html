@@ -1,0 +1,1820 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for yage — CAPI bootstrapper for Proxmox and 11 other providers">
+      
+      
+      
+      
+        <link rel="prev" href="../../context/AGENT_SYSTEM_PROMPT/">
+      
+      
+        <link rel="next" href="../architectures/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Overview - yage Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../overrides/main.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/tokens.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/print.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#yage-go-architecture" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="yage Documentation" class="md-header__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            yage Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Overview
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="yage Documentation" class="md-nav__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    yage Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Context
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Context
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../context/AGENT_SYSTEM_PROMPT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent System Prompt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#high-level-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        High-level overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-timeline-diagram-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase timeline (diagram 1)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#internal-package-dependency-graph-diagram-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Internal package dependency graph (diagram 2)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#install-topology-diagram-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Install topology (diagram 3)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cost-pricing-capacity-subsystem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cost / pricing / capacity subsystem
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bootstrap-and-pivot-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bootstrap-and-pivot pattern
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bootstrap-and-pivot pattern">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#diagram-6-bootstrap-and-pivot-timeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagram 6: bootstrap-and-pivot timeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#keycloak-sso-topology-diagram-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keycloak SSO topology (diagram 4)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#persistence-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Persistence model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config-flow-kind-secret-persistence-diagram-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Config flow / kind-Secret persistence (diagram 5)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#in-depth-run-walk-through" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        In-depth Run() walk-through
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#library-swap-audit-remaining-kubectl-shell-outs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Library swap audit — remaining kubectl shell-outs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vendor-library-inventory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vendor library inventory
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architectures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architectures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADRs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ADRs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adrs/abstraction-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abstraction Plan (Phase C/E/B/A/D)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/capacity-preflight/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capacity Preflight
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/cost-and-pricing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost and Pricing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/providers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Providers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#high-level-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        High-level overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-timeline-diagram-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase timeline (diagram 1)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#internal-package-dependency-graph-diagram-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Internal package dependency graph (diagram 2)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#install-topology-diagram-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Install topology (diagram 3)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cost-pricing-capacity-subsystem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cost / pricing / capacity subsystem
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bootstrap-and-pivot-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bootstrap-and-pivot pattern
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bootstrap-and-pivot pattern">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#diagram-6-bootstrap-and-pivot-timeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagram 6: bootstrap-and-pivot timeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#keycloak-sso-topology-diagram-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keycloak SSO topology (diagram 4)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#persistence-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Persistence model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config-flow-kind-secret-persistence-diagram-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Config flow / kind-Secret persistence (diagram 5)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#in-depth-run-walk-through" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        In-depth Run() walk-through
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#library-swap-audit-remaining-kubectl-shell-outs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Library swap audit — remaining kubectl shell-outs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vendor-library-inventory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vendor library inventory
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="yage-go-architecture">yage — Go Architecture<a class="headerlink" href="#yage-go-architecture" title="Permanent link">&para;</a></h1>
+<p>The Go binary lives in <code>cmd/yage</code> and dispatches to
+<code>internal/orchestrator.Run</code>.</p>
+<h2 id="high-level-overview">High-level overview<a class="headerlink" href="#high-level-overview" title="Permanent link">&para;</a></h2>
+<p><code>yage</code> provisions a Cluster API management plane (in a local kind
+cluster) and brings up a workload cluster on top of it across any of
+twelve registered providers (Proxmox is the most-wired path; the
+other providers vary in surface coverage). It layers in a CNI
+(Cilium), a CSI (per-provider),
+and a GitOps app-of-apps surface (Argo CD on the workload, fed by
+CAAPH HelmChartProxy from the management cluster). The Go code is
+organised as one orchestrator package and a dozen-plus focused leaf
+packages:</p>
+<ul>
+<li><code>internal/orchestrator</code> — drives the bootstrap phases and the
+  standalone modes (<code>--workload-rollout</code>, <code>--argocd-print-access</code>,
+  <code>--argocd-port-forward</code>, kind backup/restore).</li>
+<li><code>internal/platform/k8sclient</code> — the foundation. Wraps <code>client-go</code> and dynamic clients
+  keyed by kubecontext / kubeconfig file. Every package that talks to a
+  cluster goes through it.</li>
+<li><code>internal/config</code> — typed <code>Config</code> struct, <code>Load()</code> from env+CLI,
+  plus <code>Snapshot</code>/state for round-tripping into a kind Secret.</li>
+<li><code>internal/cluster/kindsync</code> — owns the <code>proxmox-bootstrap-config/config.yaml</code> Secret
+  inside the kind cluster: write-out, read-back, and merge-in (skipping CLI-
+  locked <code>*_EXPLICIT</code> fields).</li>
+<li><code>internal/platform/installer</code> — installs all client binaries (kubectl, kind,
+  clusterctl, cilium-cli, argocd-cli, cmctl, kyverno-cli, opentofu, docker
+  upgrade) and conditionally builds arm64 controller images.</li>
+<li><code>internal/cluster/kind</code> — kind cluster lifecycle: create, backup, restore, kubeconfig
+  export.</li>
+<li><code>internal/platform/opentofux</code> — OpenTofu wrapper. Generates the BPG provider tree,
+  applies/recreates the Proxmox identity stack (CAPI + CSI users, tokens,
+  ACLs), pulls outputs back into clusterctl + CSI configs.</li>
+<li><code>internal/provider/proxmox/pveapi</code> — Proxmox API client (admin +
+  clusterctl tokens), identity-suffix derivation, region/node
+  resolution, cluster-set ID validation. Lives under the proxmox
+  provider package because it's Proxmox-specific.</li>
+<li><code>internal/capi/manifest</code> — generates the workload <code>clusterctl generate
+  cluster</code> manifest, then patches it (CSI topology labels, kube-proxy skip
+  for Cilium, ProxmoxMachineTemplate spec rev, CAAPH cluster labels).</li>
+<li><code>internal/capi/caaph</code> — CAAPH HelmChartProxy authoring and waiters: Cilium HCP
+  for the workload, Cilium L2 announcements / LB IP pool, Argo CD Operator
+  install on the workload, ArgoCD CR + CAAPH <code>argocd-apps</code> HelmChartProxy
+  (root Application of the user's Git app-of-apps).</li>
+<li><code>internal/capi/argocd</code> — Argo CD UX: <code>--argocd-print-access</code>,
+  <code>--argocd-port-forward</code>, kubeconfig discovery for standalone modes,
+  pre-installed <code>argocd-redis</code> Secret on the workload.</li>
+<li><code>internal/capi/csi</code> — Proxmox CSI helpers: load vars, push the
+  <code>*-proxmox-csi-config</code> Secret into the workload.</li>
+<li><code>internal/capi/cilium</code> — Cilium values rendering / arch detection.</li>
+<li><code>internal/platform/kubectl</code> — typed-client wrappers for the few residual
+  <code>kubectl</code>-like operations (apply, wait-for-endpoints, context resolution,
+  workload-manifest apply with retries).</li>
+<li><code>internal/capi/wlargocd</code> / <code>internal/capi/postsync</code> — workload Argo CD post-sync
+  helpers (used by <code>--workload-rollout</code>).</li>
+<li><code>internal/capi/helmvalues</code> — typed value-overlay generation.</li>
+<li><code>internal/ui/cli</code> — flag parsing layer that hands a <code>*Config</code> back to
+  <code>Run()</code>.</li>
+<li><code>internal/provider</code> — pluggable CAPI infrastructure-provider interface +
+  registry. 12 providers registered, each cross-checked against the upstream
+  CAPI provider list at https://cluster-api.sigs.k8s.io/reference/providers:
+  aws, azure, gcp, hetzner, proxmox, vsphere, openstack, docker (capd),
+  digitalocean, linode, oci, ibmcloud. Each provider package self-registers
+  in <code>init()</code> and supplies the per-cloud bits (clusterctl init args, K3s
+  template, identity bootstrap, CSI Secret, cost estimator).
+  <code>provider.MinStub</code> is the embed-helper for cost-only providers: defaults
+  Capacity / EnsureIdentity / EnsureGroup / EnsureCSISecret to
+  ErrNotApplicable, K3sTemplate to ErrNotApplicable, PatchManifest to a
+  no-op. See <code>docs/providers.md</code>.</li>
+<li><code>internal/pricing</code> — live FinOps pricing fetchers, one per vendor with a
+  public catalog API (AWS Bulk JSON, Azure Retail Prices, GCP Cloud Billing
+  Catalog, Hetzner, DigitalOcean, Linode, OCI, IBM Cloud Global Catalog).
+  File-backed 24h cache at
+  <code>~/.cache/yage/pricing/</code>. No hardcoded $/hour or $/GB-month
+  numbers anywhere — when a vendor API is unreachable, callers receive
+  <code>ErrUnavailable</code> and the cost path surfaces "estimate unavailable" rather
+  than a stale figure. Also hosts the <strong>taller</strong> currency abstraction:
+  geo-detect via ip-api.com → ISO country → currency, override via
+  <code>YAGE_TALLER_CURRENCY</code>, FX from open.er-api.com (24h disk
+  cache). And per-vendor IAM/token onboarding hints with sentinel-based
+  first-run-only display. See <code>docs/cost-and-pricing.md</code>.</li>
+<li><code>internal/cost</code> — multi-cloud comparator. <code>--cost-compare</code> runs every
+  registered provider's <code>EstimateMonthlyCostUSD</code> against the same logical
+  cluster shape and prints a side-by-side table (sorted by total).
+  <code>--budget-usd-month N</code> adds a per-cloud retention column (how much
+  persistent storage your budget buys after compute).</li>
+<li><code>internal/cluster/capacity</code> — host-capacity preflight. Queries Proxmox's
+  <code>/cluster/resources</code> for both node totals (CPU/mem/storage) and
+  existing-VM census (sum of every qemu VM's declared max{cpu,mem,disk}).
+  <code>CheckCombined(plan, host, existing, soft, tolerance)</code> returns a
+  trichotomy verdict — fits / tight / abort — that drives both the
+  dry-run plan and the real-run preflight. See <code>docs/capacity-preflight.md</code>.</li>
+<li><code>internal/platform/shell</code> / <code>internal/ui/logx</code> / <code>internal/ui/promptx</code> / <code>internal/platform/sysinfo</code>
+  / <code>internal/util/versionx</code> / <code>internal/util/yamlx</code> — small support utilities (process
+  exec, structured logging, prompts, OS/arch detection, semver parsing, YAML
+  field extraction).</li>
+</ul>
+<h2 id="phase-timeline-diagram-1">Phase timeline (diagram 1)<a class="headerlink" href="#phase-timeline-diagram-1" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[main entry: cmd/yage] --&gt; B[bootstrap.Run]
+    B --&gt; SM{standalone mode?}
+    SM -- backup/restore --&gt; KSO[kind.Backup or kind.Restore]
+    SM -- workload-rollout --&gt; WR[workload-rollout flow]
+    SM -- argocd-print/port-forward --&gt; AC[argocdx.PrintAccessInfo&lt;br/&gt;or RunPortForwards]
+    SM -- normal --&gt; P0[Pre: EnsureCAPIManifestPath +&lt;br/&gt;Purge + ClusterSetID]
+    P0 --&gt; P1[Dependency install]
+    P1 --&gt; P20[OpenTofu identity bootstrap]
+    P20 --&gt; P21[clusterctl credentials]
+    P21 --&gt; P24[Detect/reuse kind cluster]
+    P24 --&gt; P25[Resolve CAPMOX image tag]
+    P25 --&gt; P26[kind create cluster]
+    P26 --&gt; P27[Management CNI = kindnet]
+    P27 --&gt; P28[clusterctl init core+CAAPH+CAPMOX]
+    P28 --&gt; P29[Workload manifest apply&lt;br/&gt;+ Cilium HelmChartProxy]
+    P29 --&gt; P295[Pivot phase PIVOT_ENABLED=true&lt;br/&gt;clusterctl move kind to mgmt&lt;br/&gt;see Diagram 6]
+    P295 --&gt; P210[Argo CD Operator&lt;br/&gt;+ CAAPH argocd-apps&lt;br/&gt;note: targets mgmt kubeconfig&lt;br/&gt;when pivot enabled, kind context otherwise]
+    P210 --&gt; Z[Done]</code></pre>
+<h2 id="internal-package-dependency-graph-diagram-2">Internal package dependency graph (diagram 2)<a class="headerlink" href="#internal-package-dependency-graph-diagram-2" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+    subgraph orchestrator[Orchestrator]
+        orchestrator[internal/orchestrator]
+    end
+
+    subgraph midtier[Mid-tier]
+        caaph[internal/capi/caaph]
+        manifest[internal/capi/manifest]
+        kindsync[internal/cluster/kindsync]
+        argocd[internal/capi/argocd]
+        csi[internal/capi/csi]
+        kindp[internal/cluster/kind]
+        installer[internal/platform/installer]
+        opentofux[internal/platform/opentofux]
+    end
+
+    subgraph leaves[Leaves]
+        configp[internal/config]
+        logx[internal/ui/logx]
+        shell[internal/platform/shell]
+        sysinfo[internal/platform/sysinfo]
+        versionx[internal/util/versionx]
+        yamlx[internal/util/yamlx]
+        proxmox[internal/provider/proxmox + pveapi]
+        promptx[internal/ui/promptx]
+        helmvalues[internal/capi/helmvalues]
+        wlargocd[internal/capi/wlargocd]
+        postsync[internal/capi/postsync]
+        cilium[internal/capi/cilium]
+        kubectl[internal/platform/kubectl]
+        clip[internal/ui/cli]
+    end
+
+    foundation[internal/platform/k8sclient]
+
+    bootstrap --&gt; caaph
+    bootstrap --&gt; capimanifest
+    bootstrap --&gt; kindsync
+    bootstrap --&gt; argocdx
+    bootstrap --&gt; csix
+    bootstrap --&gt; kindp
+    bootstrap --&gt; installer
+    bootstrap --&gt; opentofux
+    bootstrap --&gt; kubectlx
+    bootstrap --&gt; proxmox
+    bootstrap --&gt; configp
+    bootstrap --&gt; shell
+    bootstrap --&gt; logx
+    bootstrap --&gt; promptx
+    bootstrap --&gt; yamlx
+    bootstrap --&gt; helmvalues
+    bootstrap --&gt; wlargocd
+    bootstrap --&gt; postsync
+    bootstrap --&gt; foundation
+
+    caaph --&gt; ciliumx
+    caaph --&gt; proxmox
+    caaph --&gt; sysinfo
+    caaph --&gt; shell
+    caaph --&gt; configp
+    caaph --&gt; logx
+    caaph --&gt; foundation
+
+    capimanifest --&gt; ciliumx
+    capimanifest --&gt; proxmox
+    capimanifest --&gt; sysinfo
+    capimanifest --&gt; configp
+    capimanifest --&gt; logx
+    capimanifest --&gt; foundation
+
+    kindsync --&gt; proxmox
+    kindsync --&gt; kubectlx
+    kindsync --&gt; shell
+    kindsync --&gt; configp
+    kindsync --&gt; logx
+    kindsync --&gt; foundation
+
+    argocdx --&gt; sysinfo
+    argocdx --&gt; configp
+    argocdx --&gt; logx
+    argocdx --&gt; foundation
+
+    csix --&gt; configp
+    csix --&gt; logx
+    csix --&gt; foundation
+
+    kindp --&gt; shell
+    kindp --&gt; configp
+    kindp --&gt; logx
+
+    installer --&gt; versionx
+    installer --&gt; sysinfo
+    installer --&gt; shell
+    installer --&gt; configp
+    installer --&gt; logx
+
+    opentofux --&gt; capimanifest
+    opentofux --&gt; csix
+    opentofux --&gt; kindsync
+    opentofux --&gt; proxmox
+    opentofux --&gt; sysinfo
+    opentofux --&gt; shell
+    opentofux --&gt; configp
+    opentofux --&gt; logx
+
+    kubectlx --&gt; configp
+    kubectlx --&gt; logx
+    kubectlx --&gt; foundation
+
+    proxmox --&gt; sysinfo
+    proxmox --&gt; configp
+    proxmox --&gt; logx
+
+    wlargocd --&gt; postsync
+    wlargocd --&gt; configp
+    wlargocd --&gt; logx
+
+    postsync --&gt; shell
+    postsync --&gt; configp
+
+    ciliumx --&gt; sysinfo
+    ciliumx --&gt; configp
+    ciliumx --&gt; logx
+
+    helmvalues --&gt; configp
+    clip --&gt; configp
+    clip --&gt; logx</code></pre>
+<h2 id="install-topology-diagram-3">Install topology (diagram 3)<a class="headerlink" href="#install-topology-diagram-3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    BC[yage binary] --&gt; KCB[host binaries: kubectl, kind,&lt;br/&gt;clusterctl, cilium-cli, argocd-cli,&lt;br/&gt;cmctl, kyverno-cli, opentofu]
+    BC --&gt; KIND[kind cluster: management plane]
+    BC --&gt; TF[OpenTofu / BPG provider:&lt;br/&gt;Proxmox CAPI + CSI users,&lt;br/&gt;tokens, ACLs]
+    BC --&gt; CCI[clusterctl init: CAPI core,&lt;br/&gt;kubeadm bootstrap, kubeadm&lt;br/&gt;control-plane, CAAPH addon,&lt;br/&gt;in-cluster IPAM, CAPMOX]
+    BC --&gt; WCR[Workload Cluster CR&lt;br/&gt;+ ProxmoxCluster + KubeadmCP]
+    BC --&gt; CHCP[Cilium HelmChartProxy&lt;br/&gt;on management]
+    BC --&gt; CSEC[CSI config Secret&lt;br/&gt;on workload]
+    BC --&gt; RSEC[argocd-redis Secret&lt;br/&gt;on workload]
+    BC --&gt; AOP[ArgoCD CR + Argo CD Operator&lt;br/&gt;kustomize apply on workload]
+    BC --&gt; AHCP[CAAPH argocd-apps HelmChartProxy&lt;br/&gt;root Application=WORKLOAD_CLUSTER_NAME]
+
+    CHCP -- CAAPH reconciles --&gt; CILW[Cilium chart on workload]
+    AHCP -- CAAPH reconciles --&gt; ARGOAPPS[argocd-apps Helm chart&lt;br/&gt;= root Application of-apps]
+
+    ARGOAPPS -- kustomize-build --&gt; GIT[~/Devel/workload-app-of-apps Git repo]
+    GIT --&gt; CHILD[Child Argo Applications]
+
+    CHILD --&gt; MS[metrics-server wave -3]
+    CHILD --&gt; SCRDS[spire-crds wave -3]
+    CHILD --&gt; PCSI[proxmox-csi wave -2]
+    CHILD --&gt; KYV[kyverno wave 0]
+    CHILD --&gt; CM[cert-manager wave 0]
+    CHILD --&gt; CP[crossplane wave 2]
+    CHILD --&gt; CNPG[cnpg wave 2]
+    CHILD --&gt; ES[external-secrets wave 3]
+    CHILD --&gt; INF[infisical wave 4]
+    CHILD --&gt; SP[spire wave 5]
+    CHILD --&gt; VMG[victoriametrics + otel + grafana wave 6]
+    CHILD --&gt; BS[backstage wave 7 opt-in]
+    CHILD --&gt; KC[keycloak wave 8]
+    CHILD --&gt; KCRO[keycloak-realm-operator wave 9 opt-in]
+    CHILD --&gt; KCR[keycloak-realm wave 10]
+    CHILD --&gt; SSO[argocd-sso wave 11]
+
+    MS --&gt; MS_SRC[helm/oci source]
+    SCRDS --&gt; SCRDS_SRC[helm/oci source]
+    PCSI --&gt; PCSI_SRC[helm/oci source]
+    KYV --&gt; KYV_SRC[helm/oci source]
+    CM --&gt; CM_SRC[helm/oci source]
+    CP --&gt; CP_SRC[helm/oci source]
+    CNPG --&gt; CNPG_SRC[helm/oci source]
+    ES --&gt; ES_SRC[helm/oci source]
+    INF --&gt; INF_SRC[helm/oci source]
+    SP --&gt; SP_SRC[helm/oci source]
+    VMG --&gt; VMG_SRC[helm/oci sources]
+    BS --&gt; BS_SRC[helm/oci source]
+    KC --&gt; KC_SRC[helm/oci source]
+    KCRO --&gt; KCRO_SRC[helm/oci source]
+    KCR --&gt; KCR_SRC[kustomize manifest]
+    SSO --&gt; SSO_SRC[kustomize manifest]</code></pre>
+<h2 id="cost-pricing-capacity-subsystem">Cost / pricing / capacity subsystem<a class="headerlink" href="#cost-pricing-capacity-subsystem" title="Permanent link">&para;</a></h2>
+<p>Three cooperating packages turn <code>--dry-run</code> and <code>--cost-compare</code> into
+useful planning signals without provisioning anything:</p>
+<pre class="mermaid"><code>flowchart LR
+    cli[--dry-run / --cost-compare&lt;br/&gt;--budget-usd-month] --&gt; plan[bootstrap.planMonthlyCost&lt;br/&gt;bootstrap.planCostCompare&lt;br/&gt;bootstrap.planCapacity]
+    plan --&gt; prov[provider.For cfg&lt;br/&gt;EstimateMonthlyCostUSD]
+    prov --&gt; pricing[internal/pricing.Fetch&lt;br/&gt;vendor, sku, region]
+    pricing --&gt; live[(vendor catalog&lt;br/&gt;HTTP GET, free APIs)]
+    pricing --&gt; cache[(~/.cache/yage/&lt;br/&gt;pricing/*.json)]
+    pricing --&gt; taller[ToTaller&lt;br/&gt;FormatTaller]
+    taller --&gt; fx[(open.er-api.com&lt;br/&gt;FX rates, 24h cache)]
+    taller --&gt; geo[(ip-api.com&lt;br/&gt;country → currency)]
+    plan --&gt; cap[capacity.FetchHostCapacity&lt;br/&gt;capacity.FetchExistingUsage&lt;br/&gt;capacity.CheckCombined]
+    cap --&gt; pmx[(Proxmox /cluster/resources&lt;br/&gt;node + vm aggregate)]
+    plan --&gt; onboard[pricing.MaybePrintOnboarding&lt;br/&gt;shows IAM/token setup once]
+    onboard --&gt; sentinel[(~/.cache/.../.onboarded-vendor)]</code></pre>
+<p>Three independent invariants:</p>
+<ul>
+<li><strong>No hardcoded money numbers.</strong> Every <code>$/hour</code>, <code>$/month</code>, <code>$/GB-mo</code>
+  comes from a live API call. When the API is unreachable, the cost
+  path returns <code>ErrUnavailable</code> (wrapped in <code>ErrNotApplicable</code>) and
+  the dry-run shows "estimate unavailable: <specific reason>"
+  instead of fabricating a number.</li>
+<li><strong>No hardcoded display currency.</strong> All amounts pass through
+  <code>pricing.FormatTaller</code> which converts via live FX into the
+  geo-detected (or operator-overridden) local currency.</li>
+<li><strong>No silent overcommit.</strong> Capacity preflight folds in the existing
+  VMs already on the host, not just the planned cluster. The
+  trichotomy verdict (fits / tight / abort) is honest about both
+  soft-budget and hard-ceiling boundaries.</li>
+</ul>
+<p>See <code>docs/cost-and-pricing.md</code> and <code>docs/capacity-preflight.md</code> for
+the user-facing flag/env reference.</p>
+<h2 id="bootstrap-and-pivot-pattern">Bootstrap-and-pivot pattern<a class="headerlink" href="#bootstrap-and-pivot-pattern" title="Permanent link">&para;</a></h2>
+<p>The kind cluster that hosts CAPI during the kind-detection through workload
+manifest apply phases is intentionally ephemeral: it is single-host, runs on
+Docker on the operator's workstation, and is not the production management
+plane. Treating it as the long-lived CAPI host is fragile — the workstation
+reboots, Docker upgrades, kind versions, and local kubeconfigs all become
+operational surface area for a control plane that should be cluster-grade.
+The bootstrap-and-pivot pattern resolves this by using kind only as a "boot
+loader": kind brings up enough CAPI to provision a single-node "management
+cluster" on Proxmox, and that mgmt cluster then takes over CAPI duties for
+the rest of the lifecycle.</p>
+<p>When <code>PIVOT_ENABLED=true</code>, kind becomes transient. After the management
+cluster comes up on Proxmox and reports the CAPI Cluster as Available, the
+canonical <code>clusterctl move</code> machinery copies all CAPI custom resources
+(Clusters, Machines, KubeadmControlPlanes, ProxmoxClusters, MachineDeployments,
+identity Secrets, …) from the kind management plane to the new Proxmox-hosted
+management cluster, and the kind cluster is torn down. Subsequent workload
+clusters are then provisioned by applying their Cluster CRs against the
+mgmt kubeconfig instead of the kind context, and Argo CD targeting in the
+final phase follows the same flip. When <code>PIVOT_ENABLED=false</code> (the default),
+kind remains the management plane and workload Cluster CRs are applied to
+it directly.</p>
+<p>The eight pivot steps, with their Go entry points in the
+<code>internal/capi/pivot/</code> package:</p>
+<ol>
+<li><strong>EnsureManagementCluster</strong> — provision the single-node mgmt cluster on
+   Proxmox via the existing CAPMOX path on kind (<code>internal/capi/pivot/pivot.go</code>).</li>
+<li><strong>Wait for the CAPI Cluster to report Available on kind</strong>
+   (<code>internal/capi/pivot/wait.go</code>).</li>
+<li><strong>Fetch the mgmt kubeconfig</strong> from the kind-side
+   <code>&lt;mgmt-cluster&gt;-kubeconfig</code> Secret and persist it locally
+   (<code>internal/capi/pivot/wait.go</code>).</li>
+<li><strong>InstallCAPIOnManagement</strong> — <code>clusterctl init</code> against the mgmt
+   kubeconfig with the same providers (core, kubeadm bootstrap + control
+   plane, CAAPH, in-cluster IPAM, CAPMOX) (<code>internal/capi/pivot/move.go</code>).</li>
+<li><strong>MoveCAPIState</strong> — <code>clusterctl move --to-kubeconfig &lt;mgmt&gt;</code> to
+   transfer all CAPI CRs and identity Secrets from kind to mgmt
+   (<code>internal/capi/pivot/move.go</code>).</li>
+<li><strong>HandOffBootstrapSecretsToManagement</strong> — re-create the
+   <code>proxmox-bootstrap-config/config.yaml</code> Secret (and any sibling literal
+   Secrets the bootstrap relies on) inside the new
+   <code>proxmox-bootstrap-system</code> namespace on the mgmt cluster
+   (<code>internal/cluster/kindsync/handoff.go</code>).</li>
+<li><strong>VerifyParity</strong> — compare the post-move set of CAPI CRs on mgmt
+   against the pre-move snapshot from kind, and assert that controllers
+   on mgmt are reconciling the moved Clusters
+   (<code>internal/capi/pivot/pivot.go</code>).</li>
+<li><strong>TeardownKind</strong> — delete the kind cluster (skipped under
+   <code>--no-delete-kind</code>) (<code>internal/capi/pivot/pivot.go</code>).</li>
+</ol>
+<h3 id="diagram-6-bootstrap-and-pivot-timeline">Diagram 6: bootstrap-and-pivot timeline<a class="headerlink" href="#diagram-6-bootstrap-and-pivot-timeline" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart TD
+    START[yage start] --&gt; KIND[kind cluster transient&lt;br/&gt;kind detect + create phases]
+    KIND --&gt; PROV[clusterctl init on kind]
+    PROV --&gt; BRANCH{PIVOT_ENABLED?}
+
+    BRANCH -- false default --&gt; WLKIND[apply workload Cluster on kind&lt;br/&gt;workload + Argo phases]
+    WLKIND --&gt; CILIUMK[Cilium HelmChartProxy via CAAPH on kind]
+    CILIUMK --&gt; ARGOK[Argo CD Operator + argocd-apps&lt;br/&gt;targeting workload from kind]
+
+    BRANCH -- true --&gt; MGMTAPPLY[apply mgmt-Cluster CR on kind&lt;br/&gt;pivot step 1]
+    MGMTAPPLY --&gt; MGMT[mgmt cluster on Proxmox&lt;br/&gt;single node]
+    MGMT --&gt; WAIT[wait Cluster Available on kind&lt;br/&gt;step 2]
+    WAIT --&gt; KCFG[fetch mgmt kubeconfig&lt;br/&gt;from kind Secret&lt;br/&gt;step 3]
+    KCFG --&gt; INIT[clusterctl init on mgmt&lt;br/&gt;step 4]
+    INIT --&gt; MOVE[clusterctl move kind to mgmt&lt;br/&gt;step 5]
+    MOVE --&gt; HANDOFF[handoff bootstrap Secrets&lt;br/&gt;proxmox-bootstrap-system NS&lt;br/&gt;step 6]
+    HANDOFF --&gt; VERIFY[VerifyParity&lt;br/&gt;step 7]
+    VERIFY --&gt; TEARDOWN[delete kind&lt;br/&gt;step 8]
+    TEARDOWN --&gt; ONGOING[ongoing operations target mgmt]
+    ONGOING --&gt; WLMGMT[apply workload Cluster on mgmt&lt;br/&gt;Argo CD phase]
+    WLMGMT --&gt; CILIUMW[Cilium HelmChartProxy via CAAPH on mgmt]
+    CILIUMW --&gt; ARGOW[Argo CD Operator + argocd-apps&lt;br/&gt;targeting workload from mgmt]
+
+    ARGOK --&gt; DONE[Done]
+    ARGOW --&gt; DONE</code></pre>
+<h2 id="keycloak-sso-topology-diagram-4">Keycloak SSO topology (diagram 4)<a class="headerlink" href="#keycloak-sso-topology-diagram-4" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>sequenceDiagram
+    participant U as User browser
+    participant App as App (Argo CD or Grafana)
+    participant KC as Keycloak (workload realm)
+    participant Realm as KeycloakRealmImport CR&lt;br/&gt;(realm-import.yaml)
+
+    Realm-&gt;&gt;KC: realm + clients + groups (declarative, by keycloak-realm-operator)
+    U-&gt;&gt;App: GET /
+    App-&gt;&gt;U: 302 to Keycloak OIDC authorize endpoint
+    U-&gt;&gt;KC: login (username + password)
+    KC-&gt;&gt;U: 302 with auth code to App callback
+    U-&gt;&gt;App: callback with code
+    App-&gt;&gt;KC: token exchange (code -&gt; id_token + access_token)
+    KC-&gt;&gt;App: id_token + access_token (with realm group claim)
+    App-&gt;&gt;App: authorize via realm group claim&lt;br/&gt;(Argo CD RBAC ConfigMap / Grafana role-mapping)
+    App-&gt;&gt;U: app session granted</code></pre>
+<p>The realm CR is at
+<code>~/Devel/workload-app-of-apps/base/addons/manifests/keycloak-realm/realm-import.yaml</code>,
+applied as wave 10 by the <code>keycloak-realm</code> Application; the
+<code>keycloak-realm-operator</code> (wave 9, opt-in) reconciles it into Keycloak.</p>
+<h2 id="persistence-model">Persistence model<a class="headerlink" href="#persistence-model" title="Permanent link">&para;</a></h2>
+<p>yage's persistence policy: <strong>state lives in kind Secrets, not on
+local disk.</strong> Config, provider credentials, kindsync handoff data,
+and OpenTofu identity outputs all round-trip through Secrets in
+the <code>yage-system</code> namespace on the local kind cluster. The same
+state is what the eventual pivot moves to a managed cluster.</p>
+<p>Local disk is used only for <strong>encrypted kind cluster backup/restore
+archives</strong> (<code>--kind-backup</code> writes a tar.gz; <code>--kind-restore</code> reads
+one), and even those default to passphrase-encrypted on creation.</p>
+<p>The implication for tooling: yage is reproducible across machines
+as long as the operator can re-create the kind cluster — there are
+no <code>~/.yage/*</code> config files to copy, no per-host state. Run history
+is in the kind cluster's Secrets; run output is in your shell.</p>
+<h2 id="config-flow-kind-secret-persistence-diagram-5">Config flow / kind-Secret persistence (diagram 5)<a class="headerlink" href="#config-flow-kind-secret-persistence-diagram-5" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    ENV[env vars + CLI flags] --&gt; LOAD[config.Load]
+    LOAD --&gt; CFG[*config.Config in-memory]
+    CFG --&gt; SNAP[config.Snapshot&lt;br/&gt;builds map of fields with&lt;br/&gt;EXPLICIT guards]
+    SNAP --&gt; SYNC[kindsync.SyncBootstrapConfigToKind]
+    SYNC --&gt; KSEC[kind Secret&lt;br/&gt;proxmox-bootstrap-config/config.yaml]
+    KSEC --&gt; NEXT[next yage run]
+    NEXT --&gt; MERGE[kindsync.MergeProxmoxBootstrapSecretsFromKind]
+    MERGE --&gt; READBACK[read Secret config.yaml]
+    READBACK --&gt; OVR[overlay onto *config.Config&lt;br/&gt;SKIP fields where matching&lt;br/&gt;NAME_EXPLICIT is set]
+    OVR --&gt; CFG</code></pre>
+<h2 id="in-depth-run-walk-through">In-depth Run() walk-through<a class="headerlink" href="#in-depth-run-walk-through" title="Permanent link">&para;</a></h2>
+<p>The numbered steps reference <code>internal/orchestrator/bootstrap.go</code>.</p>
+<ol>
+<li><strong>Defaults</strong> — fall back <code>KindClusterName</code> to <code>ClusterName</code> or
+   <code>capi-provisioner</code>; default <code>AllowedNodes</code> to <code>ProxmoxNode</code>.</li>
+<li><strong>Standalone kind backup/restore</strong> — invoke
+   <code>installer.Kubectl</code> then <code>kind.Backup</code> / <code>kind.Restore</code> and exit.</li>
+<li><strong>Standalone <code>--workload-rollout</code></strong> — merge kind Secrets,
+   resolve management context, optionally regenerate the CAPI manifest and
+   re-apply with retries (3 attempts, 10s sleep). Argo branch logs guidance
+   (no automatic sync).</li>
+<li><strong>Standalone Argo print/port-forward</strong> — discover workload
+   kubeconfig and call <code>argocdx.PrintAccessInfo</code> /
+   <code>argocdx.RunPortForwards</code>.</li>
+<li><strong>Pre-phase</strong> — <code>EnsureCAPIManifestPath</code>, optional
+   <code>PurgeGeneratedArtifacts</code>, derive <code>ClusterSetID</code> and Proxmox identity
+   suffix.</li>
+<li><strong>Dependency install</strong> — <code>installer.SystemDependencies</code>,
+   <code>installer.Docker</code>, two-pass <code>installer.Kubectl</code> (the second pass picks
+   up a pinned <code>ClusterctlVersion</code> that the first kind-Secret merge may
+   have introduced), <code>installer.Kind</code>, <code>installer.Clusterctl</code>,
+   <code>installer.CiliumCLI</code>, optional <code>ArgoCDCLI</code>/<code>KyvernoCLI</code>/<code>Cmctl</code>,
+   conditional Docker upgrade + BPG provider install (skipped on
+   <code>--no-delete-kind</code> or when reusing a kind cluster without <code>--force</code>),
+   <code>installer.OpenTofu</code>, <code>EnsureKindConfig</code>.</li>
+<li><strong>OpenTofu identity bootstrap</strong> — if neither env nor an
+   explicit local clusterctl file satisfies CAPI/CSI creds, call
+   <code>opentofux.WriteClusterctlConfigIfMissing</code> /
+   <code>WriteCSIConfigIfMissing</code>, and as a last resort run
+   <code>opentofux.ApplyIdentity</code> (or <code>RecreateIdentities</code> under
+   <code>--recreate-proxmox-identities</code>). Outputs are written back to the
+   clusterctl + CSI config files.</li>
+<li><strong>clusterctl credentials</strong> — interactive prompt fallback,
+   pull <code>PROXMOX_URL</code>/<code>TOKEN</code>/<code>SECRET</code> from local clusterctl file,
+   normalise + validate the token secret, refresh derived token IDs,
+   verify connectivity via
+   <code>proxmox.ResolveRegionAndNodeFromClusterctlAPI</code>. Then write the
+   ephemeral clusterctl config via <code>SyncClusterctlConfigFile</code>.</li>
+<li><strong>kind detection</strong> — list kind clusters; under
+   <code>--force</code> (and not <code>--no-delete-kind</code>) delete-then-recreate, else reuse
+   and set <code>kindClusterReused</code>.</li>
+<li><strong>CAPMOX image tag</strong> — use pinned
+    <code>cfg.CAPMOXVersion</code> or git-clone the CAPMOX repo and pick the latest
+    <code>vX.Y.Z</code> tag.</li>
+<li><strong>kind create + image load</strong> — <code>kind create
+    cluster --config &lt;kind.yaml&gt;</code> (skipped on reuse), merge kubeconfig,
+    <code>installer.BuildIfNoArm64</code> for CAPMOX + CAPI core/bootstrap/control-
+    plane + IPAM (skipped on reuse), then sync config + literal creds back
+    into the kind Secret.</li>
+<li><strong>management CNI</strong> — kindnet only; no Cilium on
+    the management plane.</li>
+<li><strong>clusterctl init</strong> —
+    <code>InstallMetricsServerOnKindManagement</code>, then <code>clusterctl init</code> with
+    <code>infrastructure=proxmox</code> + <code>ipam=in-cluster</code> + <code>addon=helm</code>. Wait for
+    CAAPH (<code>caaph-system</code>), <code>capi-controller-manager</code>, kubeadm bootstrap +
+    control-plane controllers, their webhook endpoints, and
+    <code>capmox-controller-manager</code> + its webhook. End with
+    <code>opentofux.RecreateResyncCapmox</code>.</li>
+<li><strong>workload manifest apply</strong> —
+    <code>MaybeInteractiveSelectWorkloadCluster</code>,
+    <code>capimanifest.TryFillWorkloadInputsFromManagement</code>, re-merge kind
+    Secrets, <code>TryLoadCAPIManifestFromSecret</code>,
+    <code>capimanifest.GenerateWorkloadManifestIfMissing</code>, patch chain
+    (<code>PatchProxmoxCSITopologyLabels</code>, <code>PatchKubeadmSkipKubeProxyForCilium</code>,
+    <code>PatchProxmoxMachineTemplateSpecRevisions</code>,
+    <code>DiscoverWorkloadClusterIdentity</code>, <code>EnsureWorkloadClusterLabel</code>,
+    <code>RefreshDerivedCiliumClusterID</code>, <code>caaph.PatchClusterCAAPHHelmLabels</code>),
+    <code>PushCAPIManifestToSecret</code>, then
+    <code>kubectlx.ApplyWorkloadManifestToManagementCluster</code> with up to 3
+    attempts. Then <code>opentofux.RecreateIdentitiesWorkloadCSISecrets</code>,
+    <code>caaph.ApplyWorkloadCiliumHelmChartProxy</code>,
+    <code>WaitForWorkloadClusterReady</code>,
+    <code>caaph.ApplyWorkloadCiliumLBBToWorkload</code> (L2 announcements + LB IP
+    pool), conditional <code>InstallMetricsServerOnWorkload</code>,
+    <code>csix.ApplyConfigSecretToWorkload</code>, and
+    <code>argocdx.ApplyRedisSecretToWorkload</code>.</li>
+<li><strong>Argo CD on workload</strong> — when
+    <code>WorkloadArgoCDEnabled</code>, <code>caaph.ApplyWorkloadArgoHelmProxies</code> (passing
+    <code>caaph.ApplyWorkloadArgoCDOperatorAndCR</code> as the post-prepare hook),
+    <code>caaph.WaitWorkloadArgoCDServer</code>, <code>caaph.LogWorkloadArgoAppsStatus</code>.</li>
+<li><strong>Done</strong> — log a hint about <code>kubectl get clusters -A</code> /
+    <code>clusterctl describe cluster</code>.</li>
+</ol>
+<h2 id="library-swap-audit-remaining-kubectl-shell-outs">Library swap audit — remaining <code>kubectl</code> shell-outs<a class="headerlink" href="#library-swap-audit-remaining-kubectl-shell-outs" title="Permanent link">&para;</a></h2>
+<p>Counts produced from
+<code>grep -rE 'shell\.(Run|Capture|Pipe).*"kubectl"|exec\.Command\("kubectl"' internal/ --include='*.go'</code>:</p>
+<ul>
+<li><code>internal/platform/installer/installer.go:494</code> — <code>kubectl version -o json</code> for
+  client <code>gitVersion</code> parsing during version-pin reconciliation; reads the
+  on-disk <code>kubectl</code> binary the user already runs (cluster connection not
+  required), so swapping to client-go would not represent the on-disk
+  binary the user expects.</li>
+<li><code>internal/capi/caaph/caaph.go:391</code> — <code>kubectl --kubeconfig &lt;wk&gt; apply -k &lt;git
+  ref&gt; --server-side</code> for the Argo CD Operator. Reads a kustomize tree
+  from a Git ref; replicating server-side <code>-k</code> would pull in
+  <code>sigs.k8s.io/kustomize/api/krusty</code> (~10MB of deps). Comment in source
+  notes the trade-off.</li>
+<li><code>internal/cluster/kind/restore.go:294</code> — <code>kubectl --context &lt;ctx&gt; apply -f -</code> to
+  pipe a re-hydrated namespace doc back during <code>--restore</code>. Streaming
+  multi-document YAML through dynamic apply with field-management parity
+  to <code>kubectl apply</code> is non-trivial; backup/restore is rarely run.</li>
+<li><code>internal/cluster/kind/backup.go:163,169,188,337</code> — backup-side <code>kubectl get</code>
+  and <code>kubectl api-resources</code> and <code>kubectl config get-contexts</code>, used to
+  enumerate every namespaced resource type per namespace and dump them as
+  JSON Lines. Same trade-off as restore.</li>
+<li><code>internal/capi/argocd/argocdx.go:314</code> — long-lived <code>kubectl port-forward</code>
+  for <code>--argocd-port-forward</code>. The port-forwarding behaviour with proper
+  signal forwarding and re-connect is essentially what the kubectl
+  subprocess provides; replacing it with a <code>client-go</code> portforwarder
+  would re-implement the same UX. Function-level NOTE in the source
+  records this rationale.</li>
+</ul>
+<p>Everything else (deploy/Service/Secret/CRD apply, waits, Cluster CR
+patch, kubeconfig discovery, Helm chart proxy authoring) goes through
+<code>internal/platform/k8sclient</code> typed + dynamic clients.</p>
+<p>Intentional <code>clusterctl</code> shell-outs (the binary is the supported entry
+point for these operations and re-implementing them in-process would
+fork upstream behaviour):</p>
+<ul>
+<li><code>clusterctl init</code> — provider install on both the kind management plane
+  (clusterctl init phase) and the Proxmox-hosted management cluster (pivot step 4).</li>
+<li><code>clusterctl alpha rollout restart</code> — used by <code>--workload-rollout</code> to
+  roll KubeadmControlPlane / MachineDeployment.</li>
+<li><code>clusterctl move</code> — pivot step 5; transfers all CAPI CRs and identity
+  Secrets from kind to the mgmt cluster when <code>PIVOT_ENABLED=true</code>. Reusing
+  the upstream binary preserves the canonical move semantics (pause /
+  copy / verify / unpause) rather than re-implementing them.</li>
+</ul>
+<h2 id="vendor-library-inventory">Vendor library inventory<a class="headerlink" href="#vendor-library-inventory" title="Permanent link">&para;</a></h2>
+<p>Pulled from <code>go.mod</code>. Direct + transitive libraries the binary now consumes
+in-process to replace shell-outs:</p>
+<ul>
+<li><code>k8s.io/client-go</code> v0.36.0 — typed Kubernetes clientset (Deployments,
+  Services, Secrets, Namespaces, etc.), informers, and discovery.</li>
+<li><code>k8s.io/api</code> v0.36.0 — typed API objects (CoreV1, AppsV1, NetworkingV1,
+  …) used by the typed clientset.</li>
+<li><code>k8s.io/apimachinery</code> v0.36.0 — <code>metav1</code>, schema/GVR/GVK, runtime
+  serialisers, label selectors.</li>
+<li><code>k8s.io/cli-runtime</code> v0.36.0 — <code>genericclioptions</code> and resource
+  builders used by the apply paths in <code>internal/platform/kubectl</code>.</li>
+<li><code>sigs.k8s.io/yaml</code> v1.6.0 — strict YAML round-trip used by <code>yamlx</code>,
+  Snapshot, and manifest patching.</li>
+<li><code>sigs.k8s.io/kind</code> v0.31.0 — pulled in for the kind config types used
+  by <code>internal/cluster/kind</code> / <code>EnsureKindConfig</code>.</li>
+<li><code>helm.sh/helm/v3</code> — <em>not yet a direct dep in go.mod</em>; CAAPH authoring
+  is rendered through <code>internal/capi/helmvalues</code> + <code>sigs.k8s.io/yaml</code>
+  rather than embedding helm. Listed here as a future swap target.</li>
+<li><code>sigs.k8s.io/cluster-api</code> — <em>not yet a direct dep in go.mod</em>; Cluster
+  / KubeadmControlPlane / MachineDeployment are still authored as YAML
+  through <code>clusterctl generate cluster</code> and patched in
+  <code>internal/capi/manifest</code>. Direct vendor would let
+  <code>EnsureWorkloadClusterLabel</code> and friends use typed CAPI APIs instead
+  of YAML edits.</li>
+<li>Support indirects worth flagging: <code>github.com/spf13/cobra</code> /
+  <code>pflag</code> (CLI), <code>github.com/blang/semver/v4</code> (used by <code>versionx</code>),
+  <code>sigs.k8s.io/kustomize/api</code> and <code>kyaml</code> (transitively, through
+  cli-runtime).</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

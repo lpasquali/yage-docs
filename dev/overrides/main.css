@@ -1,0 +1,120 @@
+/* 
+ * RUNE Shared Design Tokens
+ * Solarized "Unix Guy" Theme
+ * ADR 0003: UI Design
+ */
+
+:root {
+  /* Solarized Colors (Base) */
+  --base03:  #002b36;
+  --base02:  #073642;
+  --base01:  #586e75;
+  --base00:  #657b83;
+  --base0:   #839496;
+  --base1:   #93a1a1;
+  --base2:   #eee8d5;
+  --base3:   #fdf6e3;
+  --yellow:  #b58900;
+  --orange:  #cb4b16;
+  --red:     #dc322f;
+  --magenta: #d33682;
+  --violet:  #6c71c4;
+  --blue:    #268bd2;
+  --cyan:    #2aa198;
+  --green:   #859900;
+
+  /* RUNE Brand Colors */
+  --rune-primary: var(--blue);
+  --rune-secondary: var(--cyan);
+  --rune-accent: var(--orange);
+  
+  /* Semantic Tokens (Light Theme Defaults) */
+  --rune-bg: var(--base3);
+  --rune-fg: var(--base00);
+  --rune-header-bg: var(--base2);
+  --rune-border: var(--base1);
+  --rune-link: var(--blue);
+  --rune-code-bg: var(--base2);
+  
+  /* Typography */
+  --rune-font-mono: "Fira Code", "JetBrains Mono", "Courier New", monospace;
+  --rune-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* Spacing */
+  --rune-space-xs: 0.25rem;
+  --rune-space-sm: 0.5rem;
+  --rune-space-md: 1rem;
+  --rune-space-lg: 1.5rem;
+  --rune-space-xl: 2rem;
+
+  /* Components */
+  --rune-radius: 4px;
+  --rune-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Dark Theme Overrides */
+[data-md-color-scheme="slate"],
+body.dark-theme {
+  --rune-bg: var(--base03);
+  --rune-fg: var(--base0);
+  --rune-header-bg: var(--base02);
+  --rune-border: var(--base01);
+  --rune-link: var(--blue);
+  --rune-code-bg: var(--base02);
+}
+
+/* Print Stylesheet Reset (Issue #51) */
+@media print {
+  :root {
+    --rune-bg: #fff;
+    --rune-fg: #000;
+    --rune-border: #ccc;
+    --rune-shadow: none;
+  }
+
+  body, .md-content {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  /* Hide navigation, search, and other UI elements for print */
+  .md-header,
+  .md-sidebar,
+  .md-footer,
+  .md-search,
+  .md-nav,
+  .md-top,
+  .md-content__button {
+    display: none !important;
+  }
+
+  .md-main__inner {
+    margin: 0 !important;
+  }
+
+  .md-content {
+    margin: 0 !important;
+  }
+
+  /* Ensure code blocks are readable in print */
+  pre, code {
+    background: #f8f8f8 !important;
+    border: 1px solid #ccc !important;
+    white-space: pre-wrap !important;
+    word-break: break-all !important;
+  }
+
+  a {
+    color: #000 !important;
+    text-decoration: underline !important;
+  }
+
+  a::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+  }
+
+  h1, h2, h3, h4 {
+    page-break-after: avoid;
+  }
+}
