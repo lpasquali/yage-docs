@@ -1,0 +1,6 @@
+mkdocs==1.6.1
+mkdocs-material==9.7.6
+pymarkdownlnt==0.9.36
+pip-licenses==5.5.5
+pip-audit==2.10.0
+mike>=2.1.3

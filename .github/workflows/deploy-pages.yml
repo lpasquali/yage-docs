@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: Apache-2.0
+name: Deploy MkDocs to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    uses: lpasquali/rune-ci/.github/workflows/docs-deploy.yml@144ef855dbf0420e5d9a8de2c8d8f89c2e789265

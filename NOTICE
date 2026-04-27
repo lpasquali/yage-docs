@@ -1,0 +1,20 @@
+yage Docs
+Copyright 2026 The yage Authors
+
+This product is licensed under the Apache License, Version 2.0.
+
+This product includes software developed by third parties.
+
+---
+
+MkDocs (https://github.com/mkdocs/mkdocs)
+  License: BSD-2-Clause
+  Copyright (c) MkDocs Contributors
+
+MkDocs Material (https://github.com/squidfunk/mkdocs-material)
+  License: MIT
+  Copyright (c) Martin Donath
+
+mike (https://github.com/jimporter/mike)
+  License: BSD-3-Clause
+  Copyright (c) Jim Porter

@@ -1,0 +1,59 @@
+site_name: yage Documentation
+site_description: Documentation for yage — CAPI bootstrapper for Proxmox and 11 other providers
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: custom
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to light mode
+    - scheme: default
+      primary: custom
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to dark mode
+  features:
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+extra_css:
+  - overrides/main.css
+  - stylesheets/tokens.css
+  - stylesheets/print.css
+
+plugins:
+  - search
+  - mike:
+      alias_type: redirect
+
+extra:
+  version:
+    provider: mike
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+nav:
+  - Home: index.md
+  - Context:
+      - Agent System Prompt: context/AGENT_SYSTEM_PROMPT.md
+  - Architecture:
+      - Overview: architecture/ARCHITECTURE.md
+      - Architectures: architecture/architectures.md
+      - ADRs:
+          - "Abstraction Plan (Phase C/E/B/A/D)": architecture/adrs/abstraction-plan.md
+  - Operations:
+      - Capacity Preflight: operations/capacity-preflight.md
+      - Cost and Pricing: operations/cost-and-pricing.md
+  - Reference:
+      - Providers: reference/providers.md
