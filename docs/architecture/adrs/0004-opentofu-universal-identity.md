@@ -2,7 +2,7 @@
 
 **Status:** Accepted
 **Date:** 2026-04-30
-**Owners:** Backend (HCL templates + EnsureIdentity wiring), Architect (interface contract)
+**Owners:** Backend (EnsureIdentity wiring, Fetcher, Runner), Architect (interface contract)
 
 ---
 
@@ -34,35 +34,68 @@ The pattern established by `opentofux` is:
 
 ## Decision
 
-### 1. Per-provider embedded HCL
+### 1. `yage-tofu` public repository
 
-Each provider gets a standalone `hcl.go` (or equivalent embedded file) inside its own package
-(`internal/provider/<name>/hcl.go`), following exactly the pattern established by
-`internal/platform/opentofux/hcl.go` for Proxmox. The HCL content is stored as a Go `const`
-string and written to the state directory at runtime by a `WriteEmbeddedFiles` helper local to
-the provider.
-
-There is no shared mega-template. Each provider's HCL encodes the credential model, IAM
-primitives, and TF provider source that are specific to that cloud. Sharing a single template
-across providers would make the HCL harder to audit and version independently.
-
-### 2. Shared `Runner` in `opentofux` (Phase G refactor target)
-
-Today, `internal/platform/opentofux/` contains Proxmox-specific helpers (`runTofu`,
-`applyVars`, `tofuEnv`, `GetOutput`, `StateRmAll`, `DestroyIdentity`) that are tightly coupled
-to Proxmox config fields and the BPG provider. Phase G begins with **extracting a generic
-`Runner` struct** from those helpers:
+All OpenTofu modules live in a separate public GitHub repository `lpasquali/yage-tofu`.
+yage contains **no embedded HCL**. The repo structure is:
 
 ```
+yage-tofu/
+├── aws/main.tf          # IAM user + access key
+├── azure/main.tf        # Service Principal + client secret
+├── gcp/main.tf          # Service Account + JSON key
+├── openstack/main.tf    # Application Credential (Keystone)
+├── oci/main.tf          # API key pair
+├── ibmcloud/main.tf     # Service ID + API key
+├── linode/main.tf       # Personal Access Token (scoped)
+└── proxmox/main.tf      # PVE user + token + ACLs (migrated from opentofux)
+```
+
+Each module takes provider credentials as input variables and outputs the runtime
+credential(s) that CAPI needs. Modules are versioned and tagged independently of yage
+releases. Operators can audit and fork `yage-tofu` without touching the yage binary.
+
+### 2. yage runs tofu — it does not generate HCL
+
+At bootstrap time, yage:
+
+1. **Fetches** `yage-tofu` at a pinned tag/ref into a local cache
+   (`~/.yage/tofu-cache/`) via the `Fetcher` component in `opentofux`
+   (clone on first use, `git fetch` + checkout on subsequent runs).
+2. Calls `tofu -chdir=<tofu-cache>/<provider>/ init`.
+3. Calls `tofu -chdir=<tofu-cache>/<provider>/ apply -auto-approve`, passing
+   credentials as `-var` flags or provider auth env vars.
+4. Reads outputs via `tofu -chdir=<tofu-cache>/<provider>/ output -raw <key>`.
+5. Syncs outputs to the provider's kind bootstrap Secret via `kindsync`.
+6. On `--purge`, calls `tofu -chdir=<tofu-cache>/<provider>/ destroy -auto-approve`,
+   then removes the per-provider state directory. The `tofu destroy` step must run
+   **before** `os.RemoveAll(stateDir)` — the state file is the source of truth for
+   destroy; losing it orphans cloud-side resources.
+
+Per-provider tofu state lives under `~/.yage/tofu/<provider>/terraform.tfstate`.
+This is separate from the source cache. State on the operator host survives kind
+cluster teardown and remains recoverable across re-runs.
+
+The pinned `yage-tofu` tag/ref is a config field (`YAGE_TOFU_REF`, default: latest
+stable tag). This lets operators pin to a known-good version for reproducibility.
+
+### 3. Shared `Runner` in `opentofux` (revised)
+
+Phase G begins by extracting a generic `Runner` struct from the existing Proxmox-specific
+`opentofux` helpers (`runTofu`, `applyVars`, `tofuEnv`, `GetOutput`, `StateRmAll`,
+`DestroyIdentity`). The revised struct is:
+
+```go
 opentofux.Runner{
-    StateDir   string          // ~/.yage/<provider>-identity-terraform/
-    Env        []string        // provider auth env vars (passed by each provider)
-    Vars       []string        // -var flags for tofu apply/destroy
-    OutputKeys []string        // expected tofu output names
+    ModuleDir  string   // absolute path to the provider's module within the yage-tofu checkout
+    Env        []string // provider auth env vars
+    Vars       []string // -var flags for tofu apply/destroy
+    OutputKeys []string // expected tofu output names
 }
 ```
 
-`Runner` owns the cross-cutting logic:
+`Runner` is responsible for `tofu -chdir=ModuleDir init/apply/output/destroy`. It owns
+the cross-cutting logic:
 
 - `Init()` — `tofu init -upgrade`
 - `Apply()` — `tofu apply -auto-approve` with the runner's vars
@@ -70,33 +103,18 @@ opentofux.Runner{
 - `StateRmAll()` — walk `tofu state list` and remove each entry
 - `Destroy()` — `tofu destroy -auto-approve` with the runner's vars
 
-Each provider's `EnsureIdentity` constructs a `Runner` with its own HCL string, auth env, and
-`-var` set. The Proxmox `ApplyIdentity` function is refactored to use this struct as its first
-consumer, keeping backward compatibility while enabling the seven new providers to plug in
-without duplicating shell-invocation logic.
+The `yage-tofu` checkout itself is managed by the `Fetcher` component in `opentofux`
+that clones/updates the repo to `~/.yage/tofu-cache/`. Each provider's `EnsureIdentity`
+constructs a `Runner` with `ModuleDir` pointing at the appropriate subdirectory inside
+the fetched checkout.
 
-### 3. State directory convention
+The Proxmox `ApplyIdentity` function is refactored to use `Runner` as its first consumer,
+keeping backward compatibility while enabling the seven new providers to plug in without
+duplicating shell-invocation logic.
 
-Tofu state lives on the **operator's local filesystem**, under
-`~/.yage/<provider>-identity-terraform/terraform.tfstate`. The Proxmox reference uses
-`~/.yage/proxmox-identity-terraform/`. Phase G providers follow the same convention:
-`~/.yage/aws-identity-terraform/`, `~/.yage/azure-identity-terraform/`, and so on.
+### 4. `TofuManaged` flag, opt-in, Proxmox backward compat
 
-This is an intentional choice: the state file is the source of truth for credential rotation
-and destroy operations. `DestroyIdentity` (called by `Purge`) reads inputs back from the
-state file before running `tofu destroy -auto-approve`; losing the state file orphans
-cloud-side resources. Keeping state on the operator host (not in the kind cluster) means it
-survives kind cluster teardown and remains recoverable across re-runs. The purge flow handles
-cleanup in the correct order: `tofu destroy` first, then `os.RemoveAll(stateDir)`.
-
-Kind Secrets hold the **outputs** (minted credentials), not the tofu state itself. After
-`tofu apply`, each provider calls `kindsync.SyncBootstrapConfigToKind` to push the outputs
-into the provider's bootstrap Secret, mirroring the Proxmox
-`GenerateConfigsFromOutputs` → `SyncBootstrapConfigToKind` path.
-
-### 4. `TofuManaged` flag per provider
-
-Each non-Proxmox provider config struct gains a `TofuManaged bool` field:
+Each non-Proxmox provider config struct gains a `TofuManaged bool` field (default `false`):
 
 ```
 YAGE_AWS_TOFU_MANAGED=true
@@ -104,82 +122,81 @@ YAGE_AZURE_TOFU_MANAGED=true
 ...
 ```
 
-`EnsureIdentity` checks this flag as its first step. When `TofuManaged` is `false` (the
-default), it returns `provider.ErrNotApplicable` immediately — the operator is expected to
-supply credentials out-of-band via environment variables or a pre-existing kind Secret.
+`EnsureIdentity` checks this flag as its first step. When `TofuManaged=false`, it returns
+`provider.ErrNotApplicable` immediately — the operator supplies credentials out-of-band via
+environment variables or a pre-existing kind Secret. This is purely additive: operators who
+already manage credentials externally experience no change.
 
-This flag is **not** added to Proxmox. Proxmox's `EnsureIdentity` remains always-on (the
-existing behavior) for backward compatibility: every Proxmox bootstrap has always minted
-credentials via OpenTofu, and operators expect it.
-
-### 5. Opt-in for all non-Proxmox providers
-
-All seven new providers listed in the Context table are **opt-in** by default
-(`TofuManaged=false`). The operator explicitly enables Phase G for a given provider by
-setting the corresponding env var. This avoids surprising cloud-side IAM mutations when
-operators already have credential workflows in place.
+`TofuManaged` is **not** added to Proxmox. Proxmox's `EnsureIdentity` remains always-on
+for backward compatibility — every Proxmox bootstrap has always minted credentials via
+OpenTofu. However, Proxmox's HCL is **migrated** from `internal/platform/opentofux/` to
+`yage-tofu/proxmox/main.tf` as part of Phase G, and `opentofux` is updated to use the
+shared `Runner` pointing at that module. This is a breaking change for operators running
+`opentofux` directly; a migration guide is required.
 
 ## Consequences
 
 ### Positive
 
-- **Uniform identity bootstrap across providers.** Every provider that activates `TofuManaged`
-  gets idempotent, auditable, state-tracked credential minting with no per-provider shell
-  scripts. The `tofu apply` / `tofu destroy` lifecycle is consistent and self-documenting via
-  the HCL.
+- **No HCL in the yage binary.** The binary stays clean; operators can audit and fork
+  `yage-tofu` independently without touching yage itself.
 
-- **No code duplication in shell invocation.** Extracting the shared `Runner` from the current
-  Proxmox-specific helpers means the eight providers (Proxmox + seven new ones) share a single
-  implementation of `tofu init`, `tofu apply`, `tofu output`, and `tofu destroy` semantics.
-  Only the HCL content and auth env differ.
+- **All providers share the same tofu invocation path.** One `Runner` implementation
+  serves all eight providers (Proxmox + seven new ones). Only `ModuleDir`, auth env,
+  and `-var` set differ per provider.
 
-- **Operator escape hatch is always available.** `TofuManaged=false` (the default for all new
-  providers) means operators who already manage credentials externally experience no change.
-  Phase G is purely additive.
+- **`yage-tofu` modules are versioned independently of yage releases.** Operators can
+  pin `YAGE_TOFU_REF` to a specific tag for reproducibility, and the tofu modules can
+  be updated, audited, or forked without a yage release.
 
-- **State survives kind cluster teardown.** Because state is on the operator host
-  (`~/.yage/<provider>-identity-terraform/`), a kind cluster rebuild does not orphan
-  cloud-side resources. `Purge` runs `tofu destroy` before removing the state directory,
-  preserving the correct cleanup ordering.
+- **Operator escape hatch is always available.** `TofuManaged=false` (the default for
+  all new providers) means the feature is purely opt-in and additive.
+
+- **State survives kind cluster teardown.** Per-provider state at
+  `~/.yage/tofu/<provider>/terraform.tfstate` is on the operator host, not in the kind
+  cluster. `Purge` runs `tofu destroy` before removing the state directory, preserving
+  correct cleanup ordering.
 
 ### Negative / Risks
 
-- **Each provider requires its TF provider version to be pinned.** The HCL `required_providers`
-  block must specify a tested version. Unpinned providers will drift on `tofu init -upgrade`,
-  potentially breaking apply. Each provider's `hcl.go` must be reviewed when the upstream TF
-  provider releases breaking changes.
+- **Network dependency at bootstrap time.** yage must clone/fetch `yage-tofu` before
+  any `EnsureIdentity` call can proceed. Mitigated by local cache at `~/.yage/tofu-cache/`;
+  subsequent runs only require a `git fetch`.
 
-- **State file on the operator host is a single point of failure for destroy.** If
-  `~/.yage/<provider>-identity-terraform/terraform.tfstate` is lost before `--purge` runs,
-  yage cannot `tofu destroy` the cloud-side resources and they must be cleaned up manually.
-  Future mitigation: replicate state to a kind Secret as a backup, or document a recovery
-  procedure using `tofu import`.
+- **If `yage-tofu` is unavailable** (GitHub outage, fork unreachable), identity bootstrap
+  fails. Mitigated by pre-seeding the cache or using a mirror. Operators with air-gapped
+  environments must mirror `lpasquali/yage-tofu` internally.
 
-- **`tofu` binary must be present on the operator host.** Phase G providers inherit the same
-  requirement Proxmox already imposes. The orchestrator's dependency-install phase must be
-  extended to gate on `tofu` availability when any provider has `TofuManaged=true`.
+- **Proxmox migration is a breaking change.** Existing Proxmox operators running
+  `opentofux` directly will need to migrate to `yage-tofu/proxmox/`. A migration guide
+  documenting the state directory path and `YAGE_TOFU_REF` pin is required alongside
+  the Phase G backend PR.
 
-- **Cloud IAM permissions required at bootstrap time.** For AWS/Azure/GCP/etc., the operator
-  must supply an admin-level credential (IAM admin, Contributor, Owner) so OpenTofu can mint
-  the restricted runtime credential. These admin creds must not be persisted beyond the
-  bootstrap phase — the pattern is: pass via env, apply, outputs synced to kind, env cleared.
+- **`tofu` binary must be present on the operator host.** Phase G providers inherit the
+  same requirement Proxmox already imposes. The orchestrator's dependency-install phase
+  must gate on `tofu` availability when any provider has `TofuManaged=true` (or for
+  Proxmox unconditionally).
+
+- **Cloud IAM permissions required at bootstrap time.** The operator must supply an
+  admin-level credential so OpenTofu can mint the restricted runtime credential. These
+  admin creds must not be persisted beyond the bootstrap phase — the pattern is: pass via
+  env, apply, outputs synced to kind Secret, env cleared.
 
 ### Implementation sequencing
 
-1. **This ADR accepted** — establishes the interface contract and `Runner` design.
-2. **Backend: extract `Runner` from `opentofux`** — prerequisite for all new providers;
-   Proxmox `ApplyIdentity` becomes `Runner`'s first consumer.
-3. **Issue #80 (OpenStack `EnsureIdentity`)** — sequenced first among the seven providers
-   because OpenStack already has a `clouds.yaml` templating spike; serves as the second
-   `Runner` consumer and validates the generic approach.
-4. **Issues #79 and follow-ons** — remaining six providers (AWS, Azure, GCP, OCI, IBMCloud,
-   Linode) each get a tracking issue covering: `hcl.go`, `TofuManaged` flag in config,
-   `EnsureIdentity` wiring, and `Purge` integration.
-5. **Integration test** — a CAPD-backed integration test that stubs `tofu` with a fake binary
-   validates the `Runner` contract end-to-end without requiring real cloud credentials.
+1. Create `lpasquali/yage-tofu` repo with modules for all 7 providers and Proxmox.
+2. Backend: implement `Fetcher` in `opentofux` for `yage-tofu` clone/update; add
+   `YAGE_TOFU_REF` config field.
+3. Backend: extract `Runner` from `opentofux`; migrate Proxmox `ApplyIdentity` to use
+   `yage-tofu/proxmox/` via `Runner` (publish migration guide).
+4. Backend: wire remaining 7 providers' `EnsureIdentity` using `Runner` + their respective
+   module dirs and `TofuManaged` guard.
+5. Integration test: a CAPD-backed test that stubs `tofu` with a fake binary validates the
+   `Runner` + `Fetcher` contract end-to-end without requiring real cloud credentials.
 
 ## References
 
 - abstraction-plan.md §21.2 — full design narrative
-- `internal/platform/opentofux/` — Proxmox reference implementation
+- `lpasquali/yage-tofu` — public repository of OpenTofu modules (Phase G target)
+- `internal/platform/opentofux/` — Proxmox reference implementation (to be refactored)
 - Issue #80 — OpenStack `EnsureIdentity` clouds.yaml templating (sequenced before Phase G)
