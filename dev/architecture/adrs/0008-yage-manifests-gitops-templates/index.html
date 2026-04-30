@@ -1,0 +1,1567 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for yage — CAPI bootstrapper for Proxmox and 11 other providers">
+      
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>ADR 0008 — yage-manifests: GitOps YAML Template Repository - yage Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../overrides/main.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/tokens.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/print.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#adr-0008-yage-manifests-gitops-yaml-template-repository" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="yage Documentation" class="md-header__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            yage Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ADR 0008 — yage-manifests: GitOps YAML Template Repository
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="yage Documentation" class="md-nav__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    yage Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Context
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Context
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/AGENT_SYSTEM_PROMPT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent System Prompt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/CURRENT_STATE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Current State
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/CODING_STANDARDS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Coding Standards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agents
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Agents
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/PO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Product Owner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/ARCHITECT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architect
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/PLATFORM_ENGINEER/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform Engineer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/BACKEND/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go Backend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/FRONTEND/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go Frontend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ARCHITECTURE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architectures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architectures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADRs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ADRs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../abstraction-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abstraction Plan (Phase C/E/B/A/D)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/capacity-preflight/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capacity Preflight
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/cost-and-pricing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost and Pricing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/providers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Providers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decision
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Decision">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-yage-manifests-public-repository" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. yage-manifests public repository
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-templating-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Templating engine
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-fetch-and-render-mechanism" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Fetch and render mechanism
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-patch-vs-template-distinction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Patch vs. template distinction
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-yage_manifests_ref-config-field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. YAGE_MANIFESTS_REF config field
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-csidriverrendervalues-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. csi.Driver.RenderValues() migration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-migration-sequencing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Migration sequencing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consequences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consequences
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Consequences">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#positive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Positive
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#negative" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Negative
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#risks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Risks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="adr-0008-yage-manifests-gitops-yaml-template-repository">ADR 0008 — yage-manifests: GitOps YAML Template Repository<a class="headerlink" href="#adr-0008-yage-manifests-gitops-yaml-template-repository" title="Permanent link">&para;</a></h1>
+<p><strong>Status:</strong> Proposed
+<strong>Date:</strong> 2026-04-30
+<strong>Owners:</strong> Architect (interface contract, repository structure), Backend (Fetcher implementation, per-package migration)</p>
+<hr />
+<h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
+<p>yage generates all Kubernetes YAML manifests, Helm values, ArgoCD Application resources,
+and CAPI add-on resources as Go string-building code. The current surface is approximately
+3,100 lines spread across six packages:</p>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Lines</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>internal/capi/manifest/</code></td>
+<td>1,228</td>
+<td>Workload cluster YAML patching + K3s template generation</td>
+</tr>
+<tr>
+<td><code>internal/capi/caaph/</code></td>
+<td>861</td>
+<td>CAAPH HelmChartProxy YAML + ArgoCD Operator install CR</td>
+</tr>
+<tr>
+<td><code>internal/capi/wlargocd/</code></td>
+<td>409</td>
+<td>Workload ArgoCD Application YAML (one per add-on)</td>
+</tr>
+<tr>
+<td><code>internal/capi/postsync/</code></td>
+<td>223</td>
+<td>ArgoCD PostSync-hook helpers + CSI smoke-test renderers</td>
+</tr>
+<tr>
+<td><code>internal/capi/cilium/</code></td>
+<td>169</td>
+<td>Cilium CNI helper manifests</td>
+</tr>
+<tr>
+<td><code>internal/capi/helmvalues/</code></td>
+<td>251</td>
+<td>Helm values YAML for metrics-server, observability stack</td>
+</tr>
+<tr>
+<td><code>internal/csi/*/RenderValues()</code></td>
+<td>~14 pkgs</td>
+<td>Per-driver Helm values YAML</td>
+</tr>
+</tbody>
+</table>
+<p>All of these use <code>strings.Builder</code> + <code>fmt.Fprintf</code> to assemble YAML inline. This approach
+has several compounding costs:</p>
+<ul>
+<li>YAML output is not reviewable except by reading Go source or running yage.</li>
+<li>Operators cannot audit or fork the templates without forking the binary.</li>
+<li>Tests must compare string output against hardcoded literals, which makes template changes
+  expensive and diff-noisy.</li>
+<li>Adding a new add-on requires modifying and rebuilding yage even when the logic is purely
+  structural YAML.</li>
+<li>There is no mechanism to pin a manifest version independently of a yage release.</li>
+</ul>
+<p>The project owner's architectural direction: move all YAML templating out of Go code into a
+dedicated GitOps repository, following the same pattern established by ADR 0004 for
+OpenTofu modules (<code>yage-tofu</code>).</p>
+<hr />
+<h2 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">&para;</a></h2>
+<h3 id="1-yage-manifests-public-repository">1. <code>yage-manifests</code> public repository<a class="headerlink" href="#1-yage-manifests-public-repository" title="Permanent link">&para;</a></h3>
+<p>A new public GitHub repository <code>lpasquali/yage-manifests</code> holds all YAML templates and
+Helm values files. yage contains <strong>no inline YAML assembly</strong>. The repository structure is:</p>
+<div class="highlight"><pre><span></span><code>yage-manifests/
+├── cluster/            # CAPI workload cluster manifests per provider
+│   ├── proxmox/
+│   ├── aws/
+│   └── ...
+├── addons/             # Helm values + ArgoCD Application YAMLs per add-on
+│   ├── cilium/
+│   ├── argocd/
+│   ├── metrics-server/
+│   ├── observability/
+│   └── ...
+├── csi/                # Per-driver Helm values (replaces csi.RenderValues)
+│   ├── hcloud/
+│   ├── aws-ebs/
+│   └── ...
+└── postsync/           # ArgoCD PostSync hook manifests
+</code></pre></div>
+<p>Modules are versioned and tagged independently of yage releases. Operators can audit and
+fork <code>yage-manifests</code> without touching the yage binary.</p>
+<h3 id="2-templating-engine">2. Templating engine<a class="headerlink" href="#2-templating-engine" title="Permanent link">&para;</a></h3>
+<p>Template files use Go <code>text/template</code> syntax with the extension <code>.yaml.tmpl</code>. Rationale:
+yage is a Go binary; <code>text/template</code> is stdlib, requires no external process or binary,
+and template rendering is in-process with zero additional dependencies. No Helm,
+no envsubst, no Kustomize — just Go template syntax.</p>
+<p>One authoring constraint to note: the CAAPH <code>HelmChartProxy</code> resource embeds a
+<code>valuesTemplate:</code> block that itself contains <code>{{ }}</code> CAAPH-side template expressions.
+When these files move to <code>yage-manifests</code>, those inner <code>{{</code>/<code>}}</code> delimiters must be
+escaped as <code>{{"{{"}}</code> / <code>{{"}}"}}</code> (or the template must use a custom delimiter pair).
+This is documented in the per-template comment header and is the responsibility of the
+Backend agent during migration.</p>
+<h3 id="3-fetch-and-render-mechanism">3. Fetch and render mechanism<a class="headerlink" href="#3-fetch-and-render-mechanism" title="Permanent link">&para;</a></h3>
+<p>The <code>internal/platform/manifests</code> package introduces a <code>Fetcher</code> struct that mirrors the
+pattern established in <code>internal/platform/opentofux</code> for the <code>yage-tofu</code> checkout. The two
+Fetchers are independent implementations — the manifests Fetcher is a new package, not a
+generic extraction of opentofux. Extracting a shared git-fetch base is deferred until the
+duplication causes pain.</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// internal/platform/manifests/fetcher.go</span>
+<span class="kd">type</span><span class="w"> </span><span class="nx">Fetcher</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">RepoURL</span><span class="w">  </span><span class="kt">string</span><span class="w">  </span><span class="c1">// https://github.com/lpasquali/yage-manifests</span>
+<span class="w">    </span><span class="nx">Ref</span><span class="w">      </span><span class="kt">string</span><span class="w">  </span><span class="c1">// cfg.ManifestsRef (env: YAGE_MANIFESTS_REF, default: latest tag)</span>
+<span class="w">    </span><span class="nx">CacheDir</span><span class="w"> </span><span class="kt">string</span><span class="w">  </span><span class="c1">// ~/.yage/manifests-cache/</span>
+<span class="p">}</span>
+
+<span class="c1">// Render fetches (clone on first use; git fetch + checkout on subsequent runs)</span>
+<span class="c1">// the yage-manifests repo at the configured Ref, reads the .yaml.tmpl at</span>
+<span class="c1">// templatePath (relative to repo root), executes it with data via text/template,</span>
+<span class="c1">// and returns the rendered YAML string.</span>
+<span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">f</span><span class="w"> </span><span class="o">*</span><span class="nx">Fetcher</span><span class="p">)</span><span class="w"> </span><span class="nx">Render</span><span class="p">(</span><span class="nx">templatePath</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="kt">any</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
+</code></pre></div>
+<p>yage replaces each <code>strings.Builder</code>-based renderer with a <code>manifests.Fetcher.Render()</code>
+call, passing the appropriate <code>templatePath</code> and the relevant section of <code>*config.Config</code>
+(or a purpose-built data struct) as <code>data</code>.</p>
+<h3 id="4-patch-vs-template-distinction">4. Patch vs. template distinction<a class="headerlink" href="#4-patch-vs-template-distinction" title="Permanent link">&para;</a></h3>
+<p><code>internal/capi/manifest/patches.go</code> does <strong>regex-based mutation of externally-supplied
+YAML documents</strong> — the inputs are manifests rendered by <code>clusterctl generate cluster</code>,
+not content yage generates from scratch. This is a fundamentally different operation from
+templating, and it stays in Go.</p>
+<p>The four patch functions that remain in <code>internal/capi/manifest/</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>What it mutates</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ApplyRoleResourceOverrides</code></td>
+<td>Sizing fields in <code>ProxmoxMachineTemplate</code> blocks</td>
+</tr>
+<tr>
+<td><code>PatchProxmoxCSITopologyLabels</code></td>
+<td>CSI topology <code>node-labels</code> in <code>KubeadmConfig</code></td>
+</tr>
+<tr>
+<td><code>PatchKubeadmSkipKubeProxyForCilium</code></td>
+<td><code>skipPhases: - addon/kube-proxy</code> in <code>KubeadmControlPlane</code></td>
+</tr>
+<tr>
+<td><code>PatchProxmoxMachineTemplateSpecRevisions</code></td>
+<td>PMT name revision hashes</td>
+</tr>
+</tbody>
+</table>
+<p>These functions receive clusterctl output and apply structural corrections. They are not
+candidates for <code>yage-manifests</code> because their input is dynamic (operator-provided, not
+yage-generated). Future work may introduce a cleaner patch API internally, but that is
+out of scope for this ADR.</p>
+<p><code>caaph.PatchClusterCAAPHHelmLabels</code> likewise stays in Go — it mutates a live Cluster
+object in the management cluster via a JSON merge-patch and also updates the on-disk
+manifest in-place. The logic is imperative, not template-shaped.</p>
+<h3 id="5-yage_manifests_ref-config-field">5. <code>YAGE_MANIFESTS_REF</code> config field<a class="headerlink" href="#5-yage_manifests_ref-config-field" title="Permanent link">&para;</a></h3>
+<p>A new config field <code>cfg.ManifestsRef string</code> (env: <code>YAGE_MANIFESTS_REF</code>, default: <code>v0.1.0</code>
+initially, then tracking the latest stable tag). Analogous to <code>YAGE_TOFU_REF</code> from
+ADR 0004.</p>
+<p>The Fetcher uses this ref to check out the <code>yage-manifests</code> repository. Operators can pin
+to a specific tag for reproducibility. Air-gapped environments must mirror
+<code>lpasquali/yage-manifests</code> and set <code>YAGE_MANIFESTS_REF</code> to an internally reachable URL.</p>
+<h3 id="6-csidriverrendervalues-migration">6. <code>csi.Driver.RenderValues()</code> migration<a class="headerlink" href="#6-csidriverrendervalues-migration" title="Permanent link">&para;</a></h3>
+<p>The current CSI driver interface declares:</p>
+<div class="highlight"><pre><span></span><code><span class="nx">RenderValues</span><span class="p">(</span><span class="nx">cfg</span><span class="w"> </span><span class="o">*</span><span class="nx">config</span><span class="p">.</span><span class="nx">Config</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
+</code></pre></div>
+<p>After migration, this becomes:</p>
+<div class="highlight"><pre><span></span><code><span class="nx">Render</span><span class="p">(</span><span class="nx">fetcher</span><span class="w"> </span><span class="o">*</span><span class="nx">manifests</span><span class="p">.</span><span class="nx">Fetcher</span><span class="p">,</span><span class="w"> </span><span class="nx">cfg</span><span class="w"> </span><span class="o">*</span><span class="nx">config</span><span class="p">.</span><span class="nx">Config</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
+</code></pre></div>
+<p>Each driver's implementation becomes a one-line call:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">d</span><span class="w"> </span><span class="nx">driver</span><span class="p">)</span><span class="w"> </span><span class="nx">Render</span><span class="p">(</span><span class="nx">f</span><span class="w"> </span><span class="o">*</span><span class="nx">manifests</span><span class="p">.</span><span class="nx">Fetcher</span><span class="p">,</span><span class="w"> </span><span class="nx">cfg</span><span class="w"> </span><span class="o">*</span><span class="nx">config</span><span class="p">.</span><span class="nx">Config</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">f</span><span class="p">.</span><span class="nx">Render</span><span class="p">(</span><span class="s">&quot;csi/&quot;</span><span class="o">+</span><span class="nx">d</span><span class="p">.</span><span class="nx">Name</span><span class="p">()</span><span class="o">+</span><span class="s">&quot;/values.yaml.tmpl&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">cfg</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>This is a breaking interface change for all 14 registered driver packages. It is sequenced
+as a single atomic PR that updates <code>internal/csi/driver.go</code> and all 14 implementations
+together.</p>
+<h3 id="7-migration-sequencing">7. Migration sequencing<a class="headerlink" href="#7-migration-sequencing" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Scaffold</strong> — Create <code>lpasquali/yage-manifests</code> with the directory structure above.
+   Populate README stubs per subdirectory; no templates yet.</li>
+<li><strong>Fetcher</strong> — Backend: implement <code>internal/platform/manifests.Fetcher</code> (clone/pull
+   logic, <code>Render</code> method, cache at <code>~/.yage/manifests-cache/</code>, <code>YAGE_MANIFESTS_REF</code> config
+   field). Unit-testable with a local file fixture (no network required in CI).</li>
+<li><strong>Per-package migration</strong> (can be parallelised per package):</li>
+<li>Port template content from Go string-builder to <code>.yaml.tmpl</code> in <code>yage-manifests</code>.</li>
+<li>Replace the Go renderer with a <code>Fetcher.Render()</code> call.</li>
+<li>Update tests to use a local file fixture pointing at a <code>testdata/</code> copy of the
+     template, so tests do not require network access.</li>
+<li><strong>CSI interface change</strong> — Update <code>internal/csi/driver.go</code> interface and all 14 driver
+   packages in one PR. Retire the <code>RenderValues</code> name.</li>
+<li><strong>Package retirement</strong> — Once all callers are migrated, retire <code>internal/capi/helmvalues/</code>,
+   <code>internal/capi/wlargocd/</code>, and <code>internal/capi/postsync/</code> as Go packages. Keep
+   <code>internal/capi/caaph/</code> for the Kubernetes client logic; only its string-building
+   helpers move out.</li>
+</ol>
+<hr />
+<h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
+<h3 id="positive">Positive<a class="headerlink" href="#positive" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><strong>YAML is auditable outside the binary.</strong> Operators can read, diff, and fork
+  <code>yage-manifests</code> without building or running yage.</p>
+</li>
+<li>
+<p><strong>Manifest version is independently pinnable.</strong> <code>YAGE_MANIFESTS_REF</code> decouples
+  template evolution from yage releases, giving operators a stable surface for controlled
+  upgrades.</p>
+</li>
+<li>
+<p><strong>Go packages are smaller and focused.</strong> <code>helmvalues/</code>, <code>wlargocd/</code>, and <code>postsync/</code>
+  become no-op packages on the retirement path; <code>caaph/</code> is left with only Kubernetes
+  client logic.</p>
+</li>
+<li>
+<p><strong>New add-ons require no Go change.</strong> A new ArgoCD Application or Helm values block is
+  a PR against <code>yage-manifests</code> only, not a yage rebuild.</p>
+</li>
+<li>
+<p><strong>Tests become structural.</strong> Instead of comparing <code>strings.Builder</code> output against
+  hardcoded literals, tests validate template rendering against known fixtures and verify
+  that the Fetcher resolves the correct path.</p>
+</li>
+</ul>
+<h3 id="negative">Negative<a class="headerlink" href="#negative" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><strong>Network dependency at bootstrap.</strong> yage must clone <code>yage-manifests</code> on first use.
+  Mitigated by local cache; subsequent runs only require a <code>git fetch</code>. Air-gapped
+  environments must mirror the repository.</p>
+</li>
+<li>
+<p><strong>Additional config surface.</strong> <code>YAGE_MANIFESTS_REF</code> is a new env var / flag that
+  operators must understand and optionally pin. Documentation and a sensible default
+  (<code>v0.1.0</code>) reduce friction.</p>
+</li>
+<li>
+<p><strong>Migration work across ~15 packages.</strong> All <code>strings.Builder</code> renderers must be ported.
+  The migration is mechanical but large. Sequencing per-package migration (step 3) allows
+  incremental merges and keeps PRs reviewable.</p>
+</li>
+<li>
+<p><strong>CSI interface break.</strong> Renaming <code>RenderValues</code> to <code>Render</code> requires a coordinated
+  change across all 14 driver packages. This is a one-time cost with no ongoing
+  maintenance burden.</p>
+</li>
+</ul>
+<h3 id="risks">Risks<a class="headerlink" href="#risks" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><strong>Template drift.</strong> If <code>yage-manifests</code> advances independently of yage, a <code>YAGE_MANIFESTS_REF</code>
+  bump may introduce templates that reference config fields not yet present in the installed
+  yage binary. Mitigation: templates should only reference fields present in <code>config.Config</code>;
+  any new field required by a template must land in yage first. The <code>yage-manifests</code>
+  changelog must document required minimum yage versions for each tag.</p>
+</li>
+<li>
+<p><strong>Double-template authoring trap.</strong> CAAPH <code>HelmChartProxy</code> resources embed
+  <code>valuesTemplate:</code> blocks that contain CAAPH's own <code>{{ }}</code> expressions. Template authors
+  must escape these inner delimiters. Failing to do so silently produces broken YAML.
+  A lint step in the <code>yage-manifests</code> CI (e.g. <code>go template validate</code> or a custom check)
+  should catch unescaped inner delimiters before merge.</p>
+</li>
+</ul>
+<hr />
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ADR 0004 — Universal OpenTofu Identity Bootstrap; establishes the <code>yage-tofu</code> / <code>Fetcher</code> / pinned-ref pattern this ADR mirrors</li>
+<li><code>lpasquali/yage-manifests</code> — public repository of YAML templates (target)</li>
+<li><code>internal/capi/manifest/patches.go</code> — patch functions that stay in Go</li>
+<li><code>internal/capi/caaph/caaph.go</code> — CAAPH HelmChartProxy + ArgoCD CR renderers (migration target)</li>
+<li><code>internal/capi/wlargocd/render.go</code> — ArgoCD Application renderers (migration target)</li>
+<li><code>internal/capi/helmvalues/</code> — Helm values generators (migration target; retirement path)</li>
+<li><code>internal/csi/driver.go</code> — CSI <code>Driver</code> interface (<code>RenderValues</code> → <code>Render</code>)</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.expand", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
