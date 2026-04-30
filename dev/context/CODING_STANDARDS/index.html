@@ -11,26 +11,28 @@
       
       
       
+        <link rel="prev" href="../CURRENT_STATE/">
       
-        <link rel="next" href="context/AGENT_SYSTEM_PROMPT/">
+      
+        <link rel="next" href="../agents/PO/">
       
       
         
       
       
-      <link rel="icon" href="assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>yage Documentation</title>
+        <title>Coding Standards - yage Documentation</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -49,13 +51,13 @@
       
     
     
-      <link rel="stylesheet" href="overrides/main.css">
+      <link rel="stylesheet" href="../../overrides/main.css">
     
-      <link rel="stylesheet" href="stylesheets/tokens.css">
+      <link rel="stylesheet" href="../../stylesheets/tokens.css">
     
-      <link rel="stylesheet" href="stylesheets/print.css">
+      <link rel="stylesheet" href="../../stylesheets/print.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -80,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#yage-documentation" class="md-skip">
+        <a href="#coding_standards" class="md-skip">
           Skip to content
         </a>
       
@@ -100,7 +102,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="yage Documentation" class="md-header__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+    <a href="../.." title="yage Documentation" class="md-header__button md-logo" aria-label="yage Documentation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -120,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              Coding Standards
             
           </span>
         </div>
@@ -224,7 +226,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="yage Documentation" class="md-nav__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+    <a href="../.." title="yage Documentation" class="md-nav__button md-logo" aria-label="yage Documentation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -239,37 +241,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Home
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="." class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -285,70 +260,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#context-ai-memory" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Context (AI Memory)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#architecture" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Architecture
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#operations" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Operations
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reference" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reference
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -357,8 +268,10 @@
       
   
   
+    
   
   
+  
     
     
     
@@ -369,13 +282,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
@@ -396,7 +307,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -414,7 +325,7 @@
   
   
     <li class="md-nav__item">
-      <a href="context/AGENT_SYSTEM_PROMPT/" class="md-nav__link">
+      <a href="../AGENT_SYSTEM_PROMPT/" class="md-nav__link">
         
   
   
@@ -442,7 +353,7 @@
   
   
     <li class="md-nav__item">
-      <a href="context/CURRENT_STATE/" class="md-nav__link">
+      <a href="../CURRENT_STATE/" class="md-nav__link">
         
   
   
@@ -467,10 +378,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="context/CODING_STANDARDS/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Coding Standards
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -486,6 +424,158 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#formatting-and-linting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Formatting and linting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logging
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shell-execution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shell execution
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#yaml-document-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YAML document handling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error handling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comments
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#provider-plugins" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Provider plugins
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config-and-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Config and state
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kubernetes-clients" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kubernetes clients
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state-integrity-ssot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State Integrity (SSOT)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -549,7 +639,7 @@
   
   
     <li class="md-nav__item">
-      <a href="context/agents/PO/" class="md-nav__link">
+      <a href="../agents/PO/" class="md-nav__link">
         
   
   
@@ -577,7 +667,7 @@
   
   
     <li class="md-nav__item">
-      <a href="context/agents/ARCHITECT/" class="md-nav__link">
+      <a href="../agents/ARCHITECT/" class="md-nav__link">
         
   
   
@@ -605,7 +695,7 @@
   
   
     <li class="md-nav__item">
-      <a href="context/agents/PLATFORM_ENGINEER/" class="md-nav__link">
+      <a href="../agents/PLATFORM_ENGINEER/" class="md-nav__link">
         
   
   
@@ -633,7 +723,7 @@
   
   
     <li class="md-nav__item">
-      <a href="context/agents/BACKEND/" class="md-nav__link">
+      <a href="../agents/BACKEND/" class="md-nav__link">
         
   
   
@@ -661,7 +751,7 @@
   
   
     <li class="md-nav__item">
-      <a href="context/agents/FRONTEND/" class="md-nav__link">
+      <a href="../agents/FRONTEND/" class="md-nav__link">
         
   
   
@@ -758,7 +848,7 @@
   
   
     <li class="md-nav__item">
-      <a href="architecture/ARCHITECTURE/" class="md-nav__link">
+      <a href="../../architecture/ARCHITECTURE/" class="md-nav__link">
         
   
   
@@ -786,7 +876,7 @@
   
   
     <li class="md-nav__item">
-      <a href="architecture/architectures/" class="md-nav__link">
+      <a href="../../architecture/architectures/" class="md-nav__link">
         
   
   
@@ -865,7 +955,7 @@
   
   
     <li class="md-nav__item">
-      <a href="architecture/adrs/abstraction-plan/" class="md-nav__link">
+      <a href="../../architecture/adrs/abstraction-plan/" class="md-nav__link">
         
   
   
@@ -962,7 +1052,7 @@
   
   
     <li class="md-nav__item">
-      <a href="operations/capacity-preflight/" class="md-nav__link">
+      <a href="../../operations/capacity-preflight/" class="md-nav__link">
         
   
   
@@ -990,7 +1080,7 @@
   
   
     <li class="md-nav__item">
-      <a href="operations/cost-and-pricing/" class="md-nav__link">
+      <a href="../../operations/cost-and-pricing/" class="md-nav__link">
         
   
   
@@ -1079,7 +1169,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/providers/" class="md-nav__link">
+      <a href="../../reference/providers/" class="md-nav__link">
         
   
   
@@ -1134,10 +1224,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#context-ai-memory" class="md-nav__link">
+  <a href="#formatting-and-linting" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Context (AI Memory)
+        Formatting and linting
       
     </span>
   </a>
@@ -1145,10 +1235,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#architecture" class="md-nav__link">
+  <a href="#testing" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Architecture
+        Testing
       
     </span>
   </a>
@@ -1156,10 +1246,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#operations" class="md-nav__link">
+  <a href="#logging" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Operations
+        Logging
       
     </span>
   </a>
@@ -1167,10 +1257,98 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#reference" class="md-nav__link">
+  <a href="#shell-execution" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Reference
+        Shell execution
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#yaml-document-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YAML document handling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error handling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comments
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#provider-plugins" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Provider plugins
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config-and-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Config and state
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kubernetes-clients" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kubernetes clients
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state-integrity-ssot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State Integrity (SSOT)
       
     </span>
   </a>
@@ -1194,26 +1372,88 @@
 
 
 
-<h1 id="yage-documentation">yage Documentation<a class="headerlink" href="#yage-documentation" title="Permanent link">&para;</a></h1>
-<p>Welcome to the central documentation for <strong>yage</strong> — a Go tool that bootstraps Kubernetes Cluster API (CAPI) environments on any of twelve registered infrastructure providers.</p>
-<h2 id="context-ai-memory">Context (AI Memory)<a class="headerlink" href="#context-ai-memory" title="Permanent link">&para;</a></h2>
+<h1 id="coding_standards">CODING_STANDARDS<a class="headerlink" href="#coding_standards" title="Permanent link">&para;</a></h1>
+<h2 id="formatting-and-linting">Formatting and linting<a class="headerlink" href="#formatting-and-linting" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><a href="context/AGENT_SYSTEM_PROMPT/">Agent System Prompt</a></strong> — Core identity, constraints, and guidance for AI agents working in the yage codebase.</li>
+<li><strong>Go</strong>: Use <code>gofmt</code> and <code>goimports</code> for formatting. Run <code>staticcheck ./...</code> before opening a PR.</li>
+<li>The Go binary may not be on PATH — use <code>make</code> targets or the full path <code>/usr/local/go/bin/go</code>.</li>
 </ul>
-<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
+<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><a href="architecture/ARCHITECTURE/">Overview</a></strong> — Component diagrams, package layout, and bootstrap phase timeline.</li>
-<li><strong><a href="architecture/architectures/">Architectures</a></strong> — Multi-architecture build details.</li>
-<li><strong><a href="architecture/adrs/abstraction-plan/">Abstraction Plan ADR</a></strong> — Multi-cloud provider abstraction phases (C, E, B, A, D).</li>
+<li>Run tests with <code>make test</code> (<code>go test ./...</code>). Run a single package: <code>go test ./internal/&lt;pkg&gt;/... -run &lt;TestName&gt; -v</code>.</li>
+<li>Prefer <strong>table-driven tests</strong> for functions with multiple input/output cases.</li>
+<li>Mock at system boundaries (external HTTP, shell commands) — do not mock internal helpers.</li>
+<li>Do not write tests that only verify happy-path with no edge-case or error-path coverage.</li>
 </ul>
-<h2 id="operations">Operations<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h2>
+<h2 id="logging">Logging<a class="headerlink" href="#logging" title="Permanent link">&para;</a></h2>
+<p>Use <code>logx.Log</code>, <code>logx.Warn</code>, <code>logx.Die</code> — never <code>fmt.Println</code> or <code>log.*</code> directly:</p>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Prefix</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>logx.Log</code></td>
+<td><code>✅ 🎉</code></td>
+<td>Normal progress</td>
+</tr>
+<tr>
+<td><code>logx.Warn</code></td>
+<td><code>⚠️ 🙈</code></td>
+<td>Non-fatal warnings</td>
+</tr>
+<tr>
+<td><code>logx.Die</code></td>
+<td><code>❌ 💩</code></td>
+<td>Fatal errors (calls os.Exit)</td>
+</tr>
+</tbody>
+</table>
+<p><code>logx.Die</code> is for unrecoverable failures only. Functions below the orchestrator level must return <code>error</code>, not call <code>logx.Die</code>.</p>
+<h2 id="shell-execution">Shell execution<a class="headerlink" href="#shell-execution" title="Permanent link">&para;</a></h2>
+<p>Use <code>shell.Run</code>, <code>shell.Capture</code>, <code>shell.RunWithEnv</code>, <code>shell.Pipe</code> — never raw <code>os/exec</code>. The <code>shell</code> package handles <code>RUN_PRIVILEGED</code> (sudo elevation) and stderr routing. The handful of intentional <code>kubectl</code> shell-outs (kustomize apply, port-forward, streaming) are documented with rationale comments at each call site.</p>
+<h2 id="yaml-document-handling">YAML document handling<a class="headerlink" href="#yaml-document-handling" title="Permanent link">&para;</a></h2>
+<p>Multi-document YAML manifests (separated by <code>\n---\n</code>) are the primary workload manifest format.</p>
 <ul>
-<li><strong><a href="operations/capacity-preflight/">Capacity Preflight</a></strong> — Host capacity planning and trichotomy verdicts.</li>
-<li><strong><a href="operations/cost-and-pricing/">Cost and Pricing</a></strong> — Live FinOps cost estimation, <code>--cost-compare</code>, currency.</li>
+<li><strong>Always split by <code>\n---\n</code> first</strong>, then match within each document.</li>
+<li>Use <strong>line-anchored regexes</strong> (<code>^kind:\s*ProxmoxCluster\s*$</code>) for kind matching — never <code>strings.Contains</code>. The <code>infrastructureRef</code> field in Cluster objects contains <code>kind: ProxmoxCluster</code> as a nested value; <code>strings.Contains</code> produces false positives.</li>
 </ul>
-<h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
+<h2 id="error-handling">Error handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><a href="reference/providers/">Providers</a></strong> — All 12 infrastructure providers and their configuration.</li>
+<li>Return <code>error</code> for recoverable failures; use <code>logx.Die</code> only in top-level orchestrator or CLI entry points.</li>
+<li>Use <code>ErrNotApplicable</code> (not <code>nil</code>, not <code>errors.New</code>, not panics) for provider phases that don't apply to a given provider.</li>
+<li>Retry loops (e.g., manifest apply): 3 attempts with 10s backoff is the established pattern.</li>
+</ul>
+<h2 id="comments">Comments<a class="headerlink" href="#comments" title="Permanent link">&para;</a></h2>
+<p>Default to <strong>no comments</strong>. Add one only when the WHY is non-obvious: a hidden constraint, a subtle invariant, a workaround for a specific external bug, behavior that would surprise a reader. Never describe what the code does — well-named identifiers do that. Never reference the current task, fix, or PR.</p>
+<h2 id="provider-plugins">Provider plugins<a class="headerlink" href="#provider-plugins" title="Permanent link">&para;</a></h2>
+<p>New providers self-register via <code>init()</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">init</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">provider</span><span class="p">.</span><span class="nx">Register</span><span class="p">(</span><span class="s">&quot;myprovider&quot;</span><span class="p">,</span><span class="w"> </span><span class="kd">func</span><span class="p">()</span><span class="w"> </span><span class="nx">provider</span><span class="p">.</span><span class="nx">Provider</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">Provider</span><span class="p">{}</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<p>Embed <code>provider.MinStub</code> for phases that don't apply. Return <code>ErrNotApplicable</code> — not errors or panics — for inapplicable phases. Reference implementation: <code>internal/provider/capd/capd.go</code>.</p>
+<h2 id="config-and-state">Config and state<a class="headerlink" href="#config-and-state" title="Permanent link">&para;</a></h2>
+<ul>
+<li>All config comes from <code>internal/config/config.go</code> (env vars → CLI flags → kind Secret merge). Do not add hardcoded defaults outside this file.</li>
+<li>State lives in kind Secrets in <code>yage-system</code> — not local disk. <code>internal/cluster/kindsync</code> owns the round-trip.</li>
+<li>Do not add new config fields without a corresponding env-var name and CLI flag.</li>
+</ul>
+<h2 id="kubernetes-clients">Kubernetes clients<a class="headerlink" href="#kubernetes-clients" title="Permanent link">&para;</a></h2>
+<p>All cluster interactions go through <code>internal/platform/k8sclient</code> (typed + dynamic clients keyed by kubecontext/kubeconfig). Do not open new <code>client-go</code> clients outside this package.</p>
+<h2 id="security">Security<a class="headerlink" href="#security" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Do not commit secrets or tokens.</li>
+<li>Use environment variables for sensitive configuration.</li>
+<li><code>kubectl port-forward</code>: use <code>--address 127.0.0.1</code> + <code>PORT:443</code> format — the <code>127.0.0.1:PORT:443</code> triple is not supported in modern kubectl.</li>
+</ul>
+<h2 id="state-integrity-ssot">State Integrity (SSOT)<a class="headerlink" href="#state-integrity-ssot" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Single Source of Truth</strong>: All project-specific WIP, active branches, known bugs, and inter-agent handoff state must reside in <code>yage-docs/docs/context/CURRENT_STATE.md</code>.</li>
+<li><strong>No External State</strong>: Do not store project-level facts in an agent's global/personal memory.</li>
+<li><strong>Atomic Persistence</strong>: Every task session that changes system state must end with an update to <code>CURRENT_STATE.md</code>.</li>
 </ul>
 
 
@@ -1264,10 +1504,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.sections", "navigation.expand", "content.code.copy"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
