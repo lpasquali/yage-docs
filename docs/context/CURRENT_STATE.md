@@ -8,38 +8,38 @@ yage is in active development. The core bootstrap pipeline is functional for Pro
 
 This file must be updated whenever system state evolves (per CODING_STANDARDS.md "Atomic Persistence"). If information here conflicts with what you observe in the code or git history, trust what you observe now — then update this file to match reality.
 
-Last updated: **2026-04-30** — PO session: PR #117 open; 10 CSI driver PRs #107–#116 open; D1 (#118) and D4 (#119) tracking issues created; #68 closed (re-scoped); ADR 0004 PR open in yage-docs; project board updated
+Last updated: **2026-04-30** — PO audit: PRs #117 + #116 merged (xapiri dashboard-only + vsphere-csi); CSI wave: 5 of 10 drivers merged (#107 hcloud, #108 openebs, #109 rook-ceph, #116 vsphere + earlier #88); 6 CSI PRs still in-flight (#110–#115); new issues #118–#121; yage-docs PR #5 open
 
 ## Version Baseline
 
 | Repo | Branch | Recent PRs | Status |
 |---|---|---|---|
-| yage | `main` | #88 (openstack-cinder CSI, d1de9b6), #76 (TUI keymap ADR 0003), #75 (OpenStack), #74 (env aliases), #73 (kindsync cleanup) | Active development |
+| yage | `main` | #117 (xapiri dashboard-only), #116 (vsphere-csi), #109 (rook-ceph), #108 (openebs), #107 (hcloud-csi) | Active development |
 | yage-docs | `main` | ADRs 0001–0007 written; WORKFLOW added | Documentation in progress |
 
 ## Recent Changes
 
-### 2026-04-30 — PO session: PR #117 open; CSI PRs #107–#116 open; D1/D4 tracking issues created
+### 2026-04-30 — PO audit: xapiri #117 + vsphere-csi #116 merged; CSI wave ongoing; new issues #118–#121
 
-**Frontend (#103 + #105):**
-- PR #117 (`feat/xapiri-dashboard-only`) open — closes #103 (dashboard default) and #105 (remove legacy walkthrough). Awaiting CI + merge.
+**Frontend (ADR 0007 — xapiri dashboard-only):**
+- **PR #117 merged** (`feat/xapiri-dashboard-only`) — closes #103 (dashboard default) and #105 (remove legacy walkthrough). Both issues auto-closed by GitHub.
+- #104 (epic: ADR 0007) remains open as parent.
 
 **Backend (CSI drivers — ADR 0001 epic #77):**
-- 10 CSI driver PRs open: #107 (hcloud), #108 (openebs), #109 (rook-ceph), #110 (oci), #111 (do), #112 (longhorn), #113 (linode), #114 (ibm-vpc), #115 (openstack-cinder INI fix), #116 (vsphere). Each is 1 clean commit ahead of main.
-- Issue #68 CLOSED (was "integrate worktrees A/B/D1/D4" — re-scoped: driver PRs are the new delivery vehicle; D1/D4 get their own tracking issues).
-- **New issue #118** — D1: wire `csi.Selector` into orchestrator; delete `internal/capi/csi/` (p1, unblocked, In progress on board).
-- **New issue #119** — D4: CAPD smoke E2E test (p3, backlog, Todo on board).
+- **PR #116 merged** (vsphere-csi) — closes #91 (auto-closed).
+- **PR #109 merged** (rook-ceph) — closes #92 (auto-closed).
+- **PR #108 merged** (openebs) — closes #93 (auto-closed).
+- **PR #107 merged** (hcloud-csi) — closes #84 (auto-closed).
+- **6 CSI PRs still open and in-flight**: #110 (oci), #111 (do), #112 (longhorn), #113 (linode), #114 (ibm-vpc), #115 (openstack-cinder INI fix). Being merged by programmer agent; #110 has conflicts (DIRTY), others show UNKNOWN state (likely mid-merge).
+
+**New issues created:**
+- **#118** — D1: wire `csi.Selector` into orchestrator; delete `internal/capi/csi/` (p1, Backend, unblocked)
+- **#119** — D4: CAPD smoke E2E test for bootstrap pipeline (p3, backlog)
+- **#120** — Epic: on-prem platform services — bootstrap registry + online issuing CA via OpenTofu (airgap path)
+- **#121** — ADR 0009: Phase H on-prem platform services: registry + issuing CA via OpenTofu (p2, Architect)
 
 **Architect (#81 — ADR 0004 Phase G):**
-- PR #5 in yage-docs open: https://github.com/lpasquali/yage-docs/pull/5 — accepts ADR 0004 universal OpenTofu identity bootstrap.
-- Issue #81 assigned to lpasquali.
-
-**Also in yage-docs:**
-- PR #4 (`docs/adr-0008-yage-manifests`) open — proposes ADR 0008 (yage-manifests GitOps YAML template repo).
-- PR #2 (`docs/po-session-2026-04-30`) open — PO session state update.
-
-**GitHub hygiene:**
-- Project board: CSI issues #85–#93 and PRs #107–#117 updated to "In progress". D1 (#118) added as "In progress". D4 (#119) added as "Todo".
+- **yage-docs PR #5** open: https://github.com/lpasquali/yage-docs/pull/5 — accepts ADR 0004 universal OpenTofu identity bootstrap. Branch: `docs/81-adr-0004-phase-g`. Issue #81 assigned to lpasquali.
 
 ---
 
@@ -184,14 +184,13 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 
 | Issue | Branch | Agent | Description | Status |
 |---|---|---|---|---|
-| #103 + #105 | feat/xapiri-dashboard-only | Frontend | ADR 0007: dashboard default + remove legacy walkthrough | **PR #117 open** — awaiting CI |
-| #104 | — | — | Epic: ADR 0007 (parent of #103, #105) | Open |
+| #84–#93 | Various worktree-agent-* | Backend | 10 CSI driver PRs (ADR 0001 epic #77) | Merging (#107–#116); 5 merged, 6 in-flight |
 | #81 | docs/81-adr-0004-phase-g (yage-docs) | Architect | ADR 0004: Phase G universal OpenTofu identity | **PR #5 open** — https://github.com/lpasquali/yage-docs/pull/5 |
 | #118 | TBD | Backend | D1: wire csi.Selector into orchestrator; delete internal/capi/csi/ | **Assigned** — unblocked |
-| #119 | TBD | Backend | D4: CAPD smoke E2E test for bootstrap pipeline | Backlog |
-| #71 | TBD | Backend | ADR 0002 item 7: remove redundant proxmox guards | **Assigned** — unblocked |
-| #84–#93 | Various worktree-agent-* branches | Backend | 10 CSI driver implementations (ADR 0001 epic #77) | **PRs #107–#116 open** |
-| #80 | TBD | Backend | OpenStack EnsureIdentity: template clouds.yaml from config fields | **Blocked** on ADR 0004 (#81) |
+| #121 | TBD | Architect | ADR 0009: Phase H on-prem platform services (registry + issuing CA) | **Assigned** |
+| #120 | — | — | Epic: on-prem platform services via OpenTofu (airgap path) | Open |
+| #104 | — | — | Epic: ADR 0007 (parent of #103, #105 — both now closed) | Open |
+| #119 | — | Frontend | D4: CAPD smoke E2E test for bootstrap pipeline | Backlog |
 
 ---
 
@@ -206,20 +205,20 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 
 ### Immediate (current sprint)
 
-1. **Merge PR #117** (Frontend, #103 + #105) — once CI green: dashboard is the only xapiri UI.
-2. **Review + merge CSI driver PRs #107–#116** (Backend) — start with #107 (hcloud); each is 1 clean commit, independent.
-3. **Open branch for D1 (#118)** (Backend) — wire `csi.Selector` into orchestrator; delete `internal/capi/csi/`. Already unblocked (openstack-cinder in main).
-4. **Merge ADR 0004 PR** (Architect, yage-docs PR #5) — unblocks #80 (OpenStack EnsureIdentity) and Agent A.
+1. **Let programmer merge remaining CSI PRs #110/#111/#112/#113/#114/#115** (Backend) — each is one clean commit; rebase #110 (oci, has conflicts) first.
+2. **Merge yage-docs PR #5** (Architect) — ADR 0004 + CURRENT_STATE on `docs/81-adr-0004-phase-g`.
+3. **Start #118** (p1, Backend) — D1: wire `csi.Selector` into orchestrator; delete `internal/capi/csi/`. Already unblocked (openstack-cinder in main via #88).
+4. **Start #121** (p2, Architect) — ADR 0009 Phase H: on-prem platform services spec.
 
 ### Planned (next sprint)
 
 5. **Issue #71** (p2, Backend) — ADR 0002 item 7: remove redundant `cfg.InfraProvider == "proxmox"` guards.
-6. **Issue #80** (p3, Backend) — OpenStack EnsureIdentity: template clouds.yaml. **Blocked** on ADR 0004 acceptance.
+6. **Issue #80** (p3, Backend) — OpenStack EnsureIdentity: template clouds.yaml. **Blocked** on ADR 0004 acceptance (yage-docs PR #5).
 7. **Issue #79** (p3, Backend) — vSphere PatchManifest sizing fields.
 
 ### Backlog
 
-8. **Issue #119** (p3, Backend) — D4: CAPD smoke E2E test.
+8. **Issue #119** (p3, Backend) — D4: CAPD smoke E2E test for bootstrap pipeline.
 9. **Issues #94–#101** (p3, Backend) — 8 PlanDescriber provider implementations (epic #78).
 
 ---
