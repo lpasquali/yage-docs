@@ -5,7 +5,8 @@
 1. **This file** — architecture, patterns, gotchas.
 2. **[CURRENT_STATE.md](CURRENT_STATE.md)** — active branches, WIP, known issues, inter-agent handoff state.
 3. **[CODING_STANDARDS.md](CODING_STANDARDS.md)** — style, logging, shell, YAML, error handling, SSOT rules.
-4. **Your role file** — read the file from the [Agent Roster](#agent-roster) that matches the role you've been assigned for this session.
+4. **[WORKFLOW.md](WORKFLOW.md)** — SOP (issue → merge), Definition of Done, Audit Triggers, PR template compliance. **Mandatory before any Execute phase.**
+5. **Your role file** — read the file from the [Agent Roster](#agent-roster) that matches the role you've been assigned for this session.
 
 ---
 
