@@ -31,7 +31,7 @@ Last updated: **2026-04-30** — PO session: PR #117 open; 10 CSI driver PRs #10
 - **New issue #119** — D4: CAPD smoke E2E test (p3, backlog, Todo on board).
 
 **Architect (#81 — ADR 0004 Phase G):**
-- PR #3 in yage-docs open: https://github.com/lpasquali/yage-docs/pull/3 — accepts ADR 0004 universal OpenTofu identity bootstrap.
+- PR #5 in yage-docs open: https://github.com/lpasquali/yage-docs/pull/5 — accepts ADR 0004 universal OpenTofu identity bootstrap.
 - Issue #81 assigned to lpasquali.
 
 **Also in yage-docs:**
@@ -186,7 +186,7 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 |---|---|---|---|---|
 | #103 + #105 | feat/xapiri-dashboard-only | Frontend | ADR 0007: dashboard default + remove legacy walkthrough | **PR #117 open** — awaiting CI |
 | #104 | — | — | Epic: ADR 0007 (parent of #103, #105) | Open |
-| #81 | docs/81-adr-0004-phase-g (yage-docs) | Architect | ADR 0004: Phase G universal OpenTofu identity | **PR #3 open** — https://github.com/lpasquali/yage-docs/pull/3 |
+| #81 | docs/81-adr-0004-phase-g (yage-docs) | Architect | ADR 0004: Phase G universal OpenTofu identity | **PR #5 open** — https://github.com/lpasquali/yage-docs/pull/5 |
 | #118 | TBD | Backend | D1: wire csi.Selector into orchestrator; delete internal/capi/csi/ | **Assigned** — unblocked |
 | #119 | TBD | Backend | D4: CAPD smoke E2E test for bootstrap pipeline | Backlog |
 | #71 | TBD | Backend | ADR 0002 item 7: remove redundant proxmox guards | **Assigned** — unblocked |
@@ -209,7 +209,7 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 1. **Merge PR #117** (Frontend, #103 + #105) — once CI green: dashboard is the only xapiri UI.
 2. **Review + merge CSI driver PRs #107–#116** (Backend) — start with #107 (hcloud); each is 1 clean commit, independent.
 3. **Open branch for D1 (#118)** (Backend) — wire `csi.Selector` into orchestrator; delete `internal/capi/csi/`. Already unblocked (openstack-cinder in main).
-4. **Merge ADR 0004 PR** (Architect, yage-docs PR #3) — unblocks #80 (OpenStack EnsureIdentity) and Agent A.
+4. **Merge ADR 0004 PR** (Architect, yage-docs PR #5) — unblocks #80 (OpenStack EnsureIdentity) and Agent A.
 
 ### Planned (next sprint)
 
