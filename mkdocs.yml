@@ -47,6 +47,14 @@ nav:
   - Home: index.md
   - Context:
       - Agent System Prompt: context/AGENT_SYSTEM_PROMPT.md
+      - Current State: context/CURRENT_STATE.md
+      - Coding Standards: context/CODING_STANDARDS.md
+      - Agents:
+          - Product Owner: context/agents/PO.md
+          - Architect: context/agents/ARCHITECT.md
+          - Platform Engineer: context/agents/PLATFORM_ENGINEER.md
+          - Go Backend: context/agents/BACKEND.md
+          - Go Frontend: context/agents/FRONTEND.md
   - Architecture:
       - Overview: architecture/ARCHITECTURE.md
       - Architectures: architecture/architectures.md
