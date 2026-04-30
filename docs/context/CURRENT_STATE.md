@@ -8,7 +8,7 @@ yage is in active development. The core bootstrap pipeline is functional for Pro
 
 This file must be updated whenever system state evolves (per CODING_STANDARDS.md "Atomic Persistence"). If information here conflicts with what you observe in the code or git history, trust what you observe now — then update this file to match reality.
 
-Last updated: **2026-04-30** — PO audit: PRs #117 + #116 merged (xapiri dashboard-only + vsphere-csi); CSI wave: 5 of 10 drivers merged (#107 hcloud, #108 openebs, #109 rook-ceph, #116 vsphere + earlier #88); 6 CSI PRs still in-flight (#110–#115); new issues #118–#121; yage-docs PR #5 open
+Last updated: **2026-04-30** — PO audit (session 2): PR #122 new (E2BIG fix, MERGEABLE); CSI status: #111 MERGEABLE, #112/#113/#114/#115 CONFLICTING (need rebase), #110 OCI anomaly (issue #86 closed, PR still open — verify); yage-docs PRs #5 and #6 both MERGEABLE; p3 backlog issues #71, #78–#80, #94–#101 fully enumerated in Active Work
 
 ## Version Baseline
 
@@ -18,6 +18,27 @@ Last updated: **2026-04-30** — PO audit: PRs #117 + #116 merged (xapiri dashbo
 | yage-docs | `main` | ADRs 0001–0007 written; WORKFLOW added | Documentation in progress |
 
 ## Recent Changes
+
+### 2026-04-30 — PO audit (session 2): PR #122 new; CSI conflict triage; yage-docs PRs #5 and #6 both ready
+
+**New PR #122 — not previously tracked:**
+- `fix(manifest): avoid E2BIG when clusterctl env inherits large parent vars` on `fix/clusterctl-env-arg-max`
+- Status: MERGEABLE, all checks green. Ready for Programmer to merge immediately.
+- Fix: `BuildEnv()` in `internal/capi/manifest` deduplicates `os.Environ()` before appending overrides; eliminates `E2BIG` on large `~/.ssh/authorized_keys` or other large inherited vars.
+
+**CSI wave status update (as of this audit):**
+- #111 (do-block-storage): MERGEABLE — ready for Programmer.
+- #112 (longhorn): CONFLICTING — needs Backend rebase onto current main, then Programmer merge. Closes #89.
+- #113 (linode-block-storage): CONFLICTING — needs Backend rebase onto current main, then Programmer merge. Closes #87.
+- #114 (ibm-vpc-block): CONFLICTING — needs Backend rebase onto current main, then Programmer merge. Closes #90.
+- #115 (openstack-cinder): CONFLICTING — needs Backend rebase onto current main, then Programmer merge. Closes #88.
+- #110 (oci-block-storage): ANOMALY — issue #86 is already CLOSED (likely auto-closed by an earlier merge); PR #110 still open on `worktree-agent-a015af3c2c642e63e`. Programmer should verify whether work is already in main and close #110 if duplicate; otherwise Backend should rebase and Programmer should merge.
+
+**yage-docs PRs:**
+- PR #5 (`docs/81-adr-0004-phase-g`): MERGEABLE — Programmer to merge; closes #81.
+- PR #6 (`docs/121-adr-0009-platform-services`): MERGEABLE — Programmer to merge; closes #121.
+
+---
 
 ### 2026-04-30 — PO audit: xapiri #117 + vsphere-csi #116 merged; CSI wave ongoing; new issues #118–#121
 
@@ -182,15 +203,35 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 
 ## Active Work
 
-| Issue | Branch | Agent | Description | Status |
+| Issue / PR | Branch | Agent | Description | Status |
 |---|---|---|---|---|
-| #84–#93 | Various worktree-agent-* | Backend | 10 CSI driver PRs (ADR 0001 epic #77) | Merging (#107–#116); 5 merged, 6 in-flight |
-| #81 | docs/81-adr-0004-phase-g (yage-docs) | Architect | ADR 0004: Phase G universal OpenTofu identity | **PR #5 open** — https://github.com/lpasquali/yage-docs/pull/5 |
-| #118 | TBD | Backend | D1: wire csi.Selector into orchestrator; delete internal/capi/csi/ | **Assigned** — unblocked |
-| #121 | TBD | Architect | ADR 0009: Phase H on-prem platform services (registry + issuing CA) | **Assigned** |
-| #120 | — | — | Epic: on-prem platform services via OpenTofu (airgap path) | Open |
-| #104 | — | — | Epic: ADR 0007 (parent of #103, #105 — both now closed) | Open |
-| #119 | — | Frontend | D4: CAPD smoke E2E test for bootstrap pipeline | Backlog |
+| PR #122 | fix/clusterctl-env-arg-max | **Programmer** | Merge fix: E2BIG clusterctl env dedup — all checks green, MERGEABLE | **Ready to merge** |
+| PR #111 (#85) | worktree-agent-aa17db78e36720843 | **Programmer** | Merge CSI: do-block-storage — MERGEABLE, checks green | **Ready to merge** |
+| PR #112 (#89) | worktree-agent-a4a291be8efba0087 | **Backend** → Programmer | Rebase longhorn CSI onto main (CONFLICTING), then merge | **Needs rebase** |
+| PR #113 (#87) | worktree-agent-a785ce9b3ce84e29d | **Backend** → Programmer | Rebase linode-block-storage CSI onto main (CONFLICTING), then merge | **Needs rebase** |
+| PR #114 (#90) | worktree-agent-acd5c30ba3b59776b | **Backend** → Programmer | Rebase ibm-vpc-block CSI onto main (CONFLICTING), then merge | **Needs rebase** |
+| PR #115 (#88) | feat/csi-openstack-cinder | **Backend** → Programmer | Rebase openstack-cinder CSI onto main (CONFLICTING), then merge | **Needs rebase** |
+| PR #110 | worktree-agent-a015af3c2c642e63e | **Programmer** | Verify OCI anomaly: issue #86 already closed; check if oci-block-storage already in main; close PR if duplicate, else rebase | **Verify/close** |
+| PR #5 (yage-docs) | docs/81-adr-0004-phase-g | **Programmer** | Merge ADR 0004 (Phase G OpenTofu identity) — MERGEABLE | **Ready to merge** — closes #81 |
+| PR #6 (yage-docs) | docs/121-adr-0009-platform-services | **Programmer** | Merge ADR 0009 (Phase H on-prem platform services) — MERGEABLE | **Ready to merge** — closes #121 |
+| #118 | TBD | **Backend** | D1: wire csi.Selector into orchestrator; delete internal/capi/csi/ | **Assigned** — p1, start after CSI PRs land |
+| #71 | TBD | **Backend** | ADR 0002 item 7: remove redundant `cfg.InfraProvider == "proxmox"` guards | **Planned** — p2 next sprint |
+| #79 | TBD | **Backend** | vSphere PatchManifest: honor VSphereMachineTemplate sizing fields | **Planned** — p3 |
+| #80 | TBD | **Backend** | OpenStack EnsureIdentity: template clouds.yaml from config fields | **Blocked** on PR #5 merge — p3 |
+| #94 | TBD | **Backend** | PlanDescriber (DescribeIdentity/Workload/Pivot) for Linode | **Backlog** — p3 (epic #78) |
+| #95 | TBD | **Backend** | PlanDescriber for CAPD (docker) | **Backlog** — p3 (epic #78) |
+| #96 | TBD | **Backend** | PlanDescriber for OpenStack | **Backlog** — p3 (epic #78) |
+| #97 | TBD | **Backend** | PlanDescriber for vSphere | **Backlog** — p3 (epic #78) |
+| #98 | TBD | **Backend** | PlanDescriber for Azure | **Backlog** — p3 (epic #78) |
+| #99 | TBD | **Backend** | PlanDescriber for IBM Cloud | **Backlog** — p3 (epic #78) |
+| #100 | TBD | **Backend** | PlanDescriber for GCP | **Backlog** — p3 (epic #78) |
+| #101 | TBD | **Backend** | PlanDescriber for DigitalOcean | **Backlog** — p3 (epic #78) |
+| #81 | docs/81-adr-0004-phase-g (yage-docs) | Architect | ADR 0004: Phase G universal OpenTofu identity — **DONE, PR #5 ready** | Waiting on Programmer |
+| #121 | docs/121-adr-0009-platform-services (yage-docs) | Architect | ADR 0009: Phase H on-prem platform services — **DONE, PR #6 ready** | Waiting on Programmer |
+| #120 | — | — | Epic: on-prem platform services via OpenTofu (airgap path) | Open — parent of #121 |
+| #104 | — | — | Epic: ADR 0007 (parent of #103, #105 — both now closed) | Open — parent epic |
+| #119 | — | **Backend** | D4: CAPD smoke E2E test for bootstrap pipeline | **Backlog** — p3 |
+| #78 | — | — | Epic: PlanDescriber missing for 8 providers (children: #94–#101) | Open — parent epic |
 
 ---
 
@@ -205,21 +246,24 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 
 ### Immediate (current sprint)
 
-1. **Let programmer merge remaining CSI PRs #110/#111/#112/#113/#114/#115** (Backend) — each is one clean commit; rebase #110 (oci, has conflicts) first.
-2. **Merge yage-docs PR #5** (Architect) — ADR 0004 + CURRENT_STATE on `docs/81-adr-0004-phase-g`.
-3. **Start #118** (p1, Backend) — D1: wire `csi.Selector` into orchestrator; delete `internal/capi/csi/`. Already unblocked (openstack-cinder in main via #88).
-4. **Start #121** (p2, Architect) — ADR 0009 Phase H: on-prem platform services spec.
+1. **Programmer: merge PR #122** — E2BIG clusterctl fix, MERGEABLE, all checks green.
+2. **Programmer: merge PR #111** — do-block-storage CSI, MERGEABLE. Closes #85.
+3. **Backend: rebase PRs #112/#113/#114/#115** onto current main (all CONFLICTING after wave merges), then Programmer merges each. Closes #89, #87, #90, #88.
+4. **Programmer: verify PR #110** — issue #86 already closed; confirm oci-block-storage not already in main; close #110 if duplicate, otherwise Backend rebases.
+5. **Programmer: merge yage-docs PR #5** — ADR 0004 Phase G. Closes #81.
+6. **Programmer: merge yage-docs PR #6** — ADR 0009 Phase H. Closes #121.
+7. **Backend: start #118** (p1) — D1: wire `csi.Selector` into orchestrator; delete `internal/capi/csi/`. Unblocked once CSI PRs land.
 
 ### Planned (next sprint)
 
-5. **Issue #71** (p2, Backend) — ADR 0002 item 7: remove redundant `cfg.InfraProvider == "proxmox"` guards.
-6. **Issue #80** (p3, Backend) — OpenStack EnsureIdentity: template clouds.yaml. **Blocked** on ADR 0004 acceptance (yage-docs PR #5).
-7. **Issue #79** (p3, Backend) — vSphere PatchManifest sizing fields.
+8. **Issue #71** (p2, Backend) — ADR 0002 item 7: remove redundant `cfg.InfraProvider == "proxmox"` guards.
+9. **Issue #80** (p3, Backend) — OpenStack EnsureIdentity: template clouds.yaml. **Blocked** on PR #5 merge.
+10. **Issue #79** (p3, Backend) — vSphere PatchManifest sizing fields.
 
 ### Backlog
 
-8. **Issue #119** (p3, Backend) — D4: CAPD smoke E2E test for bootstrap pipeline.
-9. **Issues #94–#101** (p3, Backend) — 8 PlanDescriber provider implementations (epic #78).
+11. **Issue #119** (p3, Backend) — D4: CAPD smoke E2E test for bootstrap pipeline.
+12. **Issues #94–#101** (p3, Backend) — 8 PlanDescriber provider implementations (epic #78).
 
 ---
 
