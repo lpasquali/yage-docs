@@ -3640,3 +3640,93 @@ When each returns, integrate its worktree branch into `main`.
 - Documentation refresh of `ARCHITECTURE.md` / `providers.md` to
   match the post-Wave-3 shape.
 
+---
+
+## 25. Status correction — 2026-04-30
+
+### 25.1 Phase status (ground truth)
+
+§24.1 correctly records phases A–E as landed at the interface and
+call-site level. This addendum corrects CURRENT_STATE.md, which
+incorrectly shows A/B/D/E as "Not started" (CURRENT_STATE was not
+updated when the implementations landed). Accurate status:
+
+| Phase | Interface + call sites | Implementation | Remaining |
+|---|---|---|---|
+| C | — | **Complete** (merged, confirmed) | — |
+| A | `prov.Inventory(cfg)` called in `bootstrap.go:1071`, `plan.go:279`; Proxmox implements | **Complete** | Some `if cfg.InfraProvider == "proxmox"` outer guards wrap the call sites — remove (see §25.3) |
+| B | `DescribeIdentity`/`DescribeWorkload`/`DescribePivot` in interface; `proxmox/plan.go` implements; `plan.go` calls them | **Complete** | — |
+| D | `prov.KindSyncFields(cfg)` called in `kindsync/bootstrap_config.go:215`; `prov.Purge(cfg)` called in `purge.go:306`; `YageSystemNamespace = "yage-system"` in use | **Substantially complete** | `SyncProxmoxBootstrapLiteralCredentialsToKind` (7 call sites in bootstrap.go + opentofux) not yet replaced; pre-split Secret fallback in `proxmox/state.go:326`; `proxmoxmachines` GVR hardcode in `purge.go:347` — remove (see §25.3) |
+| E | `prov.PivotTarget(cfg)` called in `pivot.go:168` | **Complete** | — |
+
+### 25.2 No-backward-compatibility policy
+
+**Decision (2026-04-30):** yage has no production users. Backward
+compatibility code is dead weight. This decision supersedes the
+dual-read/dual-write migration plan in §R.3 (Phase D) and
+`§3/Phase D step 1`. That plan is **withdrawn**:
+
+- ~~v1: read old AND new namespace; write to both~~
+- ~~v2: write only new; still read old~~
+- ~~v3: drop old read~~
+
+**Replace with:** single cut. Write only `yage-system`. Read only
+`yage-system`. Delete every legacy fallback on first touch.
+
+Same applies to all env-var aliases, Secret-name fallbacks, and
+JSON-format fallbacks documented below. No deprecation cycle. Delete.
+
+### 25.3 Cleanup handoff — Backend
+
+The following items are dead code given the no-compat policy.
+Assign to Backend programmer; each item is an isolated deletion, no
+design decision required.
+
+**Priority: complete before any new feature work on the affected files.**
+
+#### kindsync
+
+| Item | File | Action |
+|---|---|---|
+| `SyncProxmoxBootstrapLiteralCredentialsToKind` | `internal/cluster/kindsync/kindsync.go:56` | Delete function. The generic `WriteBootstrapConfigSecret` + `KindSyncFields` path covers all providers. |
+| 7 call sites | `internal/orchestrator/bootstrap.go:105,200,339,426,465,491,682`; `internal/platform/opentofux/outputs.go:43,64` | Delete each call. The orchestrator already calls `WriteBootstrapConfigSecret`; verify no gap before deleting. |
+| `admin / legacy-combined Secrets` comment | `internal/cluster/kindsync/config.go:61` | Remove comment; delete any code it describes if still present. |
+
+#### proxmox provider
+
+| Item | File | Action |
+|---|---|---|
+| Pre-split Secret name fallback | `internal/provider/proxmox/state.go:326` | Delete the fallback branch. Read only the current Secret name. |
+| `proxmoxmachines` GVR hardcode | `internal/orchestrator/purge.go:347` | Move to `proxmox` provider's `Purge()` implementation or parameterise via `Provider.Purge`. This is the last Proxmox-specific item in a non-provider file. |
+
+#### config / env aliases
+
+| Item | File | Action |
+|---|---|---|
+| `OS_PROJECT_NAME` / `OS_REGION_NAME` legacy fallbacks | `internal/config/config.go:1303–1308` | Delete. `OPENSTACK_*` is the canonical name. |
+| `YAGE_CURRENCY` legacy alias | `internal/pricing/taller.go:144` | Delete. `YAGE_TALLER_CURRENCY` is canonical. |
+| Legacy JSON format in snapshot | `internal/config/snapshot.go:310–315` | Delete legacy struct + unmarshal branch. |
+
+#### orchestrator guards
+
+The 19 `if cfg.InfraProvider == "proxmox"` checks in
+`internal/orchestrator/bootstrap.go` represent the last surface-level
+Proxmox binding in the orchestrator. Most wrap calls that are already
+abstracted through the provider interface. Backend should:
+
+1. Audit each check: if the body only calls a `Provider` method
+   (e.g. `prov.Inventory`, `prov.EnsureIdentity`, `prov.EnsureScope`),
+   **remove the guard** — `ErrNotApplicable` from `MinStub` is the
+   correct skip signal.
+2. For guards that wrap genuinely Proxmox-specific logic with no
+   provider method yet (e.g. BPG provider install at line 368), leave
+   in place and open a follow-up issue for the Provider method.
+3. Do not refactor non-guarded code in the same PR.
+
+### 25.4 Background agents (§24.2) — status unknown as of 2026-04-30
+
+Agents A/B/D1/D4 were in-flight as of §24's last update (2026-04-26).
+Their worktrees have not appeared in `main` as of this writing. PO
+should check worktree status and integrate or re-dispatch before
+starting cleanup work on overlapping files.
+
