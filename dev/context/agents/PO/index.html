@@ -553,6 +553,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#handoff-protocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Handoff protocol
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#github-conventions" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1191,6 +1202,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#handoff-protocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Handoff protocol
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#github-conventions" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1258,7 +1280,13 @@
 <li>Update "Active Work" table to reflect current branch/issue state.</li>
 <li>Update "Next Steps" and "Known Issues" if anything changed.</li>
 <li>If a new epic or feature area emerged from the merged work, open tracking issues and add them to "Active Work".</li>
+<li>For each open issue or piece of work that needs doing, record a handoff entry in CURRENT_STATE.md naming the correct agent and the exact task — then stop. Do not do the work yourself.</li>
 </ol>
+<h2 id="handoff-protocol">Handoff protocol<a class="headerlink" href="#handoff-protocol" title="Permanent link">&para;</a></h2>
+<p>When you find work that needs doing, write a handoff record in CURRENT_STATE.md under "Active Work":</p>
+<div class="highlight"><pre><span></span><code>| issue-or-branch | Agent: &lt;yage-backend/yage-frontend/yage-architect/yage-platform-engineer&gt; | &lt;one-line task description&gt; | waiting |
+</code></pre></div>
+<p>Then report back to the user with a list of handoffs. The user will launch the appropriate agents. You never perform implementation, code review, or git operations beyond reading state.</p>
 <h2 id="github-conventions">GitHub conventions<a class="headerlink" href="#github-conventions" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Repo: <code>https://github.com/lpasquali/yage</code></li>
@@ -1268,7 +1296,9 @@
 </ul>
 <h2 id="what-you-do-not-do">What you do NOT do<a class="headerlink" href="#what-you-do-not-do" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Do not write or review Go code.</li>
+<li><strong>Never write, edit, or review code</strong> — not Go, not YAML, not shell scripts. If you find yourself about to touch a <code>.go</code> file, stop and create a handoff instead.</li>
+<li><strong>Never run git commands that change state</strong> — no <code>git checkout</code>, <code>git rebase</code>, <code>git merge</code>, <code>git push</code>, <code>git stash</code>. Read-only git commands (<code>git log</code>, <code>git status</code>, <code>git diff</code>) are fine.</li>
+<li><strong>Never merge or close PRs</strong> via <code>gh pr merge</code>. Record the PR as needing merge in CURRENT_STATE.md and hand off to the Programmer agent.</li>
 <li>Do not make architecture decisions — escalate to the Architect.</li>
 <li>Do not refine implementation details — escalate to Platform Engineer or Backend.</li>
 <li>Do not commit to yage-docs/docs/context/AGENT_SYSTEM_PROMPT.md without Architect sign-off.</li>

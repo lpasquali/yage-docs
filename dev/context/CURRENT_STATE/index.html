@@ -458,6 +458,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#2026-04-30-po-audit-session-2-pr-122-new-csi-conflict-triage-yage-docs-prs-5-and-6-both-ready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2026-04-30 — PO audit (session 2): PR #122 new; CSI conflict triage; yage-docs PRs #5 and #6 both ready
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#2026-04-30-po-audit-xapiri-117-vsphere-csi-116-merged-csi-wave-ongoing-new-issues-118121" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1413,6 +1424,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#2026-04-30-po-audit-session-2-pr-122-new-csi-conflict-triage-yage-docs-prs-5-and-6-both-ready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2026-04-30 — PO audit (session 2): PR #122 new; CSI conflict triage; yage-docs PRs #5 and #6 both ready
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#2026-04-30-po-audit-xapiri-117-vsphere-csi-116-merged-csi-wave-ongoing-new-issues-118121" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1665,7 +1687,7 @@
 <p>yage is in active development. The core bootstrap pipeline is functional for Proxmox. The xapiri TUI is being built out as the primary configuration interface. The provider abstraction plan is largely complete: phases A, B, C, and E are done; D is substantially complete. Legacy cleanup is complete per ADR 0002 (no-backward-compatibility policy). ADR 0007 adopted: dashboard is the new default xapiri entry point.</p>
 <h2 id="freshness-policy">Freshness Policy<a class="headerlink" href="#freshness-policy" title="Permanent link">&para;</a></h2>
 <p>This file must be updated whenever system state evolves (per CODING_STANDARDS.md "Atomic Persistence"). If information here conflicts with what you observe in the code or git history, trust what you observe now — then update this file to match reality.</p>
-<p>Last updated: <strong>2026-04-30</strong> — PO audit: PRs #117 + #116 merged (xapiri dashboard-only + vsphere-csi); CSI wave: 5 of 10 drivers merged (#107 hcloud, #108 openebs, #109 rook-ceph, #116 vsphere + earlier #88); 6 CSI PRs still in-flight (#110–#115); new issues #118–#121; yage-docs PR #5 open</p>
+<p>Last updated: <strong>2026-04-30</strong> — PO audit (session 2): PR #122 new (E2BIG fix, MERGEABLE); CSI status: #111 MERGEABLE, #112/#113/#114/#115 CONFLICTING (need rebase), #110 OCI anomaly (issue #86 closed, PR still open — verify); yage-docs PRs #5 and #6 both MERGEABLE; p3 backlog issues #71, #78–#80, #94–#101 fully enumerated in Active Work</p>
 <h2 id="version-baseline">Version Baseline<a class="headerlink" href="#version-baseline" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -1692,6 +1714,22 @@
 </tbody>
 </table>
 <h2 id="recent-changes">Recent Changes<a class="headerlink" href="#recent-changes" title="Permanent link">&para;</a></h2>
+<h3 id="2026-04-30-po-audit-session-2-pr-122-new-csi-conflict-triage-yage-docs-prs-5-and-6-both-ready">2026-04-30 — PO audit (session 2): PR #122 new; CSI conflict triage; yage-docs PRs #5 and #6 both ready<a class="headerlink" href="#2026-04-30-po-audit-session-2-pr-122-new-csi-conflict-triage-yage-docs-prs-5-and-6-both-ready" title="Permanent link">&para;</a></h3>
+<p><strong>New PR #122 — not previously tracked:</strong>
+- <code>fix(manifest): avoid E2BIG when clusterctl env inherits large parent vars</code> on <code>fix/clusterctl-env-arg-max</code>
+- Status: MERGEABLE, all checks green. Ready for Programmer to merge immediately.
+- Fix: <code>BuildEnv()</code> in <code>internal/capi/manifest</code> deduplicates <code>os.Environ()</code> before appending overrides; eliminates <code>E2BIG</code> on large <code>~/.ssh/authorized_keys</code> or other large inherited vars.</p>
+<p><strong>CSI wave status update (as of this audit):</strong>
+- #111 (do-block-storage): MERGEABLE — ready for Programmer.
+- #112 (longhorn): CONFLICTING — needs Backend rebase onto current main, then Programmer merge. Closes #89.
+- #113 (linode-block-storage): CONFLICTING — needs Backend rebase onto current main, then Programmer merge. Closes #87.
+- #114 (ibm-vpc-block): CONFLICTING — needs Backend rebase onto current main, then Programmer merge. Closes #90.
+- #115 (openstack-cinder): CONFLICTING — needs Backend rebase onto current main, then Programmer merge. Closes #88.
+- #110 (oci-block-storage): ANOMALY — issue #86 is already CLOSED (likely auto-closed by an earlier merge); PR #110 still open on <code>worktree-agent-a015af3c2c642e63e</code>. Programmer should verify whether work is already in main and close #110 if duplicate; otherwise Backend should rebase and Programmer should merge.</p>
+<p><strong>yage-docs PRs:</strong>
+- PR #5 (<code>docs/81-adr-0004-phase-g</code>): MERGEABLE — Programmer to merge; closes #81.
+- PR #6 (<code>docs/121-adr-0009-platform-services</code>): MERGEABLE — Programmer to merge; closes #121.</p>
+<hr />
 <h3 id="2026-04-30-po-audit-xapiri-117-vsphere-csi-116-merged-csi-wave-ongoing-new-issues-118121">2026-04-30 — PO audit: xapiri #117 + vsphere-csi #116 merged; CSI wave ongoing; new issues #118–#121<a class="headerlink" href="#2026-04-30-po-audit-xapiri-117-vsphere-csi-116-merged-csi-wave-ongoing-new-issues-118121" title="Permanent link">&para;</a></h3>
 <p><strong>Frontend (ADR 0007 — xapiri dashboard-only):</strong>
 - <strong>PR #117 merged</strong> (<code>feat/xapiri-dashboard-only</code>) — closes #103 (dashboard default) and #105 (remove legacy walkthrough). Both issues auto-closed by GitHub.
@@ -1870,7 +1908,7 @@
 <table>
 <thead>
 <tr>
-<th>Issue</th>
+<th>Issue / PR</th>
 <th>Branch</th>
 <th>Agent</th>
 <th>Description</th>
@@ -1879,53 +1917,193 @@
 </thead>
 <tbody>
 <tr>
-<td>#84–#93</td>
-<td>Various worktree-agent-*</td>
-<td>Backend</td>
-<td>10 CSI driver PRs (ADR 0001 epic #77)</td>
-<td>Merging (#107–#116); 5 merged, 6 in-flight</td>
+<td>PR #122</td>
+<td>fix/clusterctl-env-arg-max</td>
+<td><strong>Programmer</strong></td>
+<td>Merge fix: E2BIG clusterctl env dedup — all checks green, MERGEABLE</td>
+<td><strong>Ready to merge</strong></td>
+</tr>
+<tr>
+<td>PR #111 (#85)</td>
+<td>worktree-agent-aa17db78e36720843</td>
+<td><strong>Programmer</strong></td>
+<td>Merge CSI: do-block-storage — MERGEABLE, checks green</td>
+<td><strong>Ready to merge</strong></td>
+</tr>
+<tr>
+<td>PR #112 (#89)</td>
+<td>worktree-agent-a4a291be8efba0087</td>
+<td><strong>Backend</strong> → Programmer</td>
+<td>Rebase longhorn CSI onto main (CONFLICTING), then merge</td>
+<td><strong>Needs rebase</strong></td>
+</tr>
+<tr>
+<td>PR #113 (#87)</td>
+<td>worktree-agent-a785ce9b3ce84e29d</td>
+<td><strong>Backend</strong> → Programmer</td>
+<td>Rebase linode-block-storage CSI onto main (CONFLICTING), then merge</td>
+<td><strong>Needs rebase</strong></td>
+</tr>
+<tr>
+<td>PR #114 (#90)</td>
+<td>worktree-agent-acd5c30ba3b59776b</td>
+<td><strong>Backend</strong> → Programmer</td>
+<td>Rebase ibm-vpc-block CSI onto main (CONFLICTING), then merge</td>
+<td><strong>Needs rebase</strong></td>
+</tr>
+<tr>
+<td>PR #115 (#88)</td>
+<td>feat/csi-openstack-cinder</td>
+<td><strong>Backend</strong> → Programmer</td>
+<td>Rebase openstack-cinder CSI onto main (CONFLICTING), then merge</td>
+<td><strong>Needs rebase</strong></td>
+</tr>
+<tr>
+<td>PR #110</td>
+<td>worktree-agent-a015af3c2c642e63e</td>
+<td><strong>Programmer</strong></td>
+<td>Verify OCI anomaly: issue #86 already closed; check if oci-block-storage already in main; close PR if duplicate, else rebase</td>
+<td><strong>Verify/close</strong></td>
+</tr>
+<tr>
+<td>PR #5 (yage-docs)</td>
+<td>docs/81-adr-0004-phase-g</td>
+<td><strong>Programmer</strong></td>
+<td>Merge ADR 0004 (Phase G OpenTofu identity) — MERGEABLE</td>
+<td><strong>Ready to merge</strong> — closes #81</td>
+</tr>
+<tr>
+<td>PR #6 (yage-docs)</td>
+<td>docs/121-adr-0009-platform-services</td>
+<td><strong>Programmer</strong></td>
+<td>Merge ADR 0009 (Phase H on-prem platform services) — MERGEABLE</td>
+<td><strong>Ready to merge</strong> — closes #121</td>
+</tr>
+<tr>
+<td>#118</td>
+<td>TBD</td>
+<td><strong>Backend</strong></td>
+<td>D1: wire csi.Selector into orchestrator; delete internal/capi/csi/</td>
+<td><strong>Assigned</strong> — p1, start after CSI PRs land</td>
+</tr>
+<tr>
+<td>#71</td>
+<td>TBD</td>
+<td><strong>Backend</strong></td>
+<td>ADR 0002 item 7: remove redundant <code>cfg.InfraProvider == "proxmox"</code> guards</td>
+<td><strong>Planned</strong> — p2 next sprint</td>
+</tr>
+<tr>
+<td>#79</td>
+<td>TBD</td>
+<td><strong>Backend</strong></td>
+<td>vSphere PatchManifest: honor VSphereMachineTemplate sizing fields</td>
+<td><strong>Planned</strong> — p3</td>
+</tr>
+<tr>
+<td>#80</td>
+<td>TBD</td>
+<td><strong>Backend</strong></td>
+<td>OpenStack EnsureIdentity: template clouds.yaml from config fields</td>
+<td><strong>Blocked</strong> on PR #5 merge — p3</td>
+</tr>
+<tr>
+<td>#94</td>
+<td>TBD</td>
+<td><strong>Backend</strong></td>
+<td>PlanDescriber (DescribeIdentity/Workload/Pivot) for Linode</td>
+<td><strong>Backlog</strong> — p3 (epic #78)</td>
+</tr>
+<tr>
+<td>#95</td>
+<td>TBD</td>
+<td><strong>Backend</strong></td>
+<td>PlanDescriber for CAPD (docker)</td>
+<td><strong>Backlog</strong> — p3 (epic #78)</td>
+</tr>
+<tr>
+<td>#96</td>
+<td>TBD</td>
+<td><strong>Backend</strong></td>
+<td>PlanDescriber for OpenStack</td>
+<td><strong>Backlog</strong> — p3 (epic #78)</td>
+</tr>
+<tr>
+<td>#97</td>
+<td>TBD</td>
+<td><strong>Backend</strong></td>
+<td>PlanDescriber for vSphere</td>
+<td><strong>Backlog</strong> — p3 (epic #78)</td>
+</tr>
+<tr>
+<td>#98</td>
+<td>TBD</td>
+<td><strong>Backend</strong></td>
+<td>PlanDescriber for Azure</td>
+<td><strong>Backlog</strong> — p3 (epic #78)</td>
+</tr>
+<tr>
+<td>#99</td>
+<td>TBD</td>
+<td><strong>Backend</strong></td>
+<td>PlanDescriber for IBM Cloud</td>
+<td><strong>Backlog</strong> — p3 (epic #78)</td>
+</tr>
+<tr>
+<td>#100</td>
+<td>TBD</td>
+<td><strong>Backend</strong></td>
+<td>PlanDescriber for GCP</td>
+<td><strong>Backlog</strong> — p3 (epic #78)</td>
+</tr>
+<tr>
+<td>#101</td>
+<td>TBD</td>
+<td><strong>Backend</strong></td>
+<td>PlanDescriber for DigitalOcean</td>
+<td><strong>Backlog</strong> — p3 (epic #78)</td>
 </tr>
 <tr>
 <td>#81</td>
 <td>docs/81-adr-0004-phase-g (yage-docs)</td>
 <td>Architect</td>
-<td>ADR 0004: Phase G universal OpenTofu identity</td>
-<td><strong>PR #5 open</strong> — https://github.com/lpasquali/yage-docs/pull/5</td>
-</tr>
-<tr>
-<td>#118</td>
-<td>TBD</td>
-<td>Backend</td>
-<td>D1: wire csi.Selector into orchestrator; delete internal/capi/csi/</td>
-<td><strong>Assigned</strong> — unblocked</td>
+<td>ADR 0004: Phase G universal OpenTofu identity — <strong>DONE, PR #5 ready</strong></td>
+<td>Waiting on Programmer</td>
 </tr>
 <tr>
 <td>#121</td>
-<td>TBD</td>
+<td>docs/121-adr-0009-platform-services (yage-docs)</td>
 <td>Architect</td>
-<td>ADR 0009: Phase H on-prem platform services (registry + issuing CA)</td>
-<td><strong>Assigned</strong></td>
+<td>ADR 0009: Phase H on-prem platform services — <strong>DONE, PR #6 ready</strong></td>
+<td>Waiting on Programmer</td>
 </tr>
 <tr>
 <td>#120</td>
 <td>—</td>
 <td>—</td>
 <td>Epic: on-prem platform services via OpenTofu (airgap path)</td>
-<td>Open</td>
+<td>Open — parent of #121</td>
 </tr>
 <tr>
 <td>#104</td>
 <td>—</td>
 <td>—</td>
 <td>Epic: ADR 0007 (parent of #103, #105 — both now closed)</td>
-<td>Open</td>
+<td>Open — parent epic</td>
 </tr>
 <tr>
 <td>#119</td>
 <td>—</td>
-<td>Frontend</td>
+<td><strong>Backend</strong></td>
 <td>D4: CAPD smoke E2E test for bootstrap pipeline</td>
-<td>Backlog</td>
+<td><strong>Backlog</strong> — p3</td>
+</tr>
+<tr>
+<td>#78</td>
+<td>—</td>
+<td>—</td>
+<td>Epic: PlanDescriber missing for 8 providers (children: #94–#101)</td>
+<td>Open — parent epic</td>
 </tr>
 </tbody>
 </table>
@@ -1940,15 +2118,18 @@
 <h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <h3 id="immediate-current-sprint">Immediate (current sprint)<a class="headerlink" href="#immediate-current-sprint" title="Permanent link">&para;</a></h3>
 <ol>
-<li><strong>Let programmer merge remaining CSI PRs #110/#111/#112/#113/#114/#115</strong> (Backend) — each is one clean commit; rebase #110 (oci, has conflicts) first.</li>
-<li><strong>Merge yage-docs PR #5</strong> (Architect) — ADR 0004 + CURRENT_STATE on <code>docs/81-adr-0004-phase-g</code>.</li>
-<li><strong>Start #118</strong> (p1, Backend) — D1: wire <code>csi.Selector</code> into orchestrator; delete <code>internal/capi/csi/</code>. Already unblocked (openstack-cinder in main via #88).</li>
-<li><strong>Start #121</strong> (p2, Architect) — ADR 0009 Phase H: on-prem platform services spec.</li>
+<li><strong>Programmer: merge PR #122</strong> — E2BIG clusterctl fix, MERGEABLE, all checks green.</li>
+<li><strong>Programmer: merge PR #111</strong> — do-block-storage CSI, MERGEABLE. Closes #85.</li>
+<li><strong>Backend: rebase PRs #112/#113/#114/#115</strong> onto current main (all CONFLICTING after wave merges), then Programmer merges each. Closes #89, #87, #90, #88.</li>
+<li><strong>Programmer: verify PR #110</strong> — issue #86 already closed; confirm oci-block-storage not already in main; close #110 if duplicate, otherwise Backend rebases.</li>
+<li><strong>Programmer: merge yage-docs PR #5</strong> — ADR 0004 Phase G. Closes #81.</li>
+<li><strong>Programmer: merge yage-docs PR #6</strong> — ADR 0009 Phase H. Closes #121.</li>
+<li><strong>Backend: start #118</strong> (p1) — D1: wire <code>csi.Selector</code> into orchestrator; delete <code>internal/capi/csi/</code>. Unblocked once CSI PRs land.</li>
 </ol>
 <h3 id="planned-next-sprint">Planned (next sprint)<a class="headerlink" href="#planned-next-sprint" title="Permanent link">&para;</a></h3>
 <ol>
 <li><strong>Issue #71</strong> (p2, Backend) — ADR 0002 item 7: remove redundant <code>cfg.InfraProvider == "proxmox"</code> guards.</li>
-<li><strong>Issue #80</strong> (p3, Backend) — OpenStack EnsureIdentity: template clouds.yaml. <strong>Blocked</strong> on ADR 0004 acceptance (yage-docs PR #5).</li>
+<li><strong>Issue #80</strong> (p3, Backend) — OpenStack EnsureIdentity: template clouds.yaml. <strong>Blocked</strong> on PR #5 merge.</li>
 <li><strong>Issue #79</strong> (p3, Backend) — vSphere PatchManifest sizing fields.</li>
 </ol>
 <h3 id="backlog">Backlog<a class="headerlink" href="#backlog" title="Permanent link">&para;</a></h3>
