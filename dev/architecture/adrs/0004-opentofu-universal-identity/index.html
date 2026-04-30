@@ -1060,6 +1060,56 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Decision">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-yage-tofu-public-repository" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. yage-tofu public repository
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-yage-runs-tofu-it-does-not-generate-hcl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. yage runs tofu — it does not generate HCL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-shared-runner-in-opentofux-revised" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Shared Runner in opentofux (revised)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-tofumanaged-flag-opt-in-proxmox-backward-compat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. TofuManaged flag, opt-in, Proxmox backward compat
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1070,6 +1120,45 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Consequences">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#positive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Positive
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#negative-risks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Negative / Risks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementation-sequencing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation sequencing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1102,9 +1191,9 @@
 
 
 <h1 id="adr-0004-universal-opentofu-identity-bootstrap-phase-g">ADR 0004 — Universal OpenTofu Identity Bootstrap (Phase G)<a class="headerlink" href="#adr-0004-universal-opentofu-identity-bootstrap-phase-g" title="Permanent link">&para;</a></h1>
-<p><strong>Status:</strong> Proposed
+<p><strong>Status:</strong> Accepted
 <strong>Date:</strong> 2026-04-30
-<strong>Owners:</strong> Backend (HCL templates + EnsureIdentity wiring), Architect (interface contract)</p>
+<strong>Owners:</strong> Backend (EnsureIdentity wiring, Fetcher, Runner), Architect (interface contract)</p>
 <hr />
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
 <p>Proxmox is the only provider where yage currently mints credentials at bootstrap time
@@ -1165,19 +1254,162 @@ that yage could use to mint credentials programmatically:</p>
 3. Read outputs, write to kind bootstrap Secret via <code>kindsync</code>.
 4. On <code>--purge</code>, run <code>tofu destroy</code>.</p>
 <h2 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">&para;</a></h2>
-<p><em>Placeholder — to be completed by the Architect in a follow-up session.</em></p>
-<p>Key questions to resolve:
-- Should each provider get a standalone HCL file embedded in its package (like <code>proxmox/hcl.go</code>)?
-- Is there a shared runner in <code>opentofux</code> that is parameterized, or do providers each call <code>tofu</code> directly?
-- Where does state live? Kind Secret, same as the Proxmox path, or a per-provider subdirectory of <code>&lt;kind-data-dir&gt;/tofu-&lt;provider&gt;/</code>?
-- How does the interface signal that Phase G is active (<code>cfg.Providers.&lt;X&gt;.TofuManaged bool</code>)?
-- Which providers are opt-in (operator must set flag) vs. default-on when credentials are absent?</p>
+<h3 id="1-yage-tofu-public-repository">1. <code>yage-tofu</code> public repository<a class="headerlink" href="#1-yage-tofu-public-repository" title="Permanent link">&para;</a></h3>
+<p>All OpenTofu modules live in a separate public GitHub repository <code>lpasquali/yage-tofu</code>.
+yage contains <strong>no embedded HCL</strong>. The repo structure is:</p>
+<div class="highlight"><pre><span></span><code>yage-tofu/
+├── aws/main.tf          # IAM user + access key
+├── azure/main.tf        # Service Principal + client secret
+├── gcp/main.tf          # Service Account + JSON key
+├── openstack/main.tf    # Application Credential (Keystone)
+├── oci/main.tf          # API key pair
+├── ibmcloud/main.tf     # Service ID + API key
+├── linode/main.tf       # Personal Access Token (scoped)
+└── proxmox/main.tf      # PVE user + token + ACLs (migrated from opentofux)
+</code></pre></div>
+<p>Each module takes provider credentials as input variables and outputs the runtime
+credential(s) that CAPI needs. Modules are versioned and tagged independently of yage
+releases. Operators can audit and fork <code>yage-tofu</code> without touching the yage binary.</p>
+<h3 id="2-yage-runs-tofu-it-does-not-generate-hcl">2. yage runs tofu — it does not generate HCL<a class="headerlink" href="#2-yage-runs-tofu-it-does-not-generate-hcl" title="Permanent link">&para;</a></h3>
+<p>At bootstrap time, yage:</p>
+<ol>
+<li><strong>Fetches</strong> <code>yage-tofu</code> at a pinned tag/ref into a local cache
+   (<code>~/.yage/tofu-cache/</code>) via the <code>Fetcher</code> component in <code>opentofux</code>
+   (clone on first use, <code>git fetch</code> + checkout on subsequent runs).</li>
+<li>Calls <code>tofu -chdir=&lt;tofu-cache&gt;/&lt;provider&gt;/ init</code>.</li>
+<li>Calls <code>tofu -chdir=&lt;tofu-cache&gt;/&lt;provider&gt;/ apply -auto-approve</code>, passing
+   credentials as <code>-var</code> flags or provider auth env vars.</li>
+<li>Reads outputs via <code>tofu -chdir=&lt;tofu-cache&gt;/&lt;provider&gt;/ output -raw &lt;key&gt;</code>.</li>
+<li>Syncs outputs to the provider's kind bootstrap Secret via <code>kindsync</code>.</li>
+<li>On <code>--purge</code>, calls <code>tofu -chdir=&lt;tofu-cache&gt;/&lt;provider&gt;/ destroy -auto-approve</code>,
+   then removes the per-provider state directory. The <code>tofu destroy</code> step must run
+   <strong>before</strong> <code>os.RemoveAll(stateDir)</code> — the state file is the source of truth for
+   destroy; losing it orphans cloud-side resources.</li>
+</ol>
+<p>Per-provider tofu state lives under <code>~/.yage/tofu/&lt;provider&gt;/terraform.tfstate</code>.
+This is separate from the source cache. State on the operator host survives kind
+cluster teardown and remains recoverable across re-runs.</p>
+<p>The pinned <code>yage-tofu</code> tag/ref is a config field (<code>YAGE_TOFU_REF</code>, default: latest
+stable tag). This lets operators pin to a known-good version for reproducibility.</p>
+<h3 id="3-shared-runner-in-opentofux-revised">3. Shared <code>Runner</code> in <code>opentofux</code> (revised)<a class="headerlink" href="#3-shared-runner-in-opentofux-revised" title="Permanent link">&para;</a></h3>
+<p>Phase G begins by extracting a generic <code>Runner</code> struct from the existing Proxmox-specific
+<code>opentofux</code> helpers (<code>runTofu</code>, <code>applyVars</code>, <code>tofuEnv</code>, <code>GetOutput</code>, <code>StateRmAll</code>,
+<code>DestroyIdentity</code>). The revised struct is:</p>
+<div class="highlight"><pre><span></span><code><span class="nx">opentofux</span><span class="p">.</span><span class="nx">Runner</span><span class="p">{</span>
+<span class="w">    </span><span class="nx">ModuleDir</span><span class="w">  </span><span class="kt">string</span><span class="w">   </span><span class="c1">// absolute path to the provider&#39;s module within the yage-tofu checkout</span>
+<span class="w">    </span><span class="nx">Env</span><span class="w">        </span><span class="p">[]</span><span class="kt">string</span><span class="w"> </span><span class="c1">// provider auth env vars</span>
+<span class="w">    </span><span class="nx">Vars</span><span class="w">       </span><span class="p">[]</span><span class="kt">string</span><span class="w"> </span><span class="c1">// -var flags for tofu apply/destroy</span>
+<span class="w">    </span><span class="nx">OutputKeys</span><span class="w"> </span><span class="p">[]</span><span class="kt">string</span><span class="w"> </span><span class="c1">// expected tofu output names</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><code>Runner</code> is responsible for <code>tofu -chdir=ModuleDir init/apply/output/destroy</code>. It owns
+the cross-cutting logic:</p>
+<ul>
+<li><code>Init()</code> — <code>tofu init -upgrade</code></li>
+<li><code>Apply()</code> — <code>tofu apply -auto-approve</code> with the runner's vars</li>
+<li><code>GetOutput(name)</code> — <code>tofu output -raw</code></li>
+<li><code>StateRmAll()</code> — walk <code>tofu state list</code> and remove each entry</li>
+<li><code>Destroy()</code> — <code>tofu destroy -auto-approve</code> with the runner's vars</li>
+</ul>
+<p>The <code>yage-tofu</code> checkout itself is managed by the <code>Fetcher</code> component in <code>opentofux</code>
+that clones/updates the repo to <code>~/.yage/tofu-cache/</code>. Each provider's <code>EnsureIdentity</code>
+constructs a <code>Runner</code> with <code>ModuleDir</code> pointing at the appropriate subdirectory inside
+the fetched checkout.</p>
+<p>The Proxmox <code>ApplyIdentity</code> function is refactored to use <code>Runner</code> as its first consumer,
+keeping backward compatibility while enabling the seven new providers to plug in without
+duplicating shell-invocation logic.</p>
+<h3 id="4-tofumanaged-flag-opt-in-proxmox-backward-compat">4. <code>TofuManaged</code> flag, opt-in, Proxmox backward compat<a class="headerlink" href="#4-tofumanaged-flag-opt-in-proxmox-backward-compat" title="Permanent link">&para;</a></h3>
+<p>Each non-Proxmox provider config struct gains a <code>TofuManaged bool</code> field (default <code>false</code>):</p>
+<div class="highlight"><pre><span></span><code>YAGE_AWS_TOFU_MANAGED=true
+YAGE_AZURE_TOFU_MANAGED=true
+...
+</code></pre></div>
+<p><code>EnsureIdentity</code> checks this flag as its first step. When <code>TofuManaged=false</code>, it returns
+<code>provider.ErrNotApplicable</code> immediately — the operator supplies credentials out-of-band via
+environment variables or a pre-existing kind Secret. This is purely additive: operators who
+already manage credentials externally experience no change.</p>
+<p><code>TofuManaged</code> is <strong>not</strong> added to Proxmox. Proxmox's <code>EnsureIdentity</code> remains always-on
+for backward compatibility — every Proxmox bootstrap has always minted credentials via
+OpenTofu. However, Proxmox's HCL is <strong>migrated</strong> from <code>internal/platform/opentofux/</code> to
+<code>yage-tofu/proxmox/main.tf</code> as part of Phase G, and <code>opentofux</code> is updated to use the
+shared <code>Runner</code> pointing at that module. This is a breaking change for operators running
+<code>opentofux</code> directly; a migration guide is required.</p>
 <h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
-<p><em>To be filled after decision is made.</em></p>
+<h3 id="positive">Positive<a class="headerlink" href="#positive" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><strong>No HCL in the yage binary.</strong> The binary stays clean; operators can audit and fork
+  <code>yage-tofu</code> independently without touching yage itself.</p>
+</li>
+<li>
+<p><strong>All providers share the same tofu invocation path.</strong> One <code>Runner</code> implementation
+  serves all eight providers (Proxmox + seven new ones). Only <code>ModuleDir</code>, auth env,
+  and <code>-var</code> set differ per provider.</p>
+</li>
+<li>
+<p><strong><code>yage-tofu</code> modules are versioned independently of yage releases.</strong> Operators can
+  pin <code>YAGE_TOFU_REF</code> to a specific tag for reproducibility, and the tofu modules can
+  be updated, audited, or forked without a yage release.</p>
+</li>
+<li>
+<p><strong>Operator escape hatch is always available.</strong> <code>TofuManaged=false</code> (the default for
+  all new providers) means the feature is purely opt-in and additive.</p>
+</li>
+<li>
+<p><strong>State survives kind cluster teardown.</strong> Per-provider state at
+  <code>~/.yage/tofu/&lt;provider&gt;/terraform.tfstate</code> is on the operator host, not in the kind
+  cluster. <code>Purge</code> runs <code>tofu destroy</code> before removing the state directory, preserving
+  correct cleanup ordering.</p>
+</li>
+</ul>
+<h3 id="negative-risks">Negative / Risks<a class="headerlink" href="#negative-risks" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><strong>Network dependency at bootstrap time.</strong> yage must clone/fetch <code>yage-tofu</code> before
+  any <code>EnsureIdentity</code> call can proceed. Mitigated by local cache at <code>~/.yage/tofu-cache/</code>;
+  subsequent runs only require a <code>git fetch</code>.</p>
+</li>
+<li>
+<p><strong>If <code>yage-tofu</code> is unavailable</strong> (GitHub outage, fork unreachable), identity bootstrap
+  fails. Mitigated by pre-seeding the cache or using a mirror. Operators with air-gapped
+  environments must mirror <code>lpasquali/yage-tofu</code> internally.</p>
+</li>
+<li>
+<p><strong>Proxmox migration is a breaking change.</strong> Existing Proxmox operators running
+  <code>opentofux</code> directly will need to migrate to <code>yage-tofu/proxmox/</code>. A migration guide
+  documenting the state directory path and <code>YAGE_TOFU_REF</code> pin is required alongside
+  the Phase G backend PR.</p>
+</li>
+<li>
+<p><strong><code>tofu</code> binary must be present on the operator host.</strong> Phase G providers inherit the
+  same requirement Proxmox already imposes. The orchestrator's dependency-install phase
+  must gate on <code>tofu</code> availability when any provider has <code>TofuManaged=true</code> (or for
+  Proxmox unconditionally).</p>
+</li>
+<li>
+<p><strong>Cloud IAM permissions required at bootstrap time.</strong> The operator must supply an
+  admin-level credential so OpenTofu can mint the restricted runtime credential. These
+  admin creds must not be persisted beyond the bootstrap phase — the pattern is: pass via
+  env, apply, outputs synced to kind Secret, env cleared.</p>
+</li>
+</ul>
+<h3 id="implementation-sequencing">Implementation sequencing<a class="headerlink" href="#implementation-sequencing" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Create <code>lpasquali/yage-tofu</code> repo with modules for all 7 providers and Proxmox.</li>
+<li>Backend: implement <code>Fetcher</code> in <code>opentofux</code> for <code>yage-tofu</code> clone/update; add
+   <code>YAGE_TOFU_REF</code> config field.</li>
+<li>Backend: extract <code>Runner</code> from <code>opentofux</code>; migrate Proxmox <code>ApplyIdentity</code> to use
+   <code>yage-tofu/proxmox/</code> via <code>Runner</code> (publish migration guide).</li>
+<li>Backend: wire remaining 7 providers' <code>EnsureIdentity</code> using <code>Runner</code> + their respective
+   module dirs and <code>TofuManaged</code> guard.</li>
+<li>Integration test: a CAPD-backed test that stubs <code>tofu</code> with a fake binary validates the
+   <code>Runner</code> + <code>Fetcher</code> contract end-to-end without requiring real cloud credentials.</li>
+</ol>
 <h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
 <ul>
 <li>abstraction-plan.md §21.2 — full design narrative</li>
-<li><code>internal/platform/opentofux/</code> — Proxmox reference implementation</li>
+<li><code>lpasquali/yage-tofu</code> — public repository of OpenTofu modules (Phase G target)</li>
+<li><code>internal/platform/opentofux/</code> — Proxmox reference implementation (to be refactored)</li>
 <li>Issue #80 — OpenStack <code>EnsureIdentity</code> clouds.yaml templating (sequenced before Phase G)</li>
 </ul>
 
