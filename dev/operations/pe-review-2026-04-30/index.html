@@ -1,0 +1,1386 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for yage — CAPI bootstrapper for Proxmox and 11 other providers">
+      
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>PE Review — 2026-04-30 - yage Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../overrides/main.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/tokens.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/print.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#pe-review-2026-04-30" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="yage Documentation" class="md-header__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            yage Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              PE Review — 2026-04-30
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="yage Documentation" class="md-nav__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    yage Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Context
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Context
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../context/AGENT_SYSTEM_PROMPT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent System Prompt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../context/CURRENT_STATE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Current State
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../context/CODING_STANDARDS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Coding Standards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agents
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Agents
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../context/agents/PO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Product Owner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../context/agents/ARCHITECT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architect
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../context/agents/PLATFORM_ENGINEER/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform Engineer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../context/agents/BACKEND/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go Backend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../context/agents/FRONTEND/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go Frontend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/ARCHITECTURE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/architectures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architectures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADRs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ADRs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/adrs/abstraction-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abstraction Plan (Phase C/E/B/A/D)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../capacity-preflight/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capacity Preflight
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cost-and-pricing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost and Pricing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/providers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Providers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#branch-1-featxapiri-config-provision-split-commits-b4b09df-761f900" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Branch 1: feat/xapiri-config-provision-split (commits b4b09df + 761f900)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Branch 1: feat/xapiri-config-provision-split (commits b4b09df + 761f900)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#check-1-statego-error-surfaced-when-primary-secret-not-found" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check 1 — state.go: error surfaced when primary Secret not found?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-2-rollout-annotation-delegation-task-description-named-this-purgego-purge-delegation-the-actual-change-is-in-workloadrolloutcapitouchrollout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check 2 — Rollout annotation delegation (task description named this "purge.go / Purge delegation" — the actual change is in WorkloadRolloutCAPITouchRollout)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-3-opsgo-inventory-returns-errnotapplicable-when-pool-limits-are-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check 3 — ops.go Inventory(): returns ErrNotApplicable when pool limits are -1?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-4-connectgo-tls-thumbprint-pinned-correctly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check 4 — connect.go: TLS thumbprint pinned correctly?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-5-vspherego-delegates-to-opsgo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check 5 — vsphere.go: delegates to ops.go?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#branch-2-worktree-agent-a529a47e1fc8d2cf7-commit-83941d5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Branch 2: worktree-agent-a529a47e1fc8d2cf7 (commit 83941d5)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Branch 2: worktree-agent-a529a47e1fc8d2cf7 (commit 83941d5)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#check-1-every-removed-syncproxmoxbootstrapliteralcredentialstokind-call-site-is-the-same-work-covered-by-the-generic-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check 1 — Every removed SyncProxmoxBootstrapLiteralCredentialsToKind call site: is the same work covered by the generic path?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-2-removed-cfginfraprovider-proxmox-guards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check 2 — Removed cfg.InfraProvider == "proxmox" guards?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-3-kindsyncgo-compilation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check 3 — kindsync.go compilation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#branch-3-worktree-agent-afd01feec4a66c948-commit-97b5288" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Branch 3: worktree-agent-afd01feec4a66c948 (commit 97b5288)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Branch 3: worktree-agent-afd01feec4a66c948 (commit 97b5288)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#check-1-env-key-fix-openstack_worker_flavor-openstack_node_machine_flavor-and-openstack_control_plane_flavor-openstack_control_plane_machine_flavor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check 1 — Env key fix: OPENSTACK_WORKER_FLAVOR → OPENSTACK_NODE_MACHINE_FLAVOR and OPENSTACK_CONTROL_PLANE_FLAVOR → OPENSTACK_CONTROL_PLANE_MACHINE_FLAVOR
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-2-inventory-returns-errnotapplicable-when-maxtotalcores-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check 2 — Inventory(): returns ErrNotApplicable when MaxTotalCores == -1?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-3-patchmanifest-yaml-document-matching-via-line-anchored-regex" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check 3 — PatchManifest(): YAML document matching via line-anchored regex?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-4-auth-via-os_-env-vars-projectid-from-tenant-env-not-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check 4 — Auth via OS_* env vars; projectID from tenant env, not token?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-5-smoke-test-testtemplatevarskeysmatchtemplate-guards-regression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check 5 — Smoke test: TestTemplateVarsKeysMatchTemplate guards regression?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#merge-order-recommendation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Merge order recommendation
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="pe-review-2026-04-30">PE Review — 2026-04-30<a class="headerlink" href="#pe-review-2026-04-30" title="Permanent link">&para;</a></h1>
+<p>Reviewer: Platform Engineer
+Scope: Three branches pending merge per ADR 0002 Secret-schema review gate.</p>
+<hr />
+<h2 id="branch-1-featxapiri-config-provision-split-commits-b4b09df-761f900">Branch 1: <code>feat/xapiri-config-provision-split</code> (commits b4b09df + 761f900)<a class="headerlink" href="#branch-1-featxapiri-config-provision-split-commits-b4b09df-761f900" title="Permanent link">&para;</a></h2>
+<p><strong>Verdict: LGTM</strong></p>
+<h3 id="check-1-statego-error-surfaced-when-primary-secret-not-found">Check 1 — <code>state.go</code>: error surfaced when primary Secret not found?<a class="headerlink" href="#check-1-statego-error-surfaced-when-primary-secret-not-found" title="Permanent link">&para;</a></h3>
+<p>The legacy fallback Secret entry <code>{Namespace: ns, Name: "proxmox-bootstrap-credentials", OnAbsorbed: markKindSecretUsed}</code> was removed from <code>BootstrapSecrets()</code>. The generic <code>MergeBootstrapSecretsFromKind</code> dispatcher behavior is unchanged — if a named Secret is absent it skips quietly, which is the existing contract. No error-swallowing was introduced; the removal simply stops the fallback read attempt. No issue.</p>
+<h3 id="check-2-rollout-annotation-delegation-task-description-named-this-purgego-purge-delegation-the-actual-change-is-in-workloadrolloutcapitouchrollout">Check 2 — Rollout annotation delegation (task description named this "purge.go / Purge delegation" — the actual change is in <code>WorkloadRolloutCAPITouchRollout</code>)<a class="headerlink" href="#check-2-rollout-annotation-delegation-task-description-named-this-purgego-purge-delegation-the-actual-change-is-in-workloadrolloutcapitouchrollout" title="Permanent link">&para;</a></h3>
+<p><code>purge.go</code> now calls <code>prov.RolloutMachineAnnotations(cfg, ctxName, ns, selector, now)</code> via the new <code>RolloutHooker</code> interface rather than constructing the <code>proxmoxmachines</code> GVR inline. All three companion files are consistent:</p>
+<ul>
+<li><code>internal/provider/provider.go</code>: <code>RolloutHooker</code> interface defined; composed into <code>Provider</code></li>
+<li><code>internal/provider/minstub.go</code>: returns <code>nil</code> (no-op)</li>
+<li><code>internal/provider/proxmox/state.go</code> (lines 141–173): implements; fetches ProxmoxMachines by label selector, patches <code>reconcile.cluster.x-k8s.io/request</code> annotation</li>
+</ul>
+<p>The delegation is correct and complete.</p>
+<h3 id="check-3-opsgo-inventory-returns-errnotapplicable-when-pool-limits-are-1">Check 3 — <code>ops.go</code> <code>Inventory()</code>: returns <code>ErrNotApplicable</code> when pool limits are <code>-1</code>?<a class="headerlink" href="#check-3-opsgo-inventory-returns-errnotapplicable-when-pool-limits-are-1" title="Permanent link">&para;</a></h3>
+<p>Yes. <code>Inventory</code> checks <code>cpuMax == -1 || memMax == -1</code> immediately after reading ResourcePool properties and returns <code>provider.ErrNotApplicable</code>. The unlimited-pool edge case is handled correctly.</p>
+<h3 id="check-4-connectgo-tls-thumbprint-pinned-correctly">Check 4 — <code>connect.go</code>: TLS thumbprint pinned correctly?<a class="headerlink" href="#check-4-connectgo-tls-thumbprint-pinned-correctly" title="Permanent link">&para;</a></h3>
+<p><code>vsphereConnect</code> sets <code>insecure := vs.TLSThumbprint == ""</code>. When the thumbprint is set it calls <code>soapClient.SetThumbprint(vs.Server, vs.TLSThumbprint)</code>. The config field is <code>cfg.Providers.Vsphere.TLSThumbprint</code> (<code>internal/config/config.go:223</code>, loaded from <code>VSPHERE_TLS_THUMBPRINT</code>). Correct.</p>
+<h3 id="check-5-vspherego-delegates-to-opsgo">Check 5 — <code>vsphere.go</code>: delegates to <code>ops.go</code>?<a class="headerlink" href="#check-5-vspherego-delegates-to-opsgo" title="Permanent link">&para;</a></h3>
+<p>The old <code>Inventory</code> and <code>EnsureGroup</code> stubs (both returned <code>ErrNotApplicable</code>) have been removed from <code>vsphere.go</code>. The implementations now live in <code>ops.go</code>. No residual stubs remain. LGTM.</p>
+<hr />
+<h2 id="branch-2-worktree-agent-a529a47e1fc8d2cf7-commit-83941d5">Branch 2: <code>worktree-agent-a529a47e1fc8d2cf7</code> (commit 83941d5)<a class="headerlink" href="#branch-2-worktree-agent-a529a47e1fc8d2cf7-commit-83941d5" title="Permanent link">&para;</a></h2>
+<p><strong>Verdict: LGTM — with one observation on scope</strong></p>
+<h3 id="check-1-every-removed-syncproxmoxbootstrapliteralcredentialstokind-call-site-is-the-same-work-covered-by-the-generic-path">Check 1 — Every removed <code>SyncProxmoxBootstrapLiteralCredentialsToKind</code> call site: is the same work covered by the generic path?<a class="headerlink" href="#check-1-every-removed-syncproxmoxbootstrapliteralcredentialstokind-call-site-is-the-same-work-covered-by-the-generic-path" title="Permanent link">&para;</a></h3>
+<p>Six call sites removed (five in <code>internal/orchestrator/bootstrap.go</code>, one in <code>internal/platform/opentofux/outputs.go</code>). In each case <code>SyncBootstrapConfigToKind</code> either already exists at the same call site or is called in the same execution path. <code>KindSyncFields()</code> on the Proxmox provider returns all credential fields (capi_token, capi_secret, csi_token_id, csi_token_secret, admin_token, admin_username, url, region, node, template_id, bridge, pool, etc.), so the round-trip to kind Secrets is fully covered by the generic path.</p>
+<p>The one credential class worth noting: <code>SyncProxmoxBootstrapLiteralCredentialsToKind</code> previously wrote a <code>capmox-system/capmox-manager-credentials</code> Secret. That write is now gone. This Secret is owned and managed by the CAPMOX controller itself; yage writing to it was belt-and-suspenders. Its removal is consistent with ADR 0002 (no-backward-compatibility). Not a blocker.</p>
+<h3 id="check-2-removed-cfginfraprovider-proxmox-guards">Check 2 — Removed <code>cfg.InfraProvider == "proxmox"</code> guards?<a class="headerlink" href="#check-2-removed-cfginfraprovider-proxmox-guards" title="Permanent link">&para;</a></h3>
+<p>Observation: the diff does NOT remove any <code>InfraProvider</code> guards. It adds <code>// TODO(ADR-0002-item-7)</code> comments marking them for a future pass. Item 7 is therefore not implemented in this commit — the branch title ("ADR 0002 items 1+7") is slightly misleading. This is not a blocking issue; the TODO comments are a valid staged approach and the guards are harmless. However the branch description in CURRENT_STATE.md should be updated to reflect that item 7 remains pending.</p>
+<h3 id="check-3-kindsyncgo-compilation">Check 3 — <code>kindsync.go</code> compilation<a class="headerlink" href="#check-3-kindsyncgo-compilation" title="Permanent link">&para;</a></h3>
+<p><code>SyncProxmoxBootstrapLiteralCredentialsToKind</code> is gone from <code>kindsync.go</code>; the helper functions <code>proxmoxEnvMap</code> and <code>boolStr</code> removed from <code>helpers.go</code>; <code>secret.go</code> gutted to package declaration. <code>SyncBootstrapConfigToKind</code> and the rollout-restart functions remain intact. No dangling references. Clean.</p>
+<hr />
+<h2 id="branch-3-worktree-agent-afd01feec4a66c948-commit-97b5288">Branch 3: <code>worktree-agent-afd01feec4a66c948</code> (commit 97b5288)<a class="headerlink" href="#branch-3-worktree-agent-afd01feec4a66c948-commit-97b5288" title="Permanent link">&para;</a></h2>
+<p><strong>Verdict: LGTM</strong></p>
+<h3 id="check-1-env-key-fix-openstack_worker_flavor-openstack_node_machine_flavor-and-openstack_control_plane_flavor-openstack_control_plane_machine_flavor">Check 1 — Env key fix: <code>OPENSTACK_WORKER_FLAVOR</code> → <code>OPENSTACK_NODE_MACHINE_FLAVOR</code> and <code>OPENSTACK_CONTROL_PLANE_FLAVOR</code> → <code>OPENSTACK_CONTROL_PLANE_MACHINE_FLAVOR</code><a class="headerlink" href="#check-1-env-key-fix-openstack_worker_flavor-openstack_node_machine_flavor-and-openstack_control_plane_flavor-openstack_control_plane_machine_flavor" title="Permanent link">&para;</a></h3>
+<p><code>state.go</code> <code>TemplateVars</code> now maps:
+- <code>"OPENSTACK_CONTROL_PLANE_MACHINE_FLAVOR"</code> → <code>cfg.Providers.OpenStack.ControlPlaneFlavor</code>
+- <code>"OPENSTACK_NODE_MACHINE_FLAVOR"</code> → <code>cfg.Providers.OpenStack.WorkerFlavor</code></p>
+<p>The K3s template in <code>openstack.go</code> uses <code>${OPENSTACK_NODE_MACHINE_FLAVOR}</code> and <code>${OPENSTACK_CONTROL_PLANE_MACHINE_FLAVOR}</code>. Keys and template placeholders match.</p>
+<h3 id="check-2-inventory-returns-errnotapplicable-when-maxtotalcores-1">Check 2 — <code>Inventory()</code>: returns <code>ErrNotApplicable</code> when <code>MaxTotalCores == -1</code>?<a class="headerlink" href="#check-2-inventory-returns-errnotapplicable-when-maxtotalcores-1" title="Permanent link">&para;</a></h3>
+<p>Yes. <code>Inventory</code> checks <code>limits.MaxTotalCores == -1</code> and returns <code>provider.ErrNotApplicable</code>. Correct.</p>
+<h3 id="check-3-patchmanifest-yaml-document-matching-via-line-anchored-regex">Check 3 — <code>PatchManifest()</code>: YAML document matching via line-anchored regex?<a class="headerlink" href="#check-3-patchmanifest-yaml-document-matching-via-line-anchored-regex" title="Permanent link">&para;</a></h3>
+<p><code>patchFlavorInManifest</code> uses:</p>
+<div class="highlight"><pre><span></span><code><span class="nx">kindRE</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">regexp</span><span class="p">.</span><span class="nx">MustCompile</span><span class="p">(</span><span class="s">`(?m)^kind:\s*OpenStackMachineTemplate\s*$`</span><span class="p">)</span>
+</code></pre></div>
+<p>Line-anchored with <code>(?m)</code> and <code>^</code>/<code>$</code>. The secondary discriminator <code>strings.Contains(docName, "md-")</code> operates on an already-extracted <code>metadata.name</code> value — not on raw YAML structure. This is acceptable. LGTM.</p>
+<h3 id="check-4-auth-via-os_-env-vars-projectid-from-tenant-env-not-token">Check 4 — Auth via <code>OS_*</code> env vars; <code>projectID</code> from tenant env, not token?<a class="headerlink" href="#check-4-auth-via-os_-env-vars-projectid-from-tenant-env-not-token" title="Permanent link">&para;</a></h3>
+<p><code>openstackClients()</code> calls <code>openstack.AuthOptionsFromEnv()</code> (reads <code>OS_*</code> vars). <code>projectID</code> is derived: <code>ao.TenantID</code> → <code>os.Getenv("OS_PROJECT_ID")</code> → <code>os.Getenv("OS_TENANT_ID")</code>. Not from <code>provider.TokenID</code>. Correct.</p>
+<h3 id="check-5-smoke-test-testtemplatevarskeysmatchtemplate-guards-regression">Check 5 — Smoke test: <code>TestTemplateVarsKeysMatchTemplate</code> guards regression?<a class="headerlink" href="#check-5-smoke-test-testtemplatevarskeysmatchtemplate-guards-regression" title="Permanent link">&para;</a></h3>
+<p>The test in <code>openstack_smoke_test.go</code>:
+- Asserts new keys present in <code>TemplateVars</code> output
+- Asserts old (wrong) keys absent
+- Asserts values match expected config fields
+- Cross-checks K3s template string contains both <code>${OPENSTACK_CONTROL_PLANE_MACHINE_FLAVOR}</code> and <code>${OPENSTACK_NODE_MACHINE_FLAVOR}</code></p>
+<p>A regression to the old key names would fail the test. Coverage is adequate.</p>
+<hr />
+<h2 id="merge-order-recommendation">Merge order recommendation<a class="headerlink" href="#merge-order-recommendation" title="Permanent link">&para;</a></h2>
+<p>No hard ordering constraint between the three branches. All three are independent.</p>
+<p>Suggested order for minimal noise:
+1. <strong>Branch 2</strong> (<code>worktree-agent-a529a47e1fc8d2cf7</code>) — cleanup only, no new dependencies
+2. <strong>Branch 3</strong> (<code>worktree-agent-afd01feec4a66c948</code>) — OpenStack #66, new gophercloud dep
+3. <strong>Branch 1</strong> (<code>feat/xapiri-config-provision-split</code>) — vSphere #67 + proxmox cleanup, new govmomi dep; already 2 commits ahead of main and awaiting fast-forward</p>
+<p>All three require rebase onto <code>02b1948</code> before merge. See CURRENT_STATE.md active work table.</p>
+<p><strong>Follow-up action</strong>: Update CURRENT_STATE.md to reflect that ADR 0002 item 7 (<code>InfraProvider</code> guard removal) was NOT completed in branch 2 — only TODO comments were added. Item 7 remains open.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

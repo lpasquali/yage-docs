@@ -1,0 +1,1454 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for yage — CAPI bootstrapper for Proxmox and 11 other providers">
+      
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>ADR 0006 — Capacity Preflight Architecture - yage Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../overrides/main.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/tokens.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/print.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#adr-0006-capacity-preflight-architecture" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="yage Documentation" class="md-header__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            yage Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ADR 0006 — Capacity Preflight Architecture
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="yage Documentation" class="md-nav__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    yage Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Context
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Context
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/AGENT_SYSTEM_PROMPT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent System Prompt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/CURRENT_STATE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Current State
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/CODING_STANDARDS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Coding Standards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agents
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Agents
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/PO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Product Owner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/ARCHITECT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architect
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/PLATFORM_ENGINEER/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform Engineer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/BACKEND/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go Backend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/FRONTEND/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go Frontend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ARCHITECTURE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architectures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architectures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADRs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ADRs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../abstraction-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abstraction Plan (Phase C/E/B/A/D)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/capacity-preflight/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capacity Preflight
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/cost-and-pricing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost and Pricing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/providers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Providers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decision
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Decision">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-verdict-thresholds-and-their-rationale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Verdict thresholds and their rationale
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-overcommit-contract-two-separate-dials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Overcommit contract: two separate dials
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-errnotapplicable-silent-skip-vs-annotated-skip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. ErrNotApplicable: silent skip vs. annotated skip
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-cloud-quota-apis-current-scope-and-follow-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Cloud quota APIs: current scope and follow-up
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-plan-integration-plancapacity-planallocations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. --plan integration: planCapacity + planAllocations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consequences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consequences
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="adr-0006-capacity-preflight-architecture">ADR 0006 — Capacity Preflight Architecture<a class="headerlink" href="#adr-0006-capacity-preflight-architecture" title="Permanent link">&para;</a></h1>
+<p><strong>Status:</strong> Accepted
+<strong>Date:</strong> 2026-04-30
+<strong>Owners:</strong> Backend (implementation), Architect (interface contract)</p>
+<hr />
+<h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
+<p>Capacity preflight is the pre-deploy gate that checks whether the target
+infrastructure has enough CPU, memory, and storage for the planned cluster
+before committing any API calls.</p>
+<p>Phase A of the provider abstraction plan merged the older split between
+<code>capacity.FetchHostCapacity</code> + <code>capacity.FetchExistingUsage</code> into a single
+<code>Provider.Inventory()</code> call. <code>Inventory</code> returns a <code>provider.Inventory</code> struct
+with <code>Total</code>, <code>Used</code>, <code>Available</code>, and <code>Hosts</code> fields. Flat-pool providers
+(Proxmox, OpenStack per-project) implement it; cloud providers (AWS, Azure,
+GCP, Hetzner) return <code>provider.ErrNotApplicable</code> per §13.4 #1 because their
+per-family quota models do not compose with flat <code>Total − Used</code> subtraction.
+vSphere (govmomi, PRs #67) and OpenStack (Nova + Cinder, PR #66) implementations
+have already landed on <code>main</code>.</p>
+<p>The verdict logic lives in <code>internal/cluster/capacity/</code> and produces one of
+three outcomes: <code>VerdictFits</code>, <code>VerdictTight</code>, or <code>VerdictAbort</code>. The
+<code>CheckCombined</code> function evaluates (existing + planned) demand against two
+thresholds: a soft budget fraction and a hard overcommit ceiling. Two operator
+dials — <code>AllowOvercommit</code> and <code>OvercommitTolerancePct</code> — are surfaced via
+<code>cfg.Capacity</code> and the xapiri TUI.</p>
+<p>Before this ADR no document captured:</p>
+<ul>
+<li>The threshold values and their rationale.</li>
+<li>The exact semantics of <code>VerdictTight</code> vs <code>VerdictAbort</code> and how the two
+  overcommit dials interact with them.</li>
+<li>What the orchestrator does when <code>Inventory</code> returns <code>ErrNotApplicable</code>.</li>
+<li>The CPU-vs-memory asymmetry in the hard abort ceiling.</li>
+<li>How the <code>--plan</code> (<code>--dry-run</code>) output integrates with capacity checking.</li>
+<li>The allocation planning model (<code>AllocationsFor</code> / <code>WorkloadAllocations</code>).</li>
+</ul>
+<hr />
+<h2 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">&para;</a></h2>
+<h3 id="1-verdict-thresholds-and-their-rationale">1. Verdict thresholds and their rationale<a class="headerlink" href="#1-verdict-thresholds-and-their-rationale" title="Permanent link">&para;</a></h3>
+<p>The verdict algorithm is implemented in <code>CheckCombined</code>
+(<code>internal/cluster/capacity/capacity.go</code>).</p>
+<p><strong>Soft budget</strong> — <code>DefaultThreshold = 2.0/3.0</code> (66%):
+<code>(existing + planned)</code> must not exceed 66% of total host CPU, memory, or
+storage. The remaining ~33% is reserved for the host OS, the Proxmox
+hypervisor, rollout slack, and workload headroom that grows after initial
+bootstrap. This value is stable and should not be changed except via the
+operator-tunable <code>cfg.Capacity.ResourceBudgetFraction</code> field.</p>
+<p><strong>Hard overcommit ceiling</strong> — <code>DefaultOvercommitTolerancePct = 15.0</code>:
+<code>(existing + planned)</code> may not exceed <code>host × 1.15</code> on the memory or disk
+dimension. Beyond that the orchestrator refuses to continue. 15% captures the
+Proxmox ballooning + swap headroom that is safe under normal load while
+preventing OOM conditions under spike.</p>
+<p><strong>CPU asymmetry</strong>: the hard ceiling applies only to <code>max(memFrac, diskFrac)</code>,
+not to <code>cpuFrac</code>. CPU overcommit is normal on Proxmox — VMs share physical
+cores and rarely all run at 100% simultaneously. Memory is the dangerous
+dimension: overcommit beyond physical RAM causes OOM-kills under load.
+This asymmetry is intentional and must not be removed.</p>
+<p><strong>Verdict rules</strong> (in order):</p>
+<table>
+<thead>
+<tr>
+<th>Condition</th>
+<th>Verdict</th>
+<th>Orchestrator action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>max(cpuFrac, memFrac, diskFrac) ≤ threshold</code></td>
+<td><code>VerdictFits</code></td>
+<td>Silent proceed</td>
+</tr>
+<tr>
+<td><code>max(memFrac, diskFrac) ≤ 1 + tolerancePct/100</code></td>
+<td><code>VerdictTight</code></td>
+<td>Warn + proceed</td>
+</tr>
+<tr>
+<td>otherwise</td>
+<td><code>VerdictAbort</code></td>
+<td>Error (unless <code>AllowOvercommit=true</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Small-environment detection</strong> (<code>SmallEnvCPUCores = 8</code>, <code>SmallEnvMemoryGiB = 16</code>):
+when host totals fall below these thresholds the orchestrator emits a
+suggestion to use <code>--bootstrap-mode k3s</code>. This is advisory only — no verdict
+changes.</p>
+<p><strong>K3s sizing constants</strong> (<code>K3sCPCores=2</code>, <code>K3sCPMemMiB=1024</code>, <code>K3sCPDiskGB=20</code>,
+<code>K3sWorkerMem=1024</code>, <code>K3sWorkerDisk=15</code>): these define the per-node footprint
+that <code>PlanForK3s</code> / <code>WouldFitAsK3s</code> use to check whether the same machine
+counts would fit if the operator switched to <code>--bootstrap-mode k3s</code>.</p>
+<h3 id="2-overcommit-contract-two-separate-dials">2. Overcommit contract: two separate dials<a class="headerlink" href="#2-overcommit-contract-two-separate-dials" title="Permanent link">&para;</a></h3>
+<p>There are two orthogonal operator controls. Conflating them is wrong.</p>
+<p><strong><code>cfg.Capacity.AllowOvercommit</code> (<code>ALLOW_RESOURCE_OVERCOMMIT=true</code>)</strong>:
+does NOT change the <code>Verdict</code> computed by <code>CheckCombined</code>. It changes what
+the orchestrator does <em>after</em> receiving <code>VerdictAbort</code>: instead of returning
+an error it logs a warning and proceeds. <code>VerdictTight</code> is unaffected —
+it already proceeds with a warning regardless of this flag.</p>
+<p>Use <code>AllowOvercommit</code> when the operator consciously accepts the risk and wants
+to proceed on a host that is beyond the hard ceiling. It is an escape hatch,
+not the normal mode of operation.</p>
+<p><strong><code>cfg.Capacity.OvercommitTolerancePct</code> (<code>OVERCOMMIT_TOLERANCE_PCT</code>)</strong>:
+changes the Tight→Abort boundary itself. Raising this value (e.g. from 15 to
+30) widens the <code>VerdictTight</code> band so that higher memory fractions still
+produce a warning-proceed rather than an abort. This is the right dial to use
+when the operator has validated that a higher overcommit ratio is safe for
+their hardware.</p>
+<p>The two dials are not equivalent: <code>OvercommitTolerancePct</code> changes the
+arithmetic; <code>AllowOvercommit</code> overrides the outcome. The xapiri TUI surfaces
+both controls; the <code>--plan</code> output describes the active values.</p>
+<h3 id="3-errnotapplicable-silent-skip-vs-annotated-skip">3. ErrNotApplicable: silent skip vs. annotated skip<a class="headerlink" href="#3-errnotapplicable-silent-skip-vs-annotated-skip" title="Permanent link">&para;</a></h3>
+<p><strong>In <code>preflightCapacity</code> (real run, <code>bootstrap.go</code>)</strong>: when
+<code>prov.Inventory(cfg)</code> returns <code>provider.ErrNotApplicable</code>, the preflight is
+skipped silently — no log line, no warning. Operators targeting AWS, Azure,
+GCP, or Hetzner see no capacity output. This is correct: their quota models
+(per-family service quotas, IAM-account limits) do not express as flat
+<code>Total − Used</code>. Attempting to check them here would produce misleading numbers.</p>
+<p>A non-<code>ErrNotApplicable</code> error (network failure, credential error) is degraded
+to a <code>logx.Warn</code> + nil return — the run continues. Capacity acquisition must
+never be a hard blocker when the underlying API is temporarily unreachable.</p>
+<p><strong>In <code>planCapacity</code> (<code>--plan</code> / <code>--dry-run</code>, <code>plan.go</code>)</strong>: when
+<code>prov.Inventory(cfg)</code> returns <code>ErrNotApplicable</code>, the section prints a <code>skip</code>
+line: <code>"provider %q has no flat-pool inventory model — preflight skipped
+(§13.4 #1)"</code>. This makes the absence explicit to the operator reviewing a
+dry-run rather than silently omitting the section. The planned-resource
+breakdown (roles × replicas × sizing) is always printed regardless of whether
+live inventory data is available.</p>
+<p><strong>Verdict display in <code>planCapacity</code></strong>: <code>✅ fits</code>, <code>⚠️ tight</code>, or <code>❌ abort</code> with
+the numeric breakdown. For <code>VerdictAbort</code> the plan output also shows the k3s
+alternative sizing if <code>WouldFitAsK3s</code> returns true.</p>
+<h3 id="4-cloud-quota-apis-current-scope-and-follow-up">4. Cloud quota APIs: current scope and follow-up<a class="headerlink" href="#4-cloud-quota-apis-current-scope-and-follow-up" title="Permanent link">&para;</a></h3>
+<p>The following providers currently return <code>ErrNotApplicable</code> from <code>Inventory</code>:
+AWS, Azure, GCP, Hetzner. The reason (§13.4 #1) is that their quota models do
+not compose with flat subtraction — AWS has per-instance-family service quotas,
+GCP has per-region per-resource quota, Azure has per-subscription per-SKU
+limits. None of these map to a single <code>Cores / MemoryMiB / StorageGiB</code> triple
+without lossy aggregation that would mislead the operator.</p>
+<p>Two providers have full <code>Inventory</code> implementations:
+- <strong>Proxmox</strong> (<code>internal/provider/proxmox/inventory.go</code>): node query +
+  storage query + VM list (running-only for CPU/RAM, all VMs for disk).
+  Reference flat-pool implementation.
+- <strong>vSphere</strong> (<code>internal/provider/vsphere/inventory.go</code>, PR #67): govmomi
+  host aggregation; ESXi hosts listed in <code>Inventory.Hosts</code>.
+- <strong>OpenStack</strong> (<code>internal/provider/openstack/inventory.go</code>, PR #66):
+  Nova + Cinder project quota; per-project flat totals.</p>
+<p>The decision on wiring vendor quota APIs (AWS <code>service-quotas</code>, GCP
+<code>cloudquotas</code>, Azure <code>Microsoft.Quota</code>) behind <code>Inventory</code> for those three
+providers is <strong>deferred</strong>. These APIs expose different shapes (count-based
+limits, per-family caps, per-region per-SKU limits) and would require a
+separate <code>QuotaInventory</code> response shape or a Notes-only advisory mode that
+does not feed into <code>CheckCombined</code>. The current ADR records that:</p>
+<ul>
+<li><code>ErrNotApplicable</code> is the correct return for AWS/GCP/Azure/Hetzner today.</li>
+<li>Any future cloud quota implementation must not feed fabricated flat-pool
+  numbers into <code>CheckCombined</code> — it may contribute advisory <code>Notes</code> entries.</li>
+<li>A follow-up issue should define the contract before implementation starts.</li>
+</ul>
+<h3 id="5-plan-integration-plancapacity-planallocations">5. <code>--plan</code> integration: planCapacity + planAllocations<a class="headerlink" href="#5-plan-integration-plancapacity-planallocations" title="Permanent link">&para;</a></h3>
+<p>Both <code>planCapacity</code> and <code>planAllocations</code> are called unconditionally from
+<code>PrintPlanTo</code> in <code>plan.go</code>. They run after all provider-specific phases
+(<code>describeIdentity</code>, <code>describeWorkload</code>, <code>describePivot</code>).</p>
+<p><strong><code>planCapacity</code></strong> always prints the planned-resource breakdown (roles × replicas
+× sizing from config). It then attempts a live <code>Inventory</code> call. If that
+fails or returns <code>ErrNotApplicable</code>, the verdict section is replaced by a
+<code>skip</code> annotation. If live data is available, the full two-threshold verdict is
+printed with numeric details.</p>
+<p><strong><code>planAllocations</code></strong> computes <code>capacity.AllocationsFor(cfg)</code> which divides
+worker-node capacity into four buckets: <code>SystemApps</code> (fixed reserve,
+default 2000 mCPU / 4096 MiB for yage's own add-ons), and three equal
+thirds of the remainder for <code>Database</code>, <code>Observability</code>, and <code>Product</code>.
+These are planning numbers only — no <code>ResourceQuota</code> objects are created.
+The operator can override the system reserve via
+<code>cfg.Capacity.SystemAppsCPUMillicores</code> / <code>cfg.Capacity.SystemAppsMemoryMiB</code>.
+An over-reserve (system bucket alone exceeds total worker capacity) is surfaced
+as a warning in the plan output; <code>WorkloadAllocations.IsOverReserved()</code> drives
+that check.</p>
+<p>The <code>xapiri</code> TUI does not currently have a dedicated capacity widget that
+calls <code>CheckCombined</code> live. The Provision tab surfaces sizing fields; capacity
+feedback is available only via <code>--plan</code>. This is a known gap, not a bug.</p>
+<hr />
+<h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
+<ul>
+<li>
+<p>Operators on AWS, GCP, Azure, or Hetzner see no capacity section in the real
+  run and a "preflight skipped (§13.4 #1)" note in <code>--plan</code>. This is correct
+  and expected. Operators who want quota visibility should use the vendor's own
+  CLI/console tools until a cloud quota advisory mode is implemented.</p>
+</li>
+<li>
+<p>The CPU-asymmetry in the abort ceiling means a plan that overcommits CPU
+  (e.g. 120% of physical cores) will produce <code>VerdictTight</code> or <code>VerdictFits</code>,
+  not <code>VerdictAbort</code>. This is intentional for Proxmox workloads where CPU
+  sharing is normal. Operators who want strict CPU enforcement can lower
+  <code>ResourceBudgetFraction</code> to force CPU into the soft-budget check.</p>
+</li>
+<li>
+<p><code>AllowOvercommit=true</code> does not suppress <code>VerdictTight</code> warnings — it only
+  converts <code>VerdictAbort</code> errors into warnings. Operators who set it expect
+  a warning-proceed, not a silent proceed. Documentation and TUI labels must
+  reflect this.</p>
+</li>
+<li>
+<p>The three-bucket allocation model (database / observability / product) is
+  purely advisory. It produces no Kubernetes objects. The intent is to give
+  operators a sanity-check before they commit sizing — not to enforce namespace
+  quotas at admission time.</p>
+</li>
+<li>
+<p>A future cloud quota advisory implementation must route through <code>Inventory.Notes</code>
+  and must not feed the numbers into <code>CheckCombined</code>. Violating this constraint
+  would produce misleading capacity verdicts for cloud providers.</p>
+</li>
+</ul>
+<hr />
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>internal/cluster/capacity/capacity.go</code> — <code>DefaultThreshold</code>,
+  <code>DefaultOvercommitTolerancePct</code>, <code>CheckCombined</code>, <code>Check</code>, <code>PlanFor</code>,
+  <code>PlanForK3s</code>, <code>WouldFitAsK3s</code>, <code>Verdict</code>, <code>SmallEnvCPUCores</code>,
+  <code>SmallEnvMemoryGiB</code>, <code>K3s*</code> constants</li>
+<li><code>internal/cluster/capacity/allocations.go</code> — <code>AllocationsFor</code>,
+  <code>WorkloadAllocations</code>, <code>IsOverReserved</code></li>
+<li><code>internal/provider/provider.go</code> — <code>Provider.Inventory</code>, <code>ErrNotApplicable</code></li>
+<li><code>internal/provider/inventory.go</code> — <code>Inventory</code>, <code>ResourceTotals</code></li>
+<li><code>internal/provider/proxmox/inventory.go</code> — reference flat-pool implementation</li>
+<li><code>internal/provider/vsphere/inventory.go</code> — govmomi flat-pool implementation</li>
+<li><code>internal/provider/openstack/inventory.go</code> — Nova+Cinder flat-pool implementation</li>
+<li><code>internal/orchestrator/bootstrap.go</code> — <code>preflightCapacity</code>,
+  <code>hostCapacityFromInventory</code>, <code>existingUsageFromInventory</code></li>
+<li><code>internal/orchestrator/plan.go</code> — <code>planCapacity</code>, <code>planAllocations</code>,
+  <code>PrintPlanTo</code></li>
+<li>abstraction-plan.md §A (Phase A narrative)</li>
+<li>abstraction-plan.md §13.4 #1 — why cloud providers return ErrNotApplicable</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.expand", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

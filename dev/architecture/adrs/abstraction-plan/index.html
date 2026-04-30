@@ -6169,6 +6169,170 @@ planning rather than the current state.</p>
 <li>Documentation refresh of <code>ARCHITECTURE.md</code> / <code>providers.md</code> to
   match the post-Wave-3 shape.</li>
 </ul>
+<hr />
+<h2 id="25-status-correction-2026-04-30">25. Status correction — 2026-04-30<a class="headerlink" href="#25-status-correction-2026-04-30" title="Permanent link">&para;</a></h2>
+<h3 id="251-phase-status-ground-truth">25.1 Phase status (ground truth)<a class="headerlink" href="#251-phase-status-ground-truth" title="Permanent link">&para;</a></h3>
+<p>§24.1 correctly records phases A–E as landed at the interface and
+call-site level. This addendum corrects CURRENT_STATE.md, which
+incorrectly shows A/B/D/E as "Not started" (CURRENT_STATE was not
+updated when the implementations landed). Accurate status:</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Interface + call sites</th>
+<th>Implementation</th>
+<th>Remaining</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C</td>
+<td>—</td>
+<td><strong>Complete</strong> (merged, confirmed)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>A</td>
+<td><code>prov.Inventory(cfg)</code> called in <code>bootstrap.go:1071</code>, <code>plan.go:279</code>; Proxmox implements</td>
+<td><strong>Complete</strong></td>
+<td>Some <code>if cfg.InfraProvider == "proxmox"</code> outer guards wrap the call sites — remove (see §25.3)</td>
+</tr>
+<tr>
+<td>B</td>
+<td><code>DescribeIdentity</code>/<code>DescribeWorkload</code>/<code>DescribePivot</code> in interface; <code>proxmox/plan.go</code> implements; <code>plan.go</code> calls them</td>
+<td><strong>Complete</strong></td>
+<td>—</td>
+</tr>
+<tr>
+<td>D</td>
+<td><code>prov.KindSyncFields(cfg)</code> called in <code>kindsync/bootstrap_config.go:215</code>; <code>prov.Purge(cfg)</code> called in <code>purge.go:306</code>; <code>YageSystemNamespace = "yage-system"</code> in use</td>
+<td><strong>Substantially complete</strong></td>
+<td><code>SyncProxmoxBootstrapLiteralCredentialsToKind</code> (7 call sites in bootstrap.go + opentofux) not yet replaced; pre-split Secret fallback in <code>proxmox/state.go:326</code>; <code>proxmoxmachines</code> GVR hardcode in <code>purge.go:347</code> — remove (see §25.3)</td>
+</tr>
+<tr>
+<td>E</td>
+<td><code>prov.PivotTarget(cfg)</code> called in <code>pivot.go:168</code></td>
+<td><strong>Complete</strong></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="252-no-backward-compatibility-policy">25.2 No-backward-compatibility policy<a class="headerlink" href="#252-no-backward-compatibility-policy" title="Permanent link">&para;</a></h3>
+<p><strong>Decision (2026-04-30):</strong> yage has no production users. Backward
+compatibility code is dead weight. This decision supersedes the
+dual-read/dual-write migration plan in §R.3 (Phase D) and
+<code>§3/Phase D step 1</code>. That plan is <strong>withdrawn</strong>:</p>
+<ul>
+<li>~~v1: read old AND new namespace; write to both~~</li>
+<li>~~v2: write only new; still read old~~</li>
+<li>~~v3: drop old read~~</li>
+</ul>
+<p><strong>Replace with:</strong> single cut. Write only <code>yage-system</code>. Read only
+<code>yage-system</code>. Delete every legacy fallback on first touch.</p>
+<p>Same applies to all env-var aliases, Secret-name fallbacks, and
+JSON-format fallbacks documented below. No deprecation cycle. Delete.</p>
+<h3 id="253-cleanup-handoff-backend">25.3 Cleanup handoff — Backend<a class="headerlink" href="#253-cleanup-handoff-backend" title="Permanent link">&para;</a></h3>
+<p>The following items are dead code given the no-compat policy.
+Assign to Backend programmer; each item is an isolated deletion, no
+design decision required.</p>
+<p><strong>Priority: complete before any new feature work on the affected files.</strong></p>
+<h4 id="kindsync">kindsync<a class="headerlink" href="#kindsync" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>File</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SyncProxmoxBootstrapLiteralCredentialsToKind</code></td>
+<td><code>internal/cluster/kindsync/kindsync.go:56</code></td>
+<td>Delete function. The generic <code>WriteBootstrapConfigSecret</code> + <code>KindSyncFields</code> path covers all providers.</td>
+</tr>
+<tr>
+<td>7 call sites</td>
+<td><code>internal/orchestrator/bootstrap.go:105,200,339,426,465,491,682</code>; <code>internal/platform/opentofux/outputs.go:43,64</code></td>
+<td>Delete each call. The orchestrator already calls <code>WriteBootstrapConfigSecret</code>; verify no gap before deleting.</td>
+</tr>
+<tr>
+<td><code>admin / legacy-combined Secrets</code> comment</td>
+<td><code>internal/cluster/kindsync/config.go:61</code></td>
+<td>Remove comment; delete any code it describes if still present.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="proxmox-provider">proxmox provider<a class="headerlink" href="#proxmox-provider" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>File</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pre-split Secret name fallback</td>
+<td><code>internal/provider/proxmox/state.go:326</code></td>
+<td>Delete the fallback branch. Read only the current Secret name.</td>
+</tr>
+<tr>
+<td><code>proxmoxmachines</code> GVR hardcode</td>
+<td><code>internal/orchestrator/purge.go:347</code></td>
+<td>Move to <code>proxmox</code> provider's <code>Purge()</code> implementation or parameterise via <code>Provider.Purge</code>. This is the last Proxmox-specific item in a non-provider file.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="config-env-aliases">config / env aliases<a class="headerlink" href="#config-env-aliases" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>File</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OS_PROJECT_NAME</code> / <code>OS_REGION_NAME</code> legacy fallbacks</td>
+<td><code>internal/config/config.go:1303–1308</code></td>
+<td>Delete. <code>OPENSTACK_*</code> is the canonical name.</td>
+</tr>
+<tr>
+<td><code>YAGE_CURRENCY</code> legacy alias</td>
+<td><code>internal/pricing/taller.go:144</code></td>
+<td>Delete. <code>YAGE_TALLER_CURRENCY</code> is canonical.</td>
+</tr>
+<tr>
+<td>Legacy JSON format in snapshot</td>
+<td><code>internal/config/snapshot.go:310–315</code></td>
+<td>Delete legacy struct + unmarshal branch.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="orchestrator-guards">orchestrator guards<a class="headerlink" href="#orchestrator-guards" title="Permanent link">&para;</a></h4>
+<p>The 19 <code>if cfg.InfraProvider == "proxmox"</code> checks in
+<code>internal/orchestrator/bootstrap.go</code> represent the last surface-level
+Proxmox binding in the orchestrator. Most wrap calls that are already
+abstracted through the provider interface. Backend should:</p>
+<ol>
+<li>Audit each check: if the body only calls a <code>Provider</code> method
+   (e.g. <code>prov.Inventory</code>, <code>prov.EnsureIdentity</code>, <code>prov.EnsureScope</code>),
+   <strong>remove the guard</strong> — <code>ErrNotApplicable</code> from <code>MinStub</code> is the
+   correct skip signal.</li>
+<li>For guards that wrap genuinely Proxmox-specific logic with no
+   provider method yet (e.g. BPG provider install at line 368), leave
+   in place and open a follow-up issue for the Provider method.</li>
+<li>Do not refactor non-guarded code in the same PR.</li>
+</ol>
+<h3 id="254-background-agents-242-status-unknown-as-of-2026-04-30">25.4 Background agents (§24.2) — status unknown as of 2026-04-30<a class="headerlink" href="#254-background-agents-242-status-unknown-as-of-2026-04-30" title="Permanent link">&para;</a></h3>
+<p>Agents A/B/D1/D4 were in-flight as of §24's last update (2026-04-26).
+Their worktrees have not appeared in <code>main</code> as of this writing. PO
+should check worktree status and integrate or re-dispatch before
+starting cleanup work on overlapping files.</p>
 
 
 

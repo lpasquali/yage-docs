@@ -1,0 +1,1427 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for yage — CAPI bootstrapper for Proxmox and 11 other providers">
+      
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>ADR 0005 — Pricing / Cost Subsystem Architecture - yage Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../overrides/main.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/tokens.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/print.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#adr-0005-pricing-cost-subsystem-architecture" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="yage Documentation" class="md-header__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            yage Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ADR 0005 — Pricing / Cost Subsystem Architecture
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="yage Documentation" class="md-nav__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    yage Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Context
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Context
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/AGENT_SYSTEM_PROMPT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent System Prompt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/CURRENT_STATE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Current State
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/CODING_STANDARDS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Coding Standards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agents
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Agents
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/PO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Product Owner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/ARCHITECT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architect
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/PLATFORM_ENGINEER/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform Engineer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/BACKEND/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go Backend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/FRONTEND/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go Frontend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ARCHITECTURE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architectures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architectures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADRs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ADRs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../abstraction-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abstraction Plan (Phase C/E/B/A/D)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/capacity-preflight/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capacity Preflight
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/cost-and-pricing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost and Pricing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/providers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Providers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decision
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Decision">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-caching-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Caching strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-error-contract-errnotapplicable-vs-errunavailable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Error contract: ErrNotApplicable vs ErrUnavailable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-package-split-internalcost-vs-internalpricing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Package split: internal/cost/ vs internal/pricing/
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-onboardinggo-and-credentialsgo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. onboarding.go and credentials.go
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-currency-region-flow-tallergo-georegiongo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Currency / region flow: taller.go + georegion.go
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consequences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consequences
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="adr-0005-pricing-cost-subsystem-architecture">ADR 0005 — Pricing / Cost Subsystem Architecture<a class="headerlink" href="#adr-0005-pricing-cost-subsystem-architecture" title="Permanent link">&para;</a></h1>
+<p><strong>Status:</strong> Accepted
+<strong>Date:</strong> 2026-04-30
+<strong>Owners:</strong> Backend (implementation), Architect (interface contract)</p>
+<hr />
+<h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
+<p>Two packages handle cloud cost estimation:</p>
+<ul>
+<li><code>internal/pricing/</code> — live FinOps pricing fetchers, one file per vendor
+  (<code>aws.go</code>, <code>azure.go</code>, <code>gcp.go</code>, <code>hetzner.go</code>, <code>digitalocean.go</code>, <code>linode.go</code>,
+  <code>oci.go</code>, <code>ibmcloud.go</code>). Also handles currency conversion (<code>taller.go</code>),
+  geo-region mapping (<code>georegion.go</code>), and per-service Postgres add-on pricing
+  (<code>aws_postgres.go</code>, <code>azure_postgres.go</code>, <code>gcp_postgres.go</code>, <code>oci_postgres.go</code>,
+  <code>ibmcloud_postgres.go</code>).</li>
+<li><code>internal/cost/</code> — multi-cloud cost comparator (<code>compare.go</code>), managed-add-on
+  costs (<code>managed.go</code>, <code>addons.go</code>, <code>postgres.go</code>).</li>
+</ul>
+<p><code>Provider.EstimateMonthlyCostUSD</code> is the seam between the provider plugin system
+and the pricing layer. Each provider's <code>cost.go</code> calls into <code>internal/pricing/</code>
+for live prices and assembles a <code>provider.CostEstimate</code> breakdown. Cloud providers
+wrap any <code>pricing.ErrUnavailable</code> as <code>provider.ErrNotApplicable</code> before returning.
+On-prem providers (Proxmox, on-premises vSphere, private OpenStack) return
+<code>provider.ErrNotApplicable</code> directly because they have no vendor pricing API.</p>
+<p>The xapiri TUI surfaces live cost estimates on the Costs tab, streamed via
+<code>kickRefreshCmd</code> which calls <code>cost.StreamWithRegions</code>. The <code>--cost-compare</code>
+CLI flag calls <code>cost.PrintComparison</code> (which calls <code>CompareClouds</code>) directly.
+The <code>--dry-run</code> plan calls <code>planMonthlyCost</code> + <code>planCostCompare</code> in
+<code>internal/orchestrator/plan.go</code>.</p>
+<hr />
+<h2 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">&para;</a></h2>
+<h3 id="1-caching-strategy">1. Caching strategy<a class="headerlink" href="#1-caching-strategy" title="Permanent link">&para;</a></h3>
+<p>Pricing data uses a two-layer cache: a 24-hour disk cache per SKU and a
+24-hour disk cache for FX rates. There is no in-memory price cache between
+the disk layer and the live fetcher. The taller currency selection is
+in-process <code>sync.Once</code> per process.</p>
+<p><strong>Disk SKU cache</strong> (<code>~/.cache/yage/pricing/&lt;vendor&gt;.&lt;sku&gt;.&lt;region&gt;.json</code>):
+<code>DefaultTTL = 24h</code> (constant in <code>pricing.go</code>). <code>Fetch()</code> reads the cache first;
+only when the entry is missing or stale does it call the live fetcher and write
+back. Cloud list prices change on month timescales; 24h is the correct TTL.</p>
+<p><strong>Disk FX cache</strong> (<code>~/.cache/yage/pricing/fx-USD.json</code>):
+<code>tallerFXCacheTTL = 24h</code>. <code>ensureFXLoaded()</code> tries the disk cache before
+hitting <code>open.er-api.com</code>. Same 24h rationale — FX rates for planning estimates
+do not need sub-day freshness.</p>
+<p><strong>Taller currency resolution</strong> (<code>resolveTallerCurrency</code>): runs once per process
+via <code>sync.Once</code>. The resolved code is stable for the process lifetime; back-to-back
+<code>TallerCurrency()</code> calls are a pure in-memory read.</p>
+<p><strong>Airgap / test kill-switch</strong>: setting <code>YAGE_PRICING_DISABLED=true</code> bypasses all
+fetching; <code>SetAirgapped(true)</code> (from <code>cfg.Airgapped</code>) has the same effect and
+is the production override for offline environments. FX loading skips live fetch
+when <code>disabled</code> is set; the local <code>{"USD": 1.0}</code> stub keeps conversion from
+panicking.</p>
+<p><strong>This layering is correct and stays as-is.</strong> The only permitted extension is
+narrowing the TTL per provider when a vendor publishes prices more frequently
+than monthly — none currently qualify.</p>
+<h3 id="2-error-contract-errnotapplicable-vs-errunavailable">2. Error contract: ErrNotApplicable vs ErrUnavailable<a class="headerlink" href="#2-error-contract-errnotapplicable-vs-errunavailable" title="Permanent link">&para;</a></h3>
+<p>The two sentinel errors have distinct semantics that must not be conflated:</p>
+<ul>
+<li>
+<p><strong><code>provider.ErrNotApplicable</code></strong> — this provider has no vendor pricing concept.
+  Applies to: Proxmox (self-hosted TCO), on-prem vSphere, private OpenStack.
+  The orchestrator and xapiri costs tab suppress the cost section entirely for
+  this provider when this error is returned; no error message is rendered.</p>
+</li>
+<li>
+<p><strong><code>pricing.ErrUnavailable</code></strong> — the vendor's live pricing API was reachable at
+  one time but isn't now (network timeout, HTTP 5xx, stale cache that failed
+  refresh). Applies to: any cloud provider (AWS, Azure, GCP, Hetzner, DO,
+  Linode, OCI, IBM Cloud) when the API call fails.</p>
+</li>
+</ul>
+<p><strong>Current behaviour</strong> (known issue): <code>provider/*/cost.go</code> wraps
+<code>pricing.ErrUnavailable</code> as <code>provider.ErrNotApplicable</code>
+(e.g. <code>fmt.Errorf("%w: ...", provider.ErrNotApplicable, err)</code>). The result is
+that a transient API outage causes the cost row to disappear silently rather
+than showing "(estimate unavailable)". The <code>cost.CompareClouds</code> table rendering
+already has correct logic for non-nil <code>r.Err</code> — it prints the error string —
+but it only triggers if the error is non-nil and not wrapped as
+<code>ErrNotApplicable</code>.</p>
+<p><strong>Accepted intent</strong>: the wrap pattern in cloud <code>cost.go</code> files is wrong and must
+be corrected as a cleanup task. The correct call-site rule is:</p>
+<ul>
+<li>Return bare <code>pricing.ErrUnavailable</code> (or wrap it with additional context) when
+  a live API is unreachable. The cost table renders "unavailable"; onboarding
+  hints may fire.</li>
+<li>Return <code>provider.ErrNotApplicable</code> only when the provider is structurally
+  incapable of providing pricing (self-hosted, no billing API by design).</li>
+</ul>
+<p>Until the cleanup lands, callers that display cost rows should treat any non-nil
+error as a display-worthy failure, not a silent skip.</p>
+<h3 id="3-package-split-internalcost-vs-internalpricing">3. Package split: internal/cost/ vs internal/pricing/<a class="headerlink" href="#3-package-split-internalcost-vs-internalpricing" title="Permanent link">&para;</a></h3>
+<p>The boundary is intentional and stays:</p>
+<ul>
+<li>
+<p><code>internal/pricing/</code> owns: per-vendor SKU catalog fetchers, disk cache, FX
+  conversion, taller currency resolution, geo-region centroid ranking,
+  onboarding hints, credential/currency process-globals (<code>credentials.go</code>).
+  Everything in this package speaks "one vendor, one SKU, one price".</p>
+</li>
+<li>
+<p><code>internal/cost/</code> owns: cross-vendor comparator (<code>CompareClouds</code>,
+  <code>StreamWithFilter</code>, <code>StreamWithRegions</code>), managed-service matrix
+  (<code>managed.go</code>), in-cluster substitute footprints (<code>addons.go</code>), block-storage
+  retention math. Everything in this package speaks "compare N providers, pick
+  the shape".</p>
+</li>
+</ul>
+<p>The comparator's parallel fan-out, sort, scope filtering, and retention
+arithmetic belong in <code>cost/</code>. Merging the packages would create an import cycle
+(<code>pricing</code> is imported by provider packages; <code>cost</code> imports <code>provider</code>;
+providers cannot import <code>cost</code>).</p>
+<h3 id="4-onboardinggo-and-credentialsgo">4. onboarding.go and credentials.go<a class="headerlink" href="#4-onboardinggo-and-credentialsgo" title="Permanent link">&para;</a></h3>
+<p><code>credentials.go</code> exposes two process-globals (<code>creds Credentials</code>,
+<code>prefs Currency</code>) and their setters (<code>SetCredentials</code>, <code>SetCurrency</code>).
+<code>cmd/yage/main.go</code> calls both once at startup after <code>config.Load()</code>, populating
+them from <code>cfg.Cost.Credentials</code> and <code>cfg.Cost.Currency</code>. Every pricing fetcher
+reads from these globals; they never call <code>os.Getenv</code> directly. This keeps the
+credential-source decision in one place and avoids ambient-shell-credential bleed
+(notably: AWS ignores <code>AWS_ACCESS_KEY_ID</code> / <code>AWS_PROFILE</code> from the shell —
+credentials must be explicitly set via the yage config).</p>
+<p><code>onboarding.go</code> provides <code>MaybePrintOnboarding(w, vendor)</code>, which writes a
+one-time CLI/web setup snippet to <code>w</code> when: (a) the user has not seen it yet
+(no sentinel file at <code>&lt;cacheDir&gt;/.onboarded-&lt;vendor&gt;</code>), and (b) credentials
+for that vendor are not configured (<code>PricingCredsConfigured</code>), and (c) the
+vendor has a hint (Azure, Linode, OCI have none — their APIs are anonymous).
+<code>YAGE_NO_PRICING_ONBOARDING=1</code> suppresses; <code>YAGE_FORCE_PRICING_ONBOARDING=1</code>
+force-replays.</p>
+<p><code>MaybePrintOnboarding</code> is called from two sites: <code>cost.PrintComparison</code> (after
+the <code>--cost-compare</code> table is rendered) and <code>orchestrator/plan.go:planMonthlyCost</code>
+(when the active provider's cost estimate fails). The xapiri TUI has its own
+<code>costCredsMode</code> form for in-TUI credential entry; it does not call
+<code>MaybePrintOnboarding</code> directly.</p>
+<h3 id="5-currency-region-flow-tallergo-georegiongo">5. Currency / region flow: taller.go + georegion.go<a class="headerlink" href="#5-currency-region-flow-tallergo-georegiongo" title="Permanent link">&para;</a></h3>
+<p>Currency and region are resolved from the same root input
+(<code>cfg.Cost.Currency.DataCenterLocation</code>, an ISO-3166 alpha-2 country code) but
+through separate mechanisms:</p>
+<p><strong>Currency (<code>taller.go</code>)</strong>: <code>resolveTallerCurrency()</code> runs once per process.
+Resolution order:
+1. <code>prefs.DisplayCurrency</code> (explicit override via <code>YAGE_TALLER_CURRENCY</code> or
+   <code>cfg.Cost.Currency.DisplayCurrency</code>)
+2. <code>prefs.DataCenterLocation</code> → <code>CountryCurrency(cc)</code> → ISO-4217 code
+3. Geo-IP detection (<code>ip-api.com/json/?fields=status,countryCode</code>) → country
+   code → ISO-4217 code
+4. <code>"USD"</code> fallback if all above fail</p>
+<p>If the resolved code is not in <code>currencySymbol</code> (the supported-currency set),
+the resolver falls back to USD and prints <code>UnsupportedCurrencyMessage</code>.</p>
+<p><strong>Region (<code>georegion.go</code> + <code>xapiri/georegions.go</code>)</strong>: <code>GeoRankedRegions(prov,
+lat, lon, limit)</code> returns the nearest region slugs for a provider using
+Haversine distance against embedded centroids. In <code>kickRefreshCmd</code>,
+<code>cost.StreamWithRegions</code> receives up to 4 geo-ranked regions per provider. When
+geo-IP is disabled and no <code>DataCenterLocation</code> is set, <code>regionsByProvider</code> is
+nil and <code>StreamWithRegions</code> falls back to the region already set in the config
+snapshot (single estimate per provider).</p>
+<p>The country-to-centroid lookup (<code>pricing.CountryCentroid</code>, in <code>country_geo.go</code>)
+is used by both the TUI's <code>ApplyDataCenterLocationDefaults</code> and the xapiri
+<code>stampGeoRegions</code> path to pre-fill <code>cfg.Providers.*.Region</code> / <code>.Location</code>
+fields before the first cost fetch.</p>
+<hr />
+<h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
+<ul>
+<li>
+<p>Operators on airgapped or offline hosts always see "estimate unavailable" for
+  cloud providers — there is no stale-number substitution. This is the
+  correct trade-off for a planning tool: a stale fabricated number is worse than
+  a clear "(unavailable)" label.</p>
+</li>
+<li>
+<p>The 24h disk TTL means back-to-back <code>--dry-run</code> calls within a day share the
+  same price snapshot. Operators who need truly live prices can <code>rm -rf
+  ~/.cache/yage/pricing/</code> or set <code>YAGE_PRICING_CACHE=/dev/null</code> (which will
+  force a live fetch on every call, at the cost of latency).</p>
+</li>
+<li>
+<p>The ErrUnavailable-wrapped-as-ErrNotApplicable bug in cloud <code>cost.go</code> files
+  is tracked as a known cleanup. Until corrected, the <code>--cost-compare</code> table
+  and xapiri Costs tab will silently drop cloud providers whose APIs are
+  unreachable rather than showing "(unavailable)".</p>
+</li>
+<li>
+<p>The <code>credentials.go</code> process-globals mean pricing credentials cannot be
+  changed mid-run. This is intentional — <code>cmd/yage/main.go</code> owns the one
+  correct call site.</p>
+</li>
+<li>
+<p>Onboarding hints display at most once per vendor per cache directory. Running
+  <code>yage --cost-compare</code> on a fresh install will print setup instructions for
+  every vendor whose credentials are missing; subsequent runs are silent. This
+  is the expected UX.</p>
+</li>
+</ul>
+<hr />
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>internal/pricing/pricing.go</code> — <code>DefaultTTL</code>, <code>Fetch</code>, cache read/write</li>
+<li><code>internal/pricing/taller.go</code> — <code>resolveTallerCurrency</code>, FX loading</li>
+<li><code>internal/pricing/georegion.go</code> — <code>GeoRankedRegions</code>, centroid tables</li>
+<li><code>internal/pricing/onboarding.go</code> — <code>MaybePrintOnboarding</code>, <code>PricingCredsConfigured</code></li>
+<li><code>internal/pricing/credentials.go</code> — <code>SetCredentials</code>, <code>SetCurrency</code></li>
+<li><code>internal/cost/compare.go</code> — <code>StreamWithRegions</code>, <code>StreamWithFilter</code>, <code>CompareWithFilter</code></li>
+<li><code>internal/cost/managed.go</code> — managed-service capability matrix</li>
+<li><code>internal/cost/addons.go</code> — in-cluster substitute footprints</li>
+<li><code>internal/provider/*/cost.go</code> — per-provider <code>EstimateMonthlyCostUSD</code> glue</li>
+<li><code>internal/ui/xapiri/georegions.go</code> — <code>ApplyDataCenterLocationDefaults</code>, <code>stampGeoRegions</code></li>
+<li><code>internal/ui/xapiri/dashboard.go</code> — <code>kickRefreshCmd</code>, Costs tab rendering</li>
+<li><code>internal/orchestrator/plan.go</code> — <code>planMonthlyCost</code>, <code>planCostCompare</code></li>
+<li>ADR 0001 §DefaultsFor — CSI driver costs are not yet in the comparator</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.expand", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
