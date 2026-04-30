@@ -2,22 +2,39 @@
 
 ## Living Memory
 
-yage is in active development. The core bootstrap pipeline is functional for Proxmox. The xapiri TUI is being built out as the primary configuration interface. The provider abstraction plan is largely complete: phases A, B, C, and E are done; D is substantially complete. Legacy cleanup is in flight per ADR 0002 (no-backward-compatibility policy).
+yage is in active development. The core bootstrap pipeline is functional for Proxmox. The xapiri TUI is being built out as the primary configuration interface. The provider abstraction plan is largely complete: phases A, B, C, and E are done; D is substantially complete. Legacy cleanup is complete per ADR 0002 (no-backward-compatibility policy). ADR 0007 adopted: dashboard is the new default xapiri entry point.
 
 ## Freshness Policy
 
 This file must be updated whenever system state evolves (per CODING_STANDARDS.md "Atomic Persistence"). If information here conflicts with what you observe in the code or git history, trust what you observe now — then update this file to match reality.
 
-Last updated: **2026-04-30** — PRs #72, #73, #74, #75, #76 all merged; issues #66, #70, #69, #67, #82, #83 closed
+Last updated: **2026-04-30** — PO session: ADR 0007 epic (#103, #104, #105) catalogued; agent assignments issued; #68 assigned to lpasquali
 
 ## Version Baseline
 
 | Repo | Branch | Recent PRs | Status |
 |---|---|---|---|
 | yage | `main` | #76 (TUI keymap ADR 0003), #75 (OpenStack), #74 (env aliases), #73 (kindsync cleanup), #72 (vSphere) | Active development |
-| yage-docs | `main` | ADRs 0003–0006 written | Documentation in progress |
+| yage-docs | `main` | ADRs 0001–0007 written; WORKFLOW added | Documentation in progress |
 
 ## Recent Changes
+
+### 2026-04-30 — PO session: ADR 0007 epic opened; agent assignments issued
+
+**New issues opened (ADR 0007 — xapiri dashboard as default entry):**
+- **#104** — epic: ADR 0007 — xapiri dashboard as default entry; deprecate and remove legacy walkthrough
+- **#103** — Phase 1 (Frontend, p1): make dashboard the default entry point; skip pre-dashboard config selection prompt. Key change: `internal/ui/xapiri/xapiri.go:useHuhTUI()` defaults to true when env var unset; `YAGE_XAPIRI_TUI=legacy` opts back for one sprint.
+- **#105** — Phase 2 (Frontend, p3): remove legacy bufio walkthrough entirely. **Blocked**: must not start until one sprint after #103 merges.
+
+**Agent assignments (this session):**
+- **Frontend**: #103 (p1 — start now)
+- **Backend**: #68 (p1 — integrate worktrees A/B/D1/D4), then #71, then #84–#93
+- **Architect**: #81 (p2 — flesh out ADR 0004 OpenTofu Phase G)
+- **Platform Engineer**: no new refinements pending; standby
+
+**GitHub hygiene:** #68 assigned to lpasquali; #103–#105 added to project board.
+
+---
 
 ### 2026-04-30 — PRs #72–#76 merged; issues #66, #67, #69, #70, #82, #83 closed
 
@@ -28,7 +45,7 @@ Last updated: **2026-04-30** — PRs #72, #73, #74, #75, #76 all merged; issues 
 - **#75** — `provider/openstack`: PatchManifest flavor resolution + Inventory via gophercloud; fix flavor env keys. Closes #66.
 - **#73** — `refactor(kindsync)`: remove `SyncProxmoxBootstrapLiteralCredentials` (ADR 0002 item 1). Closes #70 (partial).
 
-**ADRs 0003–0006** written and accepted in `yage-docs`.
+**ADRs 0003–0007** written and accepted in `yage-docs`.
 
 **Issues closed:** #66, #67, #69, #70, #82, #83.
 
@@ -64,19 +81,6 @@ Last updated: **2026-04-30** — PRs #72, #73, #74, #75, #76 all merged; issues 
 - Added: `github.com/gophercloud/gophercloud/v2 v2.12.0` to `go.mod`
 - Added: smoke test `TestTemplateVarsKeysMatchTemplate` guarding the env key correctness
 
-**ADR 0003** written (`yage-docs/docs/architecture/adrs/0003-xapiri-tui-dispatch-keymap.md`):
-- Keymap normalization: remove j/k from 4 dashboard locations + huh picker `WithKeyMap`
-- Promote `inTextField` to method; add `tabCosts+costCredsMode` case
-- `preserveTransientState` helper replaces fragile manual copy in `cfgEntryLoadMsg`
-- Call `detectFork` in `initFromConfig` when InfraProvider empty
-- Inline "location unset" prompt on costs tab when GeoIP off and DataCenterLocation empty
-- **Issue #69** opened for Frontend agent to implement
-
-**Cleanup worktrees** — all three are one commit ahead of `550698e`, need rebase onto `02b1948`:
-- `worktree-agent-a529a47e1fc8d2cf7` (83941d5): ADR 0002 item 1 — remove `SyncProxmoxBootstrapLiteralCredentials` (done); item 7 (`InfraProvider` guard removal) deferred — only TODO comments added, guards still present
-- `worktree-agent-aceeb96a31d0f49b7` (e060830): ADR 0002 items 3+4+5 — remove `OS_*`/`YAGE_CURRENCY` aliases + legacy snapshot JSON
-- `worktree-agent-afd01feec4a66c948` (97b5288): OpenStack #66 — also needs rebase before PR
-
 ---
 
 ### 2026-04-30 — Architect assessment: phase status corrected; ADR 0002 no-compat policy
@@ -86,7 +90,6 @@ Architect audited the codebase and produced §25 addendum to `abstraction-plan.m
 - **Phase status corrected**: CURRENT_STATE previously showed A/B/D/E as "Not started"; ground truth is A/B/E complete, D substantially complete (see Abstraction Plan Status table below).
 - **No-backward-compatibility policy adopted** (ADR 0002): yage has no production users; all legacy fallbacks (dual-read/write migration, env-var aliases, Secret-name fallbacks, JSON-format fallbacks) are dead weight and will be deleted without deprecation cycle.
 - **Three ADR documents written**: §25 addendum to `abstraction-plan.md`; ADR 0001 (CSI driver registry); ADR 0002 (backward compat removal).
-- **Four parallel cleanup agents spawned** to execute ADR 0002 on branches: `refactor/kindsync-cleanup`, `refactor/env-aliases`, `refactor/proxmox-purge-cleanup`, and one additional branch. Status unknown as of this writing — check before starting new work on overlapping files.
 
 ---
 
@@ -96,7 +99,7 @@ Split the previous single "Config" tab in xapiri into two separate tabs:
 - **Config** (tab 1) — profile selection list and new-config name input
 - **Provision** (tab 2) — full interactive edit form for the selected config
 
-Selecting a config from the list automatically switches to the provision tab. All other tabs (3–9) remain gated on `cfgSelected`. Keyboard shortcuts 1–8, ctrl+alt+1–8, and mouse click-to-focus remapped to new indices. Help tab updated. `main` is at `02b1948`; `feat/xapiri-config-provision-split` is 2 commits ahead (b4b09df + 761f900 — proxmox cleanup + vSphere) and awaits merge.
+Selecting a config from the list automatically switches to the provision tab. All other tabs (3–9) remain gated on `cfgSelected`. Keyboard shortcuts 1–8, ctrl+alt+1–8, and mouse click-to-focus remapped to new indices. Help tab updated.
 
 ---
 
@@ -148,16 +151,20 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 | C | Config namespacing (`cfg.Proxmox*` → `cfg.Providers.Proxmox.*`) | **Merged** |
 | A | Inventory behind `Provider.Inventory()` | **Complete** (interface + call sites wired; Proxmox implements; cleanup in progress) |
 | B | Plan body delegation per provider | **Complete** (DescribeIdentity/DescribeWorkload/DescribePivot wired; Proxmox implements) |
-| D | Generic kindsync + Purge | **Substantially complete** (KindSyncFields + WriteBootstrapConfigSecret in use; legacy wrappers being removed — see ADR 0002) |
+| D | Generic kindsync + Purge | **Substantially complete** (KindSyncFields + WriteBootstrapConfigSecret in use; legacy wrappers removed per ADR 0002) |
 | E | Pivot generalization (kind → any-cloud mgmt) | **Complete** (PivotTarget called via interface in pivot.go) |
 
 ---
 
 ## Active Work
 
-| Branch | Owner | Description | Status |
-|---|---|---|---|
-| *(none — all recent branches merged)* | — | — | — |
+| Issue | Branch | Agent | Description | Status |
+|---|---|---|---|---|
+| #103 | feat/xapiri-dashboard-default | Frontend | ADR 0007 Phase 1: dashboard as default entry point | **Assigned** |
+| #68 | TBD | Backend | Integrate worktrees A/B/D1/D4 into main | **Assigned** |
+| #81 | TBD | Architect | Flesh out ADR 0004: OpenTofu Phase G universal identity | **Assigned** |
+| #104 | — | — | Epic: ADR 0007 (parent of #103, #105) | Open |
+| #105 | — | Frontend | ADR 0007 Phase 2: remove legacy walkthrough | **Blocked** on #103 + 1 sprint |
 
 ---
 
@@ -165,17 +172,27 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 
 - xapiri is still a work-in-progress TUI; not all provider paths are fully wired.
 - Cost estimation requires live Proxmox API; returns `ErrUnavailable` when unreachable.
-- xapiri TUI: `feat/xapiri-tui-dispatch-fixes` fixes j/k, inTextField guard, detectFork, and costs tab prompt (ADR 0003 / issue #69) — pending merge.
 - vSphere `Inventory()`: `Cores=0` — CPU expressed in MHz only (cannot derive cores from ResourcePool quota alone without host-speed query).
+- #68 worktrees (A/B/D1/D4): status unknown — Backend must locate branches before implementing; may need fresh implementation if worktrees are gone.
 
 ## Next Steps
 
-1. **Issue #68** (p1) — integrate background A/B/D1/D4 worktrees (Backend); ordering constraint: D1 after B; delete `internal/capi/csi/` post-D1 per ADR 0001.
-2. **Issue #71** (p2) — ADR 0002 item 7: remove redundant `cfg.InfraProvider == "proxmox"` guards (Backend).
-3. **Issue #81** (p2) — flesh out ADR 0004: OpenTofu Phase G universal identity bootstrap (Architect).
-4. **Issues #84–#93** (p2) — 10 CSI driver implementations per ADR 0001 (Backend, epic #77).
-5. **Issues #94–#101** (p2) — 8 PlanDescriber provider implementations (Backend, epic #78).
-6. **Issues #79, #80** (p3) — vSphere PatchManifest sizing + OpenStack EnsureIdentity clouds.yaml (Backend).
+### Immediate (current sprint)
+
+1. **Issue #103** (p1, Frontend) — ADR 0007 Phase 1: make dashboard the default xapiri entry point. Key file: `internal/ui/xapiri/xapiri.go:useHuhTUI()`. Branch: `feat/xapiri-dashboard-default`.
+2. **Issue #68** (p1, Backend) — Locate and integrate worktrees A/B/D1/D4. Ordering: D1 after B. Delete `internal/capi/csi/` post-D1 per ADR 0001.
+
+### Planned (next sprint)
+
+3. **Issue #81** (p2, Architect) — Flesh out ADR 0004: OpenTofu Phase G universal identity bootstrap (Phase G).
+4. **Issue #71** (p2, Backend) — ADR 0002 item 7: remove redundant `cfg.InfraProvider == "proxmox"` guards.
+5. **Issues #84–#93** (p2, Backend) — 10 CSI driver implementations per ADR 0001 (epic #77). Note: may be partially done if worktree B in #68 is recoverable.
+6. **Issues #79, #80** (p3, Backend) — vSphere PatchManifest sizing + OpenStack EnsureIdentity clouds.yaml.
+
+### Backlog
+
+7. **Issue #105** (p3, Frontend) — ADR 0007 Phase 2: remove legacy bufio walkthrough. **Blocked**: one sprint after #103 merges.
+8. **Issues #94–#101** (p3, Backend) — 8 PlanDescriber provider implementations (epic #78).
 
 ---
 
@@ -187,4 +204,4 @@ Three open issues refined with K8s/infra-level implementation specs:
 - **#67** (vSphere Inventory + EnsureScope): govmomi not yet in go.mod — must be added. ResourcePool property query path specified. Unlimited pool (`-1`) edge case: return `ErrNotApplicable`. TLS thumbprint field check required.
 - **#68** (Background agent integration): D1 depends on B. Ordering constraint: proxmox-csi `EnsureSecret` must run before HelmChartProxy fires. Post-D1: delete `internal/capi/csi/` per ADR 0001.
 
-**Handoff to Backend:** #66 and #67 are ready for implementation. #68 is integration ops — check worktree/branch status of A/B/D1/D4 before starting.
+**Handoff to Backend:** #66 and #67 are resolved (merged in #75, #72). #68 is integration ops — check worktree/branch status of A/B/D1/D4 before starting.
