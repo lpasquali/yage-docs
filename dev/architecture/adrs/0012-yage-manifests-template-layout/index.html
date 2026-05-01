@@ -1195,6 +1195,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#41-template-funcmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Template FuncMap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#5-multi-document-and-partial-handling" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1372,7 +1383,7 @@
 
 
 <h1 id="adr-0012-yage-manifests-template-layout-file-naming-and-data-contract">ADR 0012 — yage-manifests: Template Layout, File Naming, and Data Contract<a class="headerlink" href="#adr-0012-yage-manifests-template-layout-file-naming-and-data-contract" title="Permanent link">&para;</a></h1>
-<p><strong>Status:</strong> Accepted
+<p><strong>Status:</strong> Accepted (amended — Errata E1 2026-05-01)
 <strong>Date:</strong> 2026-05-01
 <strong>Owners:</strong> Architect (template contract, directory layout), Backend (per-package migration #137–#141)</p>
 <p><strong>Amends:</strong> ADR 0008 §1 (directory layout — pinned, not changed), §2 (<code>text/template</code> data contract — added), §3 (Fetcher render call — clarified after ADR 0010 supersession)
@@ -1601,6 +1612,42 @@ zero value for a string is <code>""</code>, which produces unquoted empty fields
 the same silent-acceptance failure mode.</p>
 <p>This pins the design pick raised by yage-backend (C) on issue #136 in the
 affirmative.</p>
+<h3 id="41-template-funcmap">4.1 Template FuncMap<a class="headerlink" href="#41-template-funcmap" title="Permanent link">&para;</a></h3>
+<p><strong>Errata E1 — 2026-05-01.</strong> Amends §4 to allow a small, explicitly enumerated
+<code>template.FuncMap</code> in the <code>Fetcher</code>. The <code>missingkey=error</code> policy is unchanged.</p>
+<p><strong>Motivation.</strong> Four config fields in <code>internal/capi/helmvalues/</code> carry
+env-var-origin string values (<code>"true"</code>, <code>"false"</code>, <code>"1"</code>, <code>"yes"</code>, …). In Go
+<code>text/template</code>, <code>{{ if "false" }}</code> is truthy (any non-empty string), so the
+package-local <code>isTrue()</code> semantics cannot be expressed in a template without a
+FuncMap. Migrating these fields to <code>bool</code> in <code>config.Config</code> expands scope
+dramatically; pre-evaluating them in every wrapper struct pollutes the data
+contract. A single named function is the minimal, auditable fix.</p>
+<p><strong>Admitted function — <code>isTrue</code>.</strong></p>
+<div class="highlight"><pre><span></span><code>isTrue(string) bool
+</code></pre></div>
+<p>Semantics: identical to <code>internal/platform/sysinfo.IsTrue</code> — case-insensitive
+match on <code>"1"</code>, <code>"t"</code>, <code>"true"</code>, <code>"y"</code>, <code>"yes"</code>, <code>"on"</code> after whitespace trim.
+Admissibility justification: <code>isTrue</code> is a value-coercion helper that bridges
+env-var-origin string fields to template boolean conditions. It does not
+introduce new data, does not enable arbitrary computation, and does not bypass
+the wrapper-struct contract.</p>
+<p><strong>Extension rule.</strong> Each future FuncMap addition requires its own ADR amendment
+to this section. Admitting Sprig or any multi-function library wholesale is
+explicitly rejected — Sprig's 100+ functions weaken the data contract without
+providing auditable benefit.</p>
+<p><strong>Implementation contract.</strong> The <code>Fetcher</code> must expose a method:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">f</span><span class="w"> </span><span class="o">*</span><span class="nx">Fetcher</span><span class="p">)</span><span class="w"> </span><span class="nx">RegisterFunc</span><span class="p">(</span><span class="nx">name</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">fn</span><span class="w"> </span><span class="kt">any</span><span class="p">)</span>
+</code></pre></div>
+<p>that registers <code>fn</code> under <code>name</code> in an internal <code>template.FuncMap</code> applied on
+every <code>Render</code> call. <code>RegisterFunc</code> is the only permitted extension point; callers
+may not supply arbitrary <code>FuncMap</code> values directly. Backend implements this
+method per the amended ADR; the Architect does not touch Fetcher code.</p>
+<p><strong>Template usage example.</strong></p>
+<div class="highlight"><pre><span></span><code>{{ if isTrue .Cfg.WorkloadMetricsServerInsecureTLS }}
+args:
+  - --kubelet-insecure-tls
+{{ end }}
+</code></pre></div>
 <h3 id="5-multi-document-and-partial-handling">5. Multi-document and partial handling<a class="headerlink" href="#5-multi-document-and-partial-handling" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Every <code>.yaml.tmpl</code> outside <code>cluster/&lt;provider&gt;/cluster.yaml.tmpl</code> renders
@@ -1672,6 +1719,11 @@ target files exist and the corresponding Go renderer becomes a one-line
 <p>The two observability values files share the <code>addons/observability/</code> directory
 because they belong to the same logical add-on (VictoriaMetrics + Grafana
 shipped as one stack); the filename suffix disambiguates.</p>
+<p>Templates that reference env-var-origin string fields use the <code>isTrue</code> FuncMap
+function (§4.1) rather than a bare <code>{{ if }}</code> expression:
+<code>{{ if isTrue .Cfg.WorkloadMetricsServerInsecureTLS }}</code>. The same pattern applies
+to any <code>helmvalues</code> field whose source is an env var that accepts
+<code>"true"/"false"/"1"/"0"</code> variants.</p>
 <h3 id="internalcapiwlargocd-addonsaddonapplicationyamltmpl"><code>internal/capi/wlargocd/</code> → <code>addons/&lt;addon&gt;/application.yaml.tmpl</code><a class="headerlink" href="#internalcapiwlargocd-addonsaddonapplicationyamltmpl" title="Permanent link">&para;</a></h3>
 <p><code>wlargocd.HelmGit</code>, <code>wlargocd.Helm</code>, <code>wlargocd.HelmOCI</code>, <code>wlargocd.KustomizeGit</code>,
 and <code>wlargocd.Kyverno</code> are not per-add-on functions — they are five
