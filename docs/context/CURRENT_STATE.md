@@ -2,24 +2,60 @@
 
 ## Living Memory
 
-yage is in active development. The core bootstrap pipeline is functional for Proxmox. The xapiri TUI is being built out as the primary configuration interface. The provider abstraction plan is fully complete: phases A, B, C, D, and E are all done. Legacy cleanup is complete per ADR 0002. ADR 0007: dashboard is the new default xapiri entry point. CSI driver registry (ADR 0001) complete — all 10 drivers merged. Phase H (on-prem platform services via OpenTofu) is in late-stage implementation — ADRs 0009/0010/0011 accepted; orchestrator wiring for EnsureIssuingCA (#126/PR #163) and EnsureRepoSync (#144/PR #164) merged; only #125 (registry VM orchestrator wiring) remains. **Cross-repo gap**: yage-tofu currently has only the 8 identity modules (no `issuing-ca/` or `registry/` modules) — orchestrator wiring is dormant until those land in yage-tofu (tracked separately). ADR 0011 (pivot state migration) is substantially implemented; only #148 (extended HandOff + VerifyParity, plus a phase-order fix in bootstrap.go per ADR 0011 §7) remains.
+yage is in active development. The core bootstrap pipeline is functional for Proxmox. The xapiri TUI is being built out as the primary configuration interface. The provider abstraction plan is fully complete: phases A, B, C, D, and E are all done. Legacy cleanup is complete per ADR 0002. ADR 0007: dashboard is the new default xapiri entry point. CSI driver registry (ADR 0001) complete — all 10 drivers merged. **ADR 0011 (pivot state migration) is fully implemented** — yage PR #166 (`bb60c79`) merged today closes #148. Phase H (on-prem platform services via OpenTofu) orchestrator wiring is complete on the yage side (EnsureIssuingCA #163, EnsureRepoSync #164, EnsureManagementInstall #160, JobRunner k8s backend #162); only #125 (registry VM orchestrator wiring) remains, HELD pending architect review of the cross-repo modules. **Cross-repo gap is closing, not closed**: yage-tofu PR #6 (`registry/`, closes yage-tofu#5) and PR #7 (`issuing-ca/`, closes yage-tofu#4) are now open and need architect review (5 decisions + 2 contradictions flagged in PR bodies). yage-side wiring stays dormant (`ErrNotApplicable`-guarded) until they merge. ADR 0012 — yage-manifests template layout addendum to ADR 0008 — is open as yage-docs PR #11 and pins the `missingkey=error` policy + wrapper-struct contract that #136 needs.
 
 ## Freshness Policy
 
 This file must be updated whenever system state evolves (per CODING_STANDARDS.md "Atomic Persistence"). If information here conflicts with what you observe in the code or git history, trust what you observe now — then update this file to match reality.
 
-Last updated: **2026-05-01** — PO session 7 (post-dispatch): PRs #161 ✅ `d6e7d0a`, #163 ✅ `7b9d19b`, #164 ✅ `e7d116e` all merged; #126/#144/#152 closed; backend agents A/B/C at Halt for #148/#125/#136; cross-repo gap surfaced (yage-tofu missing `issuing-ca/` and `registry/` modules).
+Last updated: **2026-05-01** — PO session 8: PR #166 (`bb60c79`) merged — closes #148, fully implements ADR 0011, clears yage-backend (A) HALT. yage-tofu PR #6 (`registry/`, closes yage-tofu#5) and PR #7 (`issuing-ca/`, closes yage-tofu#4) opened for architect review. yage-docs PR #11 (ADR 0012) opened — closes #136 design pick #2. yage-backend (B) rotated from HELD #125 onto now-unblocked #136 and is **executing** on `feat/136-manifests-fetcher`. #125 remains HELD pending review of yage-tofu PRs #6/#7. #137–#141 remain gated on #136 landing.
 
 ## Version Baseline
 
 | Repo | Branch | Recent PRs | Status |
 |---|---|---|---|
-| yage | `main` | #164 (EnsureRepoSync, `e7d116e`), #163 (EnsureIssuingCA, `7b9d19b`), #161 (admin token TUI, `d6e7d0a`), #162 (JobRunner k8s backend), #160 (EnsureManagementInstall), #159 (profile bugs), #158 (Phase H TUI), #157 (double prompt fix), #156 (timeframe+ctrl+alt fix), #150, #149, #143, #132 | Active development; 3 backend agents at Halt for #148/#125/#136 |
-| yage-docs | `main` | PR #9 (remove codeql.yml), PR #8 (ADRs 0010+0011+CURRENT_STATE) | Up to date |
-| yage-tofu | `main` | PR #2 (kubernetes backend all 8 modules), PR #3 (license) | Up to date |
-| yage-manifests | `init` | PR #3 (license) | Scaffolded, awaiting templates |
+| yage | `main` | #166 (label-based yage-system handoff + extended VerifyParity, `bb60c79`), #164 (EnsureRepoSync, `e7d116e`), #163 (EnsureIssuingCA, `7b9d19b`), #161 (admin token TUI, `d6e7d0a`), #162 (JobRunner k8s backend), #160 (EnsureManagementInstall), #159, #158, #157, #156, #150, #149, #143, #132 | Active development; (A) HALT cleared by #166; (B) executing #136; #125 HELD |
+| yage-docs | `main` + open PR #11 (ADR 0012) | PR #9 (remove codeql.yml), PR #8 (ADRs 0010+0011+CURRENT_STATE) | PR #11 awaiting architect review |
+| yage-tofu | `main` + open PRs #6, #7 | PR #2 (kubernetes backend all 8 modules), PR #3 (license) | PRs #6 (registry) + #7 (issuing-ca) awaiting architect review |
+| yage-manifests | `init` | PR #3 (license) | Scaffolded, awaiting templates (#137–#141 gated on #136) |
 
 ## Recent Changes
+
+### 2026-05-01 — PO session 8: #148 merged; cross-repo PRs opened; ADR 0012 in review; (B) rotated onto #136
+
+**yage merged:**
+- **PR #166** (`bb60c79`, squash) — `feat(kindsync+pivot): label-based yage-system handoff + extended VerifyParity (#148)`. Closes #148. Fully implements ADR 0011. Clears yage-backend (A) HALT. ✅
+
+**Issues closed (auto on merge):** #148.
+
+**Cross-repo PRs opened (awaiting architect review):**
+
+- **yage-tofu PR #6** — `feat: add registry/ module for Phase H bootstrap registry (#5)` on `registry-module`. Closes yage-tofu#5. Five interpretive decisions flagged for architect:
+  1. **kubernetes backend** used despite ADR 0009 §1 wording `~/.yage/tofu/registry/terraform.tfstate` (local) — possible erratum to ADR 0009; reconcile against the kubernetes-backend convention established by yage-tofu PR #2 / yage #145. *(Note: architect agent is concurrently drafting `docs/adr-0009-erratum-kubernetes-backend` to address this.)*
+  2. `vm_flavor` split into discrete `registry_vm_cores` / `registry_vm_memory_mb` / `registry_vm_disk_gb` (defaults 2 / 4 GiB / 100 GiB) instead of single `YAGE_REGISTRY_VM_FLAVOR` knob.
+  3. TLS material exposed as PEM strings (`registry_tls_cert_pem`, `registry_tls_key_pem`, `registry_ca_bundle_pem`); defaults `""` so plan succeeds without certs.
+  4. Cloud-init bash bootstrap pulling Harbor 2.11.0 / Zot v2.1.0 on first boot; no baked image; image seeding remains an operator step per ADR 0009 §1.
+  5. `registry_template_id` is a required input — operator must supply a cloud-init enabled template ID.
+
+- **yage-tofu PR #7** — `feat: add issuing-ca/ module — online intermediate CA (#4)` on `feat/4-issuing-ca-module`. Closes yage-tofu#4. Two contradictions surfaced in the PR body:
+  1. **Output names not yet consumed by yage.** `EnsureIssuingCA` at `7b9d19b` generates the intermediate inline using Go `crypto/x509` and never calls `tofu output`. Module names mirror the Go-side material so a follow-up Go-side migration to `JobRunner.Output` becomes a no-op contract change.
+  2. **Root CA is an input, not generated.** yage-tofu#4 brief said "root + intermediate via `tls_self_signed_cert` / `tls_locally_signed_cert`" but yage code receives the root from operator config (`cfg.IssuingCARootCert` / `cfg.IssuingCARootKey`). Module follows Go-side semantics: offline-managed root is an input variable, not a TF resource — preserves the offline-root boundary per ADR 0009.
+
+**yage-docs PR opened (awaiting architect):**
+- **yage-docs PR #11** — `docs(adr): ADR 0012 — yage-manifests template layout and data contract` on `docs/adr-0008-addendum-template-layout`. Addendum to ADR 0008 pinning: on-disk layout (`cluster/`, `addons/<addon>/`, `csi/<driver>/`, `postsync/`), `missingkey=error` rendering policy, six wrapper-struct data contracts, full migration mapping table (helmvalues + wlargocd + postsync + caaph + cilium LBIPAMPool + 14 CSI drivers). Closes the open design pick #2 on #136 in the affirmative. Per-source-package grouping rejected (would split an add-on across two trees).
+
+**Unblocking moves this session:**
+
+- **#148 merged** (PR #166) clears yage-backend (A) HALT — agent rolls off.
+- **#136 unblocked** — its only deps were #135 (`d13e0eb`) and #144 (`e7d116e`), both merged in session 7. ADR 0012 (yage-docs PR #11) closes the last open design pick (`missingkey=error` confirmed). yage-backend (B) rotated from HELD #125 onto #136 and is now **executing** on `feat/136-manifests-fetcher`. The constructor-shape pick (zero-value `Fetcher` vs `NewFetcher()`) remains a small open decision but is not blocking.
+- **#125 unblocked by code dependencies** (#123 ✅, #124 ✅, #144 ✅, #148 ✅ — the bootstrap.go phase reorder by #148 removes the merge-conflict risk on `bootstrap.go`) but **HELD** pending architect review of yage-tofu PR #6 (registry module). The 3 questions raised in session 7 are partly answered: the yage-tofu module now exists in PR #6, but the architect must accept the 5 flagged decisions before yage-side wiring lands.
+- **#137–#141** (manifests migration chain) remain gated on #136 merging.
+
+**Architect lane (loaded):** review yage-tofu PR #6 (5 decisions), yage-tofu PR #7 (2 contradictions), yage-docs PR #11 (ADR 0012). All three have CI-clean, well-documented PR bodies; reviews are decision-gating, not detail-gating. Architect already drafting ADR 0009 erratum E1 (decision #1 on PR #6).
+
+**Next session moves:** (1) architect resolves 3 PR reviews; (2) Programmer merges yage-docs PR #11 once accepted; (3) Programmer merges yage-tofu PRs #6/#7 once accepted (this unblocks #125 Execute); (4) backend (B) lands #136 → unblocks #137–#141 chain.
+
+---
 
 ### 2026-05-01 — PO session 7: dispatch executed; 3 PRs merged; 3 backend halts
 
@@ -62,7 +98,7 @@ yage-tofu top-level has only `aws/`, `azure/`, `gcp/`, `ibmcloud/`, `linode/`, `
 - **PR #162** — `feat(opentofux): switch JobRunner to OpenTofu kubernetes backend; eliminate tofu-state PVCs`. Closes #145 (yage side). ✅
 - **PR #165** — `chore: remove codeql.yml`. CodeQL was not gating Merge Gate; removed to clean up check list. ✅
 
-**yage PRs open — CI green, awaiting merge:**
+**yage PRs open at session 6 close — CI green, awaiting merge:**
 - **PR #161** — `feat(xapiri): Proxmox admin token config in TUI; fix AdminToken kind Secret leak`. Closes #152. ⏳
 - **PR #163** — `feat(opentofux): EnsureIssuingCA — generate intermediate CA + wire cert-manager ClusterIssuer`. Closes #126. ⏳
 - **PR #164** — `feat(opentofux): implement EnsureRepoSync — yage-repos PVC + yage-repo-sync Job (ADR 0010, #144)`. Closes #144. ⏳
@@ -92,11 +128,6 @@ yage-tofu top-level has only `aws/`, `azure/`, `gcp/`, `ibmcloud/`, `linode/`, `
 - #151 (double prompt) — PR #157 ✅
 - #153 (profile bugs) — PR #159 ✅
 - #154 (timeframe keys) + #155 (ctrl+alt shortcuts) — PR #156 ✅
-
-**Issues pending closure (awaiting PR merge):**
-- #126 (EnsureIssuingCA) — PR #163 open, CI green ⏳
-- #144 (EnsureRepoSync) — PR #164 open, CI green ⏳
-- #152 (admin token TUI) — PR #161 open, CI green ⏳
 
 ---
 
@@ -130,11 +161,11 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 
 | Issue / PR | Branch | Agent | Description | Status |
 |---|---|---|---|---|
-| #148 | `feat/148-handoff-yage-system` | **yage-backend (A)** | extend `HandOffBootstrapSecretsToManagement` (labeled yage-system copy) + extend `VerifyParity` (ns + labeled Secrets + yage-repos PVC) + **reorder pivot phases per ADR 0011 §7** | **HALT** — p1; awaiting user OK to Execute |
-| #125 | `feat/125-registry-vm` | **yage-backend (B)** | provision bootstrap registry VM via OpenTofu; mirror `EnsureIssuingCA` shape; auto-wire `ImageRegistryMirror` | **HALT** — p2; 3 open questions for user (see session 7 entry) |
-| #136 | `feat/136-manifests-fetcher` | **yage-backend (C)** | `internal/platform/manifests` Fetcher package (MountRoot-based, no local clone); ADR 0008 step 2 | **HALT** — p2; 2 design picks for user (constructor shape, `missingkey=error`) |
-| yage-tofu#4 | TBD | **yage-backend** (cross-repo) | add `yage-tofu/issuing-ca/` OpenTofu module — companion to merged yage PR #163 | **Open** — p2 |
-| yage-tofu#5 | TBD | **yage-backend** (cross-repo) | add `yage-tofu/registry/` OpenTofu module — companion to in-flight yage #125 | **Open** — p2 |
+| yage-tofu PR #6 | `registry-module` (yage-tofu) | **yage-architect** review | `registry/` OpenTofu module — Phase H bootstrap registry; closes yage-tofu#5; 5 decisions flagged in PR body | **Awaiting architect review** — p2 |
+| yage-tofu PR #7 | `feat/4-issuing-ca-module` (yage-tofu) | **yage-architect** review | `issuing-ca/` OpenTofu module — online intermediate CA; closes yage-tofu#4; 2 contradictions surfaced in PR body | **Awaiting architect review** — p2 |
+| yage-docs PR #11 | `docs/adr-0008-addendum-template-layout` (yage-docs) | **yage-architect** review | ADR 0012 — yage-manifests template layout + data contract; addendum to ADR 0008; closes #136 design pick #2 | **Awaiting architect review** — p2 |
+| #136 | `feat/136-manifests-fetcher` (yage) | **yage-backend (B)** | `internal/platform/manifests` Fetcher package (MountRoot-based, no local clone); ADR 0008 step 2 | **In progress** — p2; constructor-shape pick still open (not blocking) |
+| #125 | `feat/125-registry-vm` (yage) | **yage-backend** (TBD) | provision bootstrap registry VM via OpenTofu; mirror `EnsureIssuingCA` shape; auto-wire `ImageRegistryMirror` | **HELD** — code unblocked, awaiting architect on yage-tofu PR #6 |
 | #137 | TBD | **yage-backend** | migrate `internal/capi/helmvalues/` to yage-manifests templates | **Blocked** on #136 |
 | #138 | TBD | **yage-backend** | migrate `internal/capi/wlargocd/` renderers to yage-manifests templates | **Blocked** on #136 |
 | #139 | TBD | **yage-backend** | migrate `internal/capi/postsync/` renderers to yage-manifests templates | **Blocked** on #136 |
@@ -146,13 +177,20 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 
 ---
 
+## HALT Records
+
+- **yage-backend (A) HALT — CLEARED** by PR #166 merge (`bb60c79`, 2026-05-01T11:12:11Z). Agent rolls off; #148 closed.
+- **yage-backend (B) HALT — CLEARED**. (B) rotated from HELD #125 onto #136 (now unblocked); executing on `feat/136-manifests-fetcher`.
+- **yage-backend (C) HALT — N/A** (rolled into the (B) #136 thread; only one agent on #136).
+
 ## Critical Path (in order)
 
-1. **User decides** on the 3 backend Halts — issue #148 (Execute OK?), issue #125 (3 questions), issue #136 (2 picks). Prefer batched OK to keep agents moving.
-2. **Backend agents Execute** their dispatched issues; PRs land normally via Workflow SOP.
-3. **PO opens cross-repo issues** in yage-tofu for `issuing-ca/` and `registry/` modules so the just-merged orchestrator wiring becomes operationally usable.
-4. **Phase H epic #120** closes once #125 lands AND yage-tofu modules ship. Track both arms.
-5. **Manifests migration chain** (#137–#142) unblocks once #136 ships.
+1. **Architect**: review yage-tofu PR #6 (5 decisions; ADR 0009 erratum E1 already in flight on `docs/adr-0009-erratum-kubernetes-backend`), yage-tofu PR #7 (2 contradictions), yage-docs PR #11 (ADR 0012). All three are decision-gating, not detail-gating.
+2. **Programmer**: merge yage-docs PR #11 once accepted (formalizes #136 design pick #2).
+3. **Programmer**: merge yage-tofu PRs #6 and #7 once accepted — unblocks #125 Execute.
+4. **yage-backend (B)**: land #136 (in progress) — unblocks the #137–#141 manifests migration chain.
+5. **yage-backend** (TBD): start #125 once yage-tofu PR #6 is merged and architect direction is clear.
+6. **Phase H epic #120** closes once #125 lands AND yage-tofu PRs #6/#7 ship.
 
 ---
 
@@ -174,6 +212,7 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 | 0006 | Capacity preflight architecture | Accepted |
 | 0007 | xapiri dashboard as default entry | Accepted |
 | 0008 | yage-manifests GitOps template repository | Accepted |
-| 0009 | On-prem platform services (Phase H): registry + issuing CA | Accepted |
+| 0009 | On-prem platform services (Phase H): registry + issuing CA | Accepted (erratum E1 in flight: kubernetes backend supersedes local tofu state) |
 | 0010 | In-cluster repository cache (zero workstation residue) | Accepted |
-| 0011 | Pivot: yage state migration to management cluster | Accepted |
+| 0011 | Pivot: yage state migration to management cluster | Accepted (fully implemented as of PR #166) |
+| 0012 | yage-manifests template layout and data contract (addendum to 0008) | **Proposed** (yage-docs PR #11) |
