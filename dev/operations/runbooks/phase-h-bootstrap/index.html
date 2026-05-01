@@ -1,0 +1,2513 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for yage — CAPI bootstrapper for Proxmox and 11 other providers">
+      
+      
+      
+      
+        <link rel="prev" href="../../cost-and-pricing/">
+      
+      
+        <link rel="next" href="../../../reference/providers/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Phase H Bootstrap - yage Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../overrides/main.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/tokens.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/print.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#phase-h-bootstrap-registry-and-issuing-ca-runbook" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="yage Documentation" class="md-header__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            yage Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Phase H Bootstrap
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="yage Documentation" class="md-nav__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    yage Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Context
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Context
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/AGENT_SYSTEM_PROMPT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent System Prompt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/CURRENT_STATE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Current State
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/CODING_STANDARDS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Coding Standards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agents
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Agents
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/PO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Product Owner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/ARCHITECT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architect
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/PLATFORM_ENGINEER/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform Engineer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/BACKEND/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go Backend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/FRONTEND/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go Frontend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/ARCHITECTURE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/architectures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architectures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADRs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ADRs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/adrs/abstraction-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abstraction Plan (Phase C/E/B/A/D)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../capacity-preflight/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capacity Preflight
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cost-and-pricing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost and Pricing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Runbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase H Bootstrap
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase H Bootstrap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-prerequisites-environment-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Prerequisites — environment variables
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Prerequisites — environment variables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#registry-vm-consumed-by-yage-tofuregistry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Registry VM (consumed by yage-tofu/registry/)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issuing-ca-consumed-by-yage-tofuissuing-ca-and-by-ensureissuingca" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issuing CA (consumed by yage-tofu/issuing-ca/ and by EnsureIssuingCA)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#repo-cache-prerequisites-adr-0010-adr-0011" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Repo cache prerequisites (ADR 0010 / ADR 0011)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-expected-post-bootstrap-state-in-yage-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Expected post-bootstrap state in yage-system
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-cert-manager-clusterissuer-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. cert-manager ClusterIssuer verification
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. cert-manager ClusterIssuer verification">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-confirm-the-management-side-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Confirm the management-side Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-confirm-the-workload-side-secret-clusterissuer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Confirm the workload-side Secret + ClusterIssuer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-issue-a-test-certificate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Issue a test certificate
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-registry-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Registry verification
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Registry verification">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-vm-reachability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 VM reachability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-tls-validation-against-the-operator-supplied-chain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 TLS validation against the operator-supplied chain
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-registry-api-harbor-zot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Registry API (Harbor / Zot)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-confirm-cfgimageregistrymirror-is-in-effect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Confirm cfg.ImageRegistryMirror is in effect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#45-pull-through-the-mirror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.5 Pull through the mirror
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-purge-teardown-ordering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. --purge teardown ordering
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. --purge teardown ordering">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recommended-teardown-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended teardown order
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ordering-rationale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ordering rationale
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-known-gaps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Known gaps
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Known gaps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-yage-tofuissuing-ca-is-dormant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 yage-tofu/issuing-ca/ is dormant
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-yage-tofuregistry-has-no-go-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 yage-tofu/registry/ has no Go consumer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-purge-does-not-destroy-phase-h-tofu-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 --purge does not destroy Phase H tofu state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#64-hostname-tls-template-id-env-vars-are-not-exposed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4 Hostname / TLS / template-ID env vars are not exposed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#65-adr-0009-state-location-is-outdated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.5 ADR 0009 § state location is outdated
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/providers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Providers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-prerequisites-environment-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Prerequisites — environment variables
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Prerequisites — environment variables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#registry-vm-consumed-by-yage-tofuregistry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Registry VM (consumed by yage-tofu/registry/)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issuing-ca-consumed-by-yage-tofuissuing-ca-and-by-ensureissuingca" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issuing CA (consumed by yage-tofu/issuing-ca/ and by EnsureIssuingCA)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#repo-cache-prerequisites-adr-0010-adr-0011" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Repo cache prerequisites (ADR 0010 / ADR 0011)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-expected-post-bootstrap-state-in-yage-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Expected post-bootstrap state in yage-system
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-cert-manager-clusterissuer-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. cert-manager ClusterIssuer verification
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. cert-manager ClusterIssuer verification">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-confirm-the-management-side-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Confirm the management-side Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-confirm-the-workload-side-secret-clusterissuer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Confirm the workload-side Secret + ClusterIssuer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-issue-a-test-certificate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Issue a test certificate
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-registry-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Registry verification
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Registry verification">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-vm-reachability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 VM reachability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-tls-validation-against-the-operator-supplied-chain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 TLS validation against the operator-supplied chain
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-registry-api-harbor-zot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Registry API (Harbor / Zot)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-confirm-cfgimageregistrymirror-is-in-effect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Confirm cfg.ImageRegistryMirror is in effect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#45-pull-through-the-mirror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.5 Pull through the mirror
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-purge-teardown-ordering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. --purge teardown ordering
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. --purge teardown ordering">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recommended-teardown-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended teardown order
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ordering-rationale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ordering rationale
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-known-gaps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Known gaps
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Known gaps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-yage-tofuissuing-ca-is-dormant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 yage-tofu/issuing-ca/ is dormant
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-yage-tofuregistry-has-no-go-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 yage-tofu/registry/ has no Go consumer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-purge-does-not-destroy-phase-h-tofu-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 --purge does not destroy Phase H tofu state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#64-hostname-tls-template-id-env-vars-are-not-exposed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4 Hostname / TLS / template-ID env vars are not exposed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#65-adr-0009-state-location-is-outdated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.5 ADR 0009 § state location is outdated
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="phase-h-bootstrap-registry-and-issuing-ca-runbook">Phase H bootstrap — registry and issuing CA runbook<a class="headerlink" href="#phase-h-bootstrap-registry-and-issuing-ca-runbook" title="Permanent link">&para;</a></h1>
+<p>Phase H provisions the two on-prem platform services described in
+<a href="../../../architecture/adrs/0009-on-prem-platform-services/">ADR 0009</a>:</p>
+<ol>
+<li>an <strong>OCI bootstrap registry</strong> (Harbor by default, Zot opt-in) running on a
+   Proxmox VM, used as the air-gapped image mirror for CAPI / CNI / Helm
+   pulls;</li>
+<li>an <strong>online intermediate (issuing) CA</strong> signed by the operator's offline
+   root, wired into a workload-cluster <code>cert-manager</code> <code>ClusterIssuer</code>.</li>
+</ol>
+<p>This runbook covers what an operator must configure, what the cluster looks
+like after bootstrap, how to verify each surface, the order in which to tear
+the surface down on <code>--purge</code>, and which pieces of the design are not yet
+implemented in the orchestrator.</p>
+<div class="admonition warning">
+<p class="admonition-title">Implementation gap — read this first</p>
+<p>The two OpenTofu modules (<code>yage-tofu/registry/</code> and <code>yage-tofu/issuing-ca/</code>,
+<a href="https://github.com/lpasquali/yage-tofu/pull/6">yage-tofu PR #6</a> and
+<a href="https://github.com/lpasquali/yage-tofu/pull/7">PR #7</a>) are merged shapes,
+not active code paths from yage's point of view. As of commit
+<a href="https://github.com/lpasquali/yage/commit/7b9d19b"><code>7b9d19b</code></a> on
+<code>main</code>:</p>
+<ul>
+<li>There is <strong>no <code>EnsureRegistry</code> Go function</strong>. Setting <code>YAGE_REGISTRY_*</code>
+  configures the <code>--dry-run</code> plan output and surfaces the fields in the
+  xapiri TUI (<a href="https://github.com/lpasquali/yage/commit/6504821">yage commit <code>6504821</code></a>),
+  but yage does <strong>not</strong> apply the <code>yage-tofu/registry/</code> module and does
+  <strong>not</strong> auto-populate <code>cfg.ImageRegistryMirror</code>. Operators must
+  provision the registry VM separately (running <code>tofu apply</code> in
+  <code>yage-tofu/registry/</code> by hand, or pre-staging out-of-band) and continue
+  to set <code>YAGE_IMAGE_REGISTRY_MIRROR</code> explicitly.</li>
+<li><code>EnsureIssuingCA</code> exists (<a href="https://github.com/lpasquali/yage/commit/7b9d19b">yage commit <code>7b9d19b</code></a>)
+  but generates the intermediate CA inline using <code>crypto/x509</code>. It does
+  <strong>not</strong> read outputs from the <code>yage-tofu/issuing-ca/</code> module. The
+  module is dormant code waiting for the orchestrator migration tracked
+  in <a href="https://github.com/lpasquali/yage-tofu/issues/4">yage-tofu issue #4</a>.</li>
+</ul>
+<p>Sections 2–4 below describe the state that is achievable today through
+<code>EnsureIssuingCA</code> plus a manually-applied registry. Section 5 calls out
+which <code>--purge</code> steps are wired and which the operator must do by hand.</p>
+</div>
+<hr />
+<h2 id="1-prerequisites-environment-variables">1. Prerequisites — environment variables<a class="headerlink" href="#1-prerequisites-environment-variables" title="Permanent link">&para;</a></h2>
+<p>The fields below are defined in
+<a href="https://github.com/lpasquali/yage/blob/main/internal/config/config.go"><code>internal/config/config.go</code></a>
+and surfaced in the <code>--dry-run</code> plan and the xapiri TUI.</p>
+<h3 id="registry-vm-consumed-by-yage-tofuregistry">Registry VM (consumed by <code>yage-tofu/registry/</code>)<a class="headerlink" href="#registry-vm-consumed-by-yage-tofuregistry" title="Permanent link">&para;</a></h3>
+<p>The variable wiring lives in
+<a href="https://github.com/lpasquali/yage-tofu/blob/registry-module/registry/variables.tf"><code>yage-tofu/registry/variables.tf</code></a>.
+Setting these does <strong>not</strong> trigger automatic provisioning today — see the
+warning above — but they are the canonical names to use when running the
+module manually so that a future <code>EnsureRegistry</code> phase can take over without
+reconfiguration.</p>
+<table>
+<thead>
+<tr>
+<th>Env var</th>
+<th>tofu variable</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>YAGE_REGISTRY_NODE</code></td>
+<td><code>registry_node</code></td>
+<td>yes</td>
+<td>—</td>
+<td>Proxmox node where the registry VM is provisioned. Empty disables Phase H registry surface in <code>--dry-run</code>.</td>
+</tr>
+<tr>
+<td><code>YAGE_REGISTRY_VM_FLAVOR</code></td>
+<td>(mapped to <code>registry_vm_cores</code> / <code>registry_vm_memory_mb</code> / <code>registry_vm_disk_gb</code>)</td>
+<td>no</td>
+<td><code>2</code> cores / <code>4096</code> MiB / <code>100</code> GiB</td>
+<td>Operator-defined flavor name; the module exposes the three discrete inputs. Map flavor → triple before <code>tofu apply</code>.</td>
+</tr>
+<tr>
+<td><code>YAGE_REGISTRY_NETWORK</code></td>
+<td><code>registry_network</code></td>
+<td>no</td>
+<td><code>vmbr0</code></td>
+<td>Proxmox bridge attached to the registry VM.</td>
+</tr>
+<tr>
+<td><code>YAGE_REGISTRY_STORAGE</code></td>
+<td><code>registry_storage</code></td>
+<td>no</td>
+<td><code>local-lvm</code></td>
+<td>Proxmox storage pool for the registry root disk.</td>
+</tr>
+<tr>
+<td><code>YAGE_REGISTRY_FLAVOR</code></td>
+<td><code>registry_flavor</code></td>
+<td>no</td>
+<td><code>harbor</code></td>
+<td>Registry implementation: <code>harbor</code> (replication-capable) or <code>zot</code> (lightweight).</td>
+</tr>
+<tr>
+<td>(no env yet)</td>
+<td><code>registry_template_id</code></td>
+<td>yes</td>
+<td>—</td>
+<td>Proxmox VM template ID to clone (cloud-init enabled Ubuntu/Debian). Pass via <code>-var</code> when running <code>tofu apply</code> manually.</td>
+</tr>
+<tr>
+<td>(no env yet)</td>
+<td><code>registry_hostname</code></td>
+<td>yes</td>
+<td>—</td>
+<td>DNS name used as cloud-init hostname and TLS SAN.</td>
+</tr>
+<tr>
+<td>(no env yet)</td>
+<td><code>registry_tls_cert_pem</code> / <code>registry_tls_key_pem</code> / <code>registry_ca_bundle_pem</code></td>
+<td>no</td>
+<td>empty</td>
+<td>PEM material served by the registry. The module accepts empty values for dev mode; production must supply the chain.</td>
+</tr>
+<tr>
+<td>(no env yet)</td>
+<td><code>registry_admin_password</code></td>
+<td>no</td>
+<td>empty</td>
+<td>Initial Harbor admin password seeded on first boot.</td>
+</tr>
+<tr>
+<td>(no env yet)</td>
+<td><code>proxmox_url</code> / <code>proxmox_username</code> / <code>proxmox_password</code> / <code>proxmox_insecure</code></td>
+<td>yes</td>
+<td>—</td>
+<td>Proxmox API credentials. Reuse the same values as the yage Phase G identity bootstrap.</td>
+</tr>
+</tbody>
+</table>
+<p>The hostname, TLS material, admin password, and template ID are not yet
+exposed as <code>YAGE_*</code> env vars in <code>internal/config/config.go</code>. When the
+orchestrator migrates to consume the module these will be added; for the
+manual workflow today, pass them as <code>-var</code> flags to <code>tofu apply</code>.</p>
+<h3 id="issuing-ca-consumed-by-yage-tofuissuing-ca-and-by-ensureissuingca">Issuing CA (consumed by <code>yage-tofu/issuing-ca/</code> <em>and</em> by <code>EnsureIssuingCA</code>)<a class="headerlink" href="#issuing-ca-consumed-by-yage-tofuissuing-ca-and-by-ensureissuingca" title="Permanent link">&para;</a></h3>
+<p>The variable wiring lives in
+<a href="https://github.com/lpasquali/yage-tofu/blob/feat/4-issuing-ca-module/issuing-ca/variables.tf"><code>yage-tofu/issuing-ca/variables.tf</code></a>
+and the <a href="https://github.com/lpasquali/yage-tofu/blob/feat/4-issuing-ca-module/issuing-ca/README.md">module README</a>.
+The two PEM env vars are also read directly by
+<code>EnsureIssuingCA</code> in
+<a href="https://github.com/lpasquali/yage/blob/main/internal/platform/opentofux/issuing_ca.go"><code>internal/platform/opentofux/issuing_ca.go</code></a>,
+which is what runs today.</p>
+<table>
+<thead>
+<tr>
+<th>Env var</th>
+<th>tofu variable</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>YAGE_ISSUING_CA_ROOT_CERT</code></td>
+<td><code>root_ca_cert</code></td>
+<td>yes (to enable the surface)</td>
+<td>empty</td>
+<td>PEM root CA cert. When empty, <code>EnsureIssuingCA</code> returns <code>ErrNotApplicable</code> and the orchestrator skips the phase silently.</td>
+</tr>
+<tr>
+<td><code>YAGE_ISSUING_CA_ROOT_KEY</code></td>
+<td><code>root_ca_key</code></td>
+<td>yes (to enable the surface)</td>
+<td>empty</td>
+<td>PEM root CA key (RSA, ECDSA, or Ed25519). Sensitive — never persisted to kind Secrets (omitted from <code>Snapshot</code>).</td>
+</tr>
+<tr>
+<td>(no env yet)</td>
+<td><code>cluster_name</code></td>
+<td>yes (in tofu)</td>
+<td>—</td>
+<td>Workload cluster name. yage's inline path uses <code>cfg.WorkloadClusterName</code> automatically.</td>
+</tr>
+<tr>
+<td>(no env yet)</td>
+<td><code>validity_hours</code></td>
+<td>no</td>
+<td><code>8760</code> (365 d)</td>
+<td>Intermediate validity. Mirrors <code>issuingCAValidityDays = 365</code> in <code>issuing_ca.go</code>.</td>
+</tr>
+<tr>
+<td>(no env yet)</td>
+<td><code>early_renewal_hours</code></td>
+<td>no</td>
+<td><code>720</code> (30 d)</td>
+<td>Renewal threshold. Not yet wired to the inline path.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition danger">
+<p class="admonition-title">Root CA material handling</p>
+<p><code>YAGE_ISSUING_CA_ROOT_CERT</code> and <code>YAGE_ISSUING_CA_ROOT_KEY</code> carry
+operator-controlled offline-root material. Per ADR 0009 §4 these must
+never appear in kind Secrets, <code>CURRENT_STATE.md</code>, or any persistent
+store managed by yage. Inject from a vault / secrets manager for the
+duration of the bootstrap process, then unset them.</p>
+</div>
+<h3 id="repo-cache-prerequisites-adr-0010-adr-0011">Repo cache prerequisites (ADR 0010 / ADR 0011)<a class="headerlink" href="#repo-cache-prerequisites-adr-0010-adr-0011" title="Permanent link">&para;</a></h3>
+<p>Both modules are cloned into the in-cluster <code>yage-repos</code> PVC by the
+<code>yage-repo-sync</code> Job, created by <code>EnsureRepoSync</code> in
+<a href="https://github.com/lpasquali/yage/blob/main/internal/platform/opentofux/fetcher.go"><code>internal/platform/opentofux/fetcher.go</code></a>
+(yage commit
+<a href="https://github.com/lpasquali/yage/commit/e7d116e"><code>e7d116e</code></a>). Operators
+who plan to run the modules out-of-band can clone the repo locally instead;
+the variables above apply identically.</p>
+<table>
+<thead>
+<tr>
+<th>Env var</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>YAGE_TOFU_REPO</code></td>
+<td><code>https://github.com/lpasquali/yage-tofu</code></td>
+<td>Source for both modules.</td>
+</tr>
+<tr>
+<td><code>YAGE_TOFU_REF</code></td>
+<td><code>main</code></td>
+<td>Pin to a tag for reproducibility.</td>
+</tr>
+<tr>
+<td><code>YAGE_REPOS_PVC_SIZE</code></td>
+<td><code>500Mi</code></td>
+<td>Backing storage for the in-cluster cache.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-expected-post-bootstrap-state-in-yage-system">2. Expected post-bootstrap state in <code>yage-system</code><a class="headerlink" href="#2-expected-post-bootstrap-state-in-yage-system" title="Permanent link">&para;</a></h2>
+<p>After a bootstrap run with <code>YAGE_ISSUING_CA_ROOT_CERT</code> / <code>YAGE_ISSUING_CA_ROOT_KEY</code>
+set (and <code>EnsureRepoSync</code> having succeeded), the management cluster's
+<code>yage-system</code> namespace contains the following objects. All carry the
+<code>app.kubernetes.io/managed-by=yage</code> label; see
+<a href="https://github.com/lpasquali/yage/issues/148">issue #148</a> for the
+HandOff/VerifyParity contract that consumes that label.</p>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Name</th>
+<th>Source</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Namespace</td>
+<td><code>yage-system</code></td>
+<td><code>EnsureYageSystemOnCluster</code> (<a href="https://github.com/lpasquali/yage/blob/main/internal/cluster/kindsync/yagesystem.go"><code>kindsync/yagesystem.go</code></a>)</td>
+<td>Idempotent on every Ensure call.</td>
+</tr>
+<tr>
+<td>ServiceAccount</td>
+<td><code>yage-job-runner</code></td>
+<td><code>EnsureYageSystemOnCluster</code></td>
+<td>Used by <code>yage-repo-sync</code> and (future) tofu Jobs.</td>
+</tr>
+<tr>
+<td>Role / RoleBinding</td>
+<td><code>yage-job-runner</code></td>
+<td><code>EnsureYageSystemOnCluster</code></td>
+<td>Permits Job + Secret + ConfigMap RW within <code>yage-system</code>.</td>
+</tr>
+<tr>
+<td>PersistentVolumeClaim</td>
+<td><code>yage-repos</code></td>
+<td><code>EnsureRepoSync</code> (commit <code>e7d116e</code>)</td>
+<td><code>ReadWriteOnce</code>, default <code>500Mi</code>, storage class resolved by <code>repoSyncStorageClass()</code> (CSI default → Proxmox CSI → <code>standard</code>). Bound after the sync Job completes.</td>
+</tr>
+<tr>
+<td>Secret</td>
+<td><code>yage-issuing-ca</code></td>
+<td><code>EnsureIssuingCA</code> (commit <code>7b9d19b</code>)</td>
+<td>Type <code>kubernetes.io/tls</code>. Keys: <code>tls.crt</code> (intermediate, ECDSA P-256), <code>tls.key</code>, <code>ca.crt</code> (operator-supplied root). Label <code>app.kubernetes.io/managed-by=yage</code>.</td>
+</tr>
+<tr>
+<td>Secret</td>
+<td><code>tfstate-default-issuing-ca</code></td>
+<td>OpenTofu <code>kubernetes</code> backend (when the module is applied)</td>
+<td><strong>Not produced by yage today</strong> — see warning at top. Created only when an operator runs <code>tofu apply</code> against <code>yage-tofu/issuing-ca/</code> manually with the in-cluster backend. Labels <code>app.kubernetes.io/managed-by=yage</code>, <code>app.kubernetes.io/component=tofu-state</code> (per <a href="https://github.com/lpasquali/yage-tofu/blob/feat/4-issuing-ca-module/issuing-ca/backend.tf"><code>backend.tf</code></a>).</td>
+</tr>
+<tr>
+<td>Secret</td>
+<td><code>tfstate-default-registry</code></td>
+<td>OpenTofu <code>kubernetes</code> backend (when the module is applied)</td>
+<td>Same caveat. Same labels.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">What the warning means in practice</p>
+<p>Operators running yage today should expect <strong>only</strong> the first five rows
+on a clean run. The two <code>tfstate-default-*</code> Secrets appear only when an
+operator runs <code>tofu apply</code> against the modules out-of-band against a
+cluster that already has <code>yage-system</code> and the <code>yage-job-runner</code> RBAC
+in place. <code>yage --purge</code> does not delete those Secrets — see §5.</p>
+</div>
+<p>The workload cluster receives, in the <code>cert-manager</code> namespace:</p>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Name</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Namespace</td>
+<td><code>cert-manager</code></td>
+<td>Created by <code>EnsureIssuingCA</code> even before cert-manager itself installs, so the Secret can land first.</td>
+</tr>
+<tr>
+<td>Secret</td>
+<td><code>yage-issuing-ca</code></td>
+<td>Type <code>kubernetes.io/tls</code>. Keys: <code>tls.crt</code>, <code>tls.key</code> only — no <code>ca.crt</code>. Label <code>app.kubernetes.io/managed-by=yage</code>.</td>
+</tr>
+<tr>
+<td>ClusterIssuer</td>
+<td><code>yage-ca-issuer</code></td>
+<td><code>spec.ca.secretName: yage-issuing-ca</code>. Label <code>app.kubernetes.io/managed-by=yage</code>.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-cert-manager-clusterissuer-verification">3. cert-manager <code>ClusterIssuer</code> verification<a class="headerlink" href="#3-cert-manager-clusterissuer-verification" title="Permanent link">&para;</a></h2>
+<p>Run the steps below from a shell that has both the management cluster
+kubeconfig (<code>KUBECONFIG=$YAGE_MGMT_KCFG</code>) and the workload cluster
+kubeconfig (<code>KUBECONFIG=$YAGE_WL_KCFG</code>) available.</p>
+<h3 id="31-confirm-the-management-side-secret">3.1 Confirm the management-side Secret<a class="headerlink" href="#31-confirm-the-management-side-secret" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>--kubeconfig<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$YAGE_MGMT_KCFG</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-n<span class="w"> </span>yage-system<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>yage-issuing-ca<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.metadata.labels.app\.kubernetes\.io/managed-by}{&quot;\n&quot;}&#39;</span>
+<span class="c1"># Expected: yage</span>
+
+kubectl<span class="w"> </span>--kubeconfig<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$YAGE_MGMT_KCFG</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-n<span class="w"> </span>yage-system<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>yage-issuing-ca<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.data.tls\.crt}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d<span class="w"> </span><span class="p">|</span><span class="w"> </span>openssl<span class="w"> </span>x509<span class="w"> </span>-noout<span class="w"> </span>-subject<span class="w"> </span>-issuer<span class="w"> </span>-dates
+<span class="c1"># Expected:</span>
+<span class="c1">#   subject= CN = yage-issuing-ca-&lt;workload-cluster-name&gt;</span>
+<span class="c1">#   issuer=  CN = &lt;your-root-CA-CN&gt;</span>
+<span class="c1">#   notBefore=...  notAfter=... (≈ 365 d span)</span>
+</code></pre></div>
+<h3 id="32-confirm-the-workload-side-secret-clusterissuer">3.2 Confirm the workload-side Secret + ClusterIssuer<a class="headerlink" href="#32-confirm-the-workload-side-secret-clusterissuer" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>--kubeconfig<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$YAGE_WL_KCFG</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-n<span class="w"> </span>cert-manager<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>yage-issuing-ca<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.type}{&quot;\n&quot;}&#39;</span>
+<span class="c1"># Expected: kubernetes.io/tls</span>
+
+kubectl<span class="w"> </span>--kubeconfig<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$YAGE_WL_KCFG</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>get<span class="w"> </span>clusterissuer<span class="w"> </span>yage-ca-issuer<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A2<span class="w"> </span><span class="s1">&#39;conditions:&#39;</span>
+<span class="c1"># Expected: type: Ready, status: &quot;True&quot;, reason: KeyPairVerified</span>
+</code></pre></div>
+<p>If <code>ClusterIssuer</code> is missing, cert-manager was not yet installed when
+<code>EnsureIssuingCA</code> ran (the function logs a warning and continues). Re-run
+the wiring with:</p>
+<div class="highlight"><pre><span></span><code>yage<span class="w"> </span>--workload-rollout
+</code></pre></div>
+<h3 id="33-issue-a-test-certificate">3.3 Issue a test certificate<a class="headerlink" href="#33-issue-a-test-certificate" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39; | kubectl --kubeconfig &quot;$YAGE_WL_KCFG&quot; apply -f -</span>
+<span class="s">apiVersion: cert-manager.io/v1</span>
+<span class="s">kind: Certificate</span>
+<span class="s">metadata:</span>
+<span class="s">  name: yage-issuer-smoketest</span>
+<span class="s">  namespace: default</span>
+<span class="s">spec:</span>
+<span class="s">  secretName: yage-issuer-smoketest-tls</span>
+<span class="s">  issuerRef:</span>
+<span class="s">    kind: ClusterIssuer</span>
+<span class="s">    name: yage-ca-issuer</span>
+<span class="s">  commonName: yage-issuer-smoketest.local</span>
+<span class="s">  dnsNames:</span>
+<span class="s">    - yage-issuer-smoketest.local</span>
+<span class="s">  duration: 24h</span>
+<span class="s">  renewBefore: 8h</span>
+<span class="s">EOF</span>
+
+kubectl<span class="w"> </span>--kubeconfig<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$YAGE_WL_KCFG</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-n<span class="w"> </span>default<span class="w"> </span><span class="nb">wait</span><span class="w"> </span>--for<span class="o">=</span><span class="nv">condition</span><span class="o">=</span>Ready<span class="w"> </span>certificate/yage-issuer-smoketest<span class="w"> </span>--timeout<span class="o">=</span>2m
+
+kubectl<span class="w"> </span>--kubeconfig<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$YAGE_WL_KCFG</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-n<span class="w"> </span>default<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>yage-issuer-smoketest-tls<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.data.tls\.crt}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d<span class="w"> </span><span class="p">|</span><span class="w"> </span>openssl<span class="w"> </span>x509<span class="w"> </span>-noout<span class="w"> </span>-issuer
+<span class="c1"># Expected: issuer= CN = yage-issuing-ca-&lt;workload-cluster-name&gt;</span>
+</code></pre></div>
+<p>Clean up the smoke-test artifacts when done:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>--kubeconfig<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$YAGE_WL_KCFG</span><span class="s2">&quot;</span><span class="w"> </span>-n<span class="w"> </span>default<span class="w"> </span>delete<span class="w"> </span>certificate<span class="w"> </span>yage-issuer-smoketest
+kubectl<span class="w"> </span>--kubeconfig<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$YAGE_WL_KCFG</span><span class="s2">&quot;</span><span class="w"> </span>-n<span class="w"> </span>default<span class="w"> </span>delete<span class="w"> </span>secret<span class="w"> </span>yage-issuer-smoketest-tls
+</code></pre></div>
+<hr />
+<h2 id="4-registry-verification">4. Registry verification<a class="headerlink" href="#4-registry-verification" title="Permanent link">&para;</a></h2>
+<p>The verification below assumes a registry VM provisioned manually (today)
+or by a future <code>EnsureRegistry</code> (when wired). The module outputs declared in
+<a href="https://github.com/lpasquali/yage-tofu/blob/registry-module/registry/outputs.tf"><code>yage-tofu/registry/outputs.tf</code></a>
+(<code>registry_ip</code>, <code>registry_host</code>, <code>registry_url</code>, <code>vm_id</code>) drive the checks
+below.</p>
+<h3 id="41-vm-reachability">4.1 VM reachability<a class="headerlink" href="#41-vm-reachability" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nv">REGISTRY_HOST</span><span class="o">=</span><span class="k">$(</span>tofu<span class="w"> </span>-chdir<span class="o">=</span>registry/<span class="w"> </span>output<span class="w"> </span>-raw<span class="w"> </span>registry_host<span class="k">)</span><span class="w">   </span><span class="c1"># if you ran the module</span>
+<span class="nv">REGISTRY_IP</span><span class="o">=</span><span class="k">$(</span>tofu<span class="w">   </span>-chdir<span class="o">=</span>registry/<span class="w"> </span>output<span class="w"> </span>-raw<span class="w"> </span>registry_ip<span class="k">)</span>
+
+ping<span class="w"> </span>-c<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$REGISTRY_IP</span><span class="s2">&quot;</span>
+nc<span class="w"> </span>-zv<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$REGISTRY_HOST</span><span class="s2">&quot;</span><span class="w"> </span><span class="m">443</span>
+</code></pre></div>
+<p>If you provisioned by hand, substitute the operator-known hostname and IP.</p>
+<h3 id="42-tls-validation-against-the-operator-supplied-chain">4.2 TLS validation against the operator-supplied chain<a class="headerlink" href="#42-tls-validation-against-the-operator-supplied-chain" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>openssl<span class="w"> </span>s_client<span class="w"> </span>-connect<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$REGISTRY_HOST</span><span class="s2">:443&quot;</span><span class="w"> </span>-servername<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$REGISTRY_HOST</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-CAfile<span class="w"> </span>/path/to/internal-ca-bundle.pem<span class="w"> </span>-showcerts<span class="w"> </span>&lt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;subject=|issuer=|Verify return code&#39;</span>
+<span class="c1"># Expected: Verify return code: 0 (ok)</span>
+</code></pre></div>
+<p>The <code>internal-ca-bundle.pem</code> you pass here must be the same file referenced
+by <code>YAGE_INTERNAL_CA_BUNDLE</code> (it must contain the offline root CA so the
+intermediate served by the registry chains back to a trusted anchor).</p>
+<h3 id="43-registry-api-harbor-zot">4.3 Registry API (Harbor / Zot)<a class="headerlink" href="#43-registry-api-harbor-zot" title="Permanent link">&para;</a></h3>
+<p>Harbor:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>--cacert<span class="w"> </span>/path/to/internal-ca-bundle.pem<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-u<span class="w"> </span><span class="s2">&quot;admin:</span><span class="nv">$YAGE_REGISTRY_ADMIN_PASSWORD</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;https://</span><span class="nv">$REGISTRY_HOST</span><span class="s2">/api/v2.0/health&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.
+<span class="c1"># Expected: components all &quot;healthy&quot;</span>
+</code></pre></div>
+<p>Zot:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>--cacert<span class="w"> </span>/path/to/internal-ca-bundle.pem<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;https://</span><span class="nv">$REGISTRY_HOST</span><span class="s2">/v2/&quot;</span><span class="w"> </span>-I
+<span class="c1"># Expected: HTTP/1.1 200 OK with Docker-Distribution-API-Version header</span>
+</code></pre></div>
+<h3 id="44-confirm-cfgimageregistrymirror-is-in-effect">4.4 Confirm <code>cfg.ImageRegistryMirror</code> is in effect<a class="headerlink" href="#44-confirm-cfgimageregistrymirror-is-in-effect" title="Permanent link">&para;</a></h3>
+<p>Because there is no <code>EnsureRegistry</code> Go function today,
+<code>cfg.ImageRegistryMirror</code> is <strong>not</strong> populated automatically from the tofu
+output. Verify the value the orchestrator actually used by inspecting the
+realized bootstrap-config Secret on the management cluster:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>--kubeconfig<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$YAGE_MGMT_KCFG</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-n<span class="w"> </span>yage-system<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">YAGE_CONFIG_NAME</span><span class="k">:-</span><span class="nv">$YAGE_WORKLOAD_CLUSTER_NAME</span><span class="si">}</span><span class="s2">-bootstrap-config&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.data.config\.yaml}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;^(YAGE_IMAGE_REGISTRY_MIRROR|YAGE_HELM_REPO_MIRROR|YAGE_INTERNAL_CA_BUNDLE)=&#39;</span>
+<span class="c1"># Expected: YAGE_IMAGE_REGISTRY_MIRROR=https://&lt;your-registry-host&gt;</span>
+</code></pre></div>
+<p>The same value must match <code>cfg.ImageRegistryMirror</code> printed by <code>--dry-run</code>
+under "Phase H — registry":</p>
+<div class="highlight"><pre><span></span><code>yage<span class="w"> </span>--dry-run<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A6<span class="w"> </span><span class="s1">&#39;Registry node&#39;</span>
+<span class="c1"># Expected: &#39;image registry mirror: https://...&#39; line aligned to YAGE_IMAGE_REGISTRY_MIRROR.</span>
+</code></pre></div>
+<p>If the line is empty, you forgot to set <code>YAGE_IMAGE_REGISTRY_MIRROR</code>. yage
+does not derive it from <code>YAGE_REGISTRY_NODE</code> today.</p>
+<h3 id="45-pull-through-the-mirror">4.5 Pull through the mirror<a class="headerlink" href="#45-pull-through-the-mirror" title="Permanent link">&para;</a></h3>
+<p>The fastest way to confirm the registry is fronting the mirror is to
+re-pull a CAPI image on a workload node and check the pull origin:</p>
+<div class="highlight"><pre><span></span><code>ssh<span class="w"> </span>ubuntu@&lt;worker-node-ip&gt;<span class="w"> </span>--<span class="w"> </span><span class="s1">&#39;sudo crictl pull $YAGE_IMAGE_REGISTRY_MIRROR/cluster-api/cluster-api-controller:v1.11.8&#39;</span>
+ssh<span class="w"> </span>ubuntu@&lt;worker-node-ip&gt;<span class="w"> </span>--<span class="w"> </span><span class="s1">&#39;sudo crictl images | grep cluster-api-controller&#39;</span>
+<span class="c1"># Expected: image listed with the registry-mirror prefix.</span>
+</code></pre></div>
+<hr />
+<h2 id="5-purge-teardown-ordering">5. <code>--purge</code> teardown ordering<a class="headerlink" href="#5-purge-teardown-ordering" title="Permanent link">&para;</a></h2>
+<p><code>yage --purge</code> drives <code>PurgeGeneratedArtifacts</code> in
+<a href="https://github.com/lpasquali/yage/blob/main/internal/orchestrator/purge.go"><code>internal/orchestrator/purge.go</code></a>,
+which executes — in order — workload-cluster deletion, the CAPI manifest
+Secret cleanup, the per-provider <code>Provider.Purge</code> (Proxmox runs the BPG
+identity <code>tofu destroy</code>), then file/disk cleanup. <strong>Phase H surfaces are
+not yet integrated.</strong> Operators must teardown manually in the order below
+to avoid orphan VMs and orphan tofu state.</p>
+<p>The two recently-introduced orchestrator commits anchor the surface:</p>
+<ul>
+<li><code>EnsureRepoSync</code> (<a href="https://github.com/lpasquali/yage/commit/e7d116e"><code>e7d116e</code></a>)
+  creates the <code>yage-repos</code> PVC and the <code>yage-repo-sync</code> Job that clones
+  <code>yage-tofu</code> and <code>yage-manifests</code> into it.</li>
+<li><code>EnsureIssuingCA</code> (<a href="https://github.com/lpasquali/yage/commit/7b9d19b"><code>7b9d19b</code></a>)
+  creates the <code>yage-issuing-ca</code> Secret on the management cluster and the
+  Secret + <code>ClusterIssuer</code> on the workload.</li>
+</ul>
+<h3 id="recommended-teardown-order">Recommended teardown order<a class="headerlink" href="#recommended-teardown-order" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Stop traffic</strong> to the registry (set <code>Airgapped=false</code> and unset
+   <code>YAGE_IMAGE_REGISTRY_MIRROR</code> / <code>YAGE_HELM_REPO_MIRROR</code> for any new
+   workloads), or shut the workload cluster down first if you are tearing
+   the whole environment.</p>
+</li>
+<li>
+<p><strong>Workload cluster</strong>: delete in this order so cert-manager doesn't
+   re-issue against an about-to-be-revoked Secret:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>--kubeconfig<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$YAGE_WL_KCFG</span><span class="s2">&quot;</span><span class="w"> </span>delete<span class="w"> </span>clusterissuer<span class="w"> </span>yage-ca-issuer<span class="w"> </span>--ignore-not-found
+kubectl<span class="w"> </span>--kubeconfig<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$YAGE_WL_KCFG</span><span class="s2">&quot;</span><span class="w"> </span>-n<span class="w"> </span>cert-manager<span class="w"> </span>delete<span class="w"> </span>secret<span class="w"> </span>yage-issuing-ca<span class="w"> </span>--ignore-not-found
+</code></pre></div>
+</li>
+<li>
+<p><strong>Issuing CA tofu state</strong> (only if you applied the module manually):</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/path/to/yage-tofu/issuing-ca/
+tofu<span class="w"> </span>destroy<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-var<span class="o">=</span><span class="s2">&quot;cluster_name=</span><span class="nv">$YAGE_WORKLOAD_CLUSTER_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-var<span class="o">=</span><span class="s2">&quot;root_ca_cert=</span><span class="nv">$YAGE_ISSUING_CA_ROOT_CERT</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-var<span class="o">=</span><span class="s2">&quot;root_ca_key=</span><span class="nv">$YAGE_ISSUING_CA_ROOT_KEY</span><span class="s2">&quot;</span>
+</code></pre></div>
+<p>This deletes the <code>tfstate-default-issuing-ca</code> Secret in <code>yage-system</code>.
+The <code>ClusterIssuer</code> was already removed in step 2.</p>
+</li>
+<li>
+<p><strong>Management-cluster issuing CA Secret</strong>: removed automatically by
+    <code>--purge</code> only when the management cluster is the <code>kind-&lt;KindClusterName&gt;</code>
+    cluster being deleted. After a pivot, the post-pivot management cluster
+    is <strong>not</strong> torn down by <code>--purge</code>, so the <code>yage-issuing-ca</code> Secret
+    persists in <code>yage-system</code> until the operator deletes it:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>--kubeconfig<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$YAGE_MGMT_KCFG</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-n<span class="w"> </span>yage-system<span class="w"> </span>delete<span class="w"> </span>secret<span class="w"> </span>yage-issuing-ca<span class="w"> </span>--ignore-not-found
+</code></pre></div>
+</li>
+<li>
+<p><strong>Run <code>yage --purge</code></strong> for the rest of the surface (workload cluster
+   deletion, CAPI manifest cleanup, Proxmox identity <code>tofu destroy</code>, kind
+   teardown):</p>
+<div class="highlight"><pre><span></span><code>yage<span class="w"> </span>--purge
+</code></pre></div>
+</li>
+<li>
+<p><strong>Registry tofu state and VM</strong> (only if you applied the module
+   manually). Run <strong>after</strong> <code>yage --purge</code> so any remaining workload-node
+   image pulls have completed:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/path/to/yage-tofu/registry/
+tofu<span class="w"> </span>destroy<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-var<span class="o">=</span><span class="s2">&quot;proxmox_url=</span><span class="nv">$PROXMOX_URL</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-var<span class="o">=</span><span class="s2">&quot;proxmox_username=</span><span class="nv">$PROXMOX_USERNAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-var<span class="o">=</span><span class="s2">&quot;proxmox_password=</span><span class="nv">$PROXMOX_PASSWORD</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-var<span class="o">=</span><span class="s2">&quot;cluster_name=</span><span class="nv">$YAGE_WORKLOAD_CLUSTER_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-var<span class="o">=</span><span class="s2">&quot;registry_node=</span><span class="nv">$YAGE_REGISTRY_NODE</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-var<span class="o">=</span><span class="s2">&quot;registry_template_id=</span><span class="nv">$YAGE_REGISTRY_TEMPLATE_ID</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-var<span class="o">=</span><span class="s2">&quot;registry_hostname=&lt;as-supplied&gt;&quot;</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Backend availability</p>
+<p>The <code>kubernetes</code> backend stores tofu state in <code>yage-system</code> on the
+management cluster. After step 5 the kind cluster is gone — if you
+had not pivoted, your registry-module state is gone too. Either:</p>
+<ul>
+<li>run step 6 <strong>before</strong> <code>yage --purge</code> (i.e. swap steps 5 and 6),
+  accepting that workload pulls may fail mid-teardown; or</li>
+<li>run the registry module with <code>-backend=false</code> from the start, so
+  state lives in a local <code>terraform.tfstate</code> file you can keep
+  across kind teardown.</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Verify no orphans on Proxmox</strong>:</p>
+<div class="highlight"><pre><span></span><code>pvesh<span class="w"> </span>get<span class="w"> </span>/cluster/resources<span class="w"> </span>--type<span class="w"> </span>vm<span class="w"> </span>--output-format<span class="w"> </span>json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.[] | select(.tags | contains(&quot;yage&quot;)) | &quot;\(.vmid)\t\(.name)&quot;&#39;</span>
+<span class="c1"># Expected: empty</span>
+</code></pre></div>
+</li>
+</ol>
+<h3 id="ordering-rationale">Ordering rationale<a class="headerlink" href="#ordering-rationale" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Workload <code>ClusterIssuer</code> first: avoids cert-manager attempting to
+  renew certificates against a Secret that is about to vanish.</li>
+<li>Issuing-CA tofu destroy before <code>yage --purge</code>: the kubernetes backend
+  Secret lives on the management cluster; once <code>yage --purge</code> deletes the
+  kind management cluster, the state Secret is gone with it and <code>tofu
+  destroy</code> will fail with a "no state" error.</li>
+<li>Registry tofu destroy last: the registry must remain reachable while
+  the workload cluster is being torn down, in case CAPI controllers
+  reach for any remaining images during cleanup.</li>
+<li>The Proxmox identity <code>tofu destroy</code> runs inside <code>yage --purge</code> via
+  <code>Provider.Purge</code> — operators do not need to invoke it explicitly.</li>
+</ul>
+<hr />
+<h2 id="6-known-gaps">6. Known gaps<a class="headerlink" href="#6-known-gaps" title="Permanent link">&para;</a></h2>
+<p>These are the deltas between ADR 0009 / the merged tofu modules and what
+the orchestrator actually does today. Operators should plan around them.</p>
+<h3 id="61-yage-tofuissuing-ca-is-dormant">6.1 <code>yage-tofu/issuing-ca/</code> is dormant<a class="headerlink" href="#61-yage-tofuissuing-ca-is-dormant" title="Permanent link">&para;</a></h3>
+<p><code>EnsureIssuingCA</code> (<a href="https://github.com/lpasquali/yage/blob/main/internal/platform/opentofux/issuing_ca.go"><code>internal/platform/opentofux/issuing_ca.go</code></a>,
+commit <a href="https://github.com/lpasquali/yage/commit/7b9d19b"><code>7b9d19b</code></a>)
+generates the intermediate CA inline using <code>crypto/x509</code> and never invokes
+the <code>yage-tofu/issuing-ca/</code> module. As a result:</p>
+<ul>
+<li>there is no <code>tfstate-default-issuing-ca</code> Secret in <code>yage-system</code> after
+  a normal <code>yage</code> run;</li>
+<li>the intermediate CA is regenerated <strong>on every run</strong> when no existing
+  <code>yage-issuing-ca</code> Secret is found — there is no early-renewal logic in
+  the inline path;</li>
+<li><code>validity_hours</code> and <code>early_renewal_hours</code> (declared in the module)
+  have no effect today; <code>issuingCAValidityDays = 365</code> is hard-coded in
+  Go.</li>
+</ul>
+<p>The migration is tracked by
+<a href="https://github.com/lpasquali/yage-tofu/issues/4">yage-tofu issue #4</a>.
+Once it lands, <code>EnsureIssuingCA</code> will read the four module outputs
+(<code>intermediate_cert_pem</code>, <code>intermediate_key_pem</code>, <code>ca_chain_pem</code>,
+<code>root_ca_cert_pem</code>) instead of generating the material in-process, and
+the tofu state Secret will appear after the first run.</p>
+<h3 id="62-yage-tofuregistry-has-no-go-consumer">6.2 <code>yage-tofu/registry/</code> has no Go consumer<a class="headerlink" href="#62-yage-tofuregistry-has-no-go-consumer" title="Permanent link">&para;</a></h3>
+<p>There is no <code>EnsureRegistry</code> function in
+<code>internal/platform/opentofux/</code>. Setting <code>YAGE_REGISTRY_*</code> configures
+<code>--dry-run</code> output and the xapiri TUI (<a href="https://github.com/lpasquali/yage/commit/6504821">yage commit
+<code>6504821</code></a>) but does
+<strong>not</strong> apply the module. Consequences:</p>
+<ul>
+<li><code>cfg.ImageRegistryMirror</code> is <strong>not</strong> auto-populated. Operators must
+  continue to set <code>YAGE_IMAGE_REGISTRY_MIRROR</code> to the registry URL by
+  hand.</li>
+<li>The <code>tfstate-default-registry</code> Secret never appears unless the operator
+  runs <code>tofu apply</code> against the module manually.</li>
+<li>Registry image-seeding is fully manual (this is true even after
+  <code>EnsureRegistry</code> lands — see ADR 0009 §1, Phase H scope explicitly
+  excludes a <code>--seed-registry</code> flag).</li>
+</ul>
+<p>The orchestrator integration is tracked by
+<a href="https://github.com/lpasquali/yage/issues/125">yage issue #125</a>.</p>
+<h3 id="63-purge-does-not-destroy-phase-h-tofu-state">6.3 <code>--purge</code> does not destroy Phase H tofu state<a class="headerlink" href="#63-purge-does-not-destroy-phase-h-tofu-state" title="Permanent link">&para;</a></h3>
+<p>Per §5, <code>PurgeGeneratedArtifacts</code> runs the Proxmox identity <code>tofu destroy</code>
+through <code>Provider.Purge</code> but does not touch the registry or issuing-ca
+modules. Operators must run those <code>tofu destroy</code> calls manually, in the
+order documented above.</p>
+<h3 id="64-hostname-tls-template-id-env-vars-are-not-exposed">6.4 Hostname / TLS / template-ID env vars are not exposed<a class="headerlink" href="#64-hostname-tls-template-id-env-vars-are-not-exposed" title="Permanent link">&para;</a></h3>
+<p>The registry module requires <code>registry_hostname</code>, <code>registry_template_id</code>,
+and the three TLS PEM inputs, but no <code>YAGE_*</code> env vars exist for them in
+<code>internal/config/config.go</code>. Operators must pass them as <code>-var</code> flags
+when running <code>tofu apply</code> manually. These will be added when the
+<code>EnsureRegistry</code> orchestrator integration lands.</p>
+<h3 id="65-adr-0009-state-location-is-outdated">6.5 ADR 0009 § state location is outdated<a class="headerlink" href="#65-adr-0009-state-location-is-outdated" title="Permanent link">&para;</a></h3>
+<p>ADR 0009 §1 describes registry state at
+<code>~/.yage/tofu/registry/terraform.tfstate</code>. That predates the kubernetes
+backend migration (<a href="https://github.com/lpasquali/yage/commit/1c2365d">yage PR <code>1c2365d</code></a>,
+issue #145). Both modules' <code>backend.tf</code> now declare the kubernetes
+backend; state lives in <code>yage-system</code> Secrets. Trust the
+<a href="https://github.com/lpasquali/yage-tofu/blob/feat/4-issuing-ca-module/issuing-ca/backend.tf"><code>backend.tf</code></a>
+files over the ADR text for the current location.</p>
+<hr />
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../../architecture/adrs/0009-on-prem-platform-services/">ADR 0009 — On-Prem Platform Services (Phase H)</a></li>
+<li><a href="../../../architecture/adrs/0010-in-cluster-repo-cache/">ADR 0010 — In-cluster repository cache</a></li>
+<li><a href="../../../architecture/adrs/0011-pivot-yage-state-migration/">ADR 0011 — Pivot: yage state migration</a></li>
+<li>yage-tofu PR <a href="https://github.com/lpasquali/yage-tofu/pull/6">#6</a> — registry module</li>
+<li>yage-tofu PR <a href="https://github.com/lpasquali/yage-tofu/pull/7">#7</a> — issuing-ca module</li>
+<li>yage commit <a href="https://github.com/lpasquali/yage/commit/e7d116e"><code>e7d116e</code></a> — <code>EnsureRepoSync</code></li>
+<li>yage commit <a href="https://github.com/lpasquali/yage/commit/7b9d19b"><code>7b9d19b</code></a> — <code>EnsureIssuingCA</code></li>
+<li>yage commit <a href="https://github.com/lpasquali/yage/commit/6504821"><code>6504821</code></a> — xapiri + plan surfaces</li>
+<li><a href="https://github.com/lpasquali/yage/blob/main/internal/platform/opentofux/issuing_ca.go"><code>internal/platform/opentofux/issuing_ca.go</code></a></li>
+<li><a href="https://github.com/lpasquali/yage/blob/main/internal/platform/opentofux/fetcher.go"><code>internal/platform/opentofux/fetcher.go</code></a></li>
+<li><a href="https://github.com/lpasquali/yage/blob/main/internal/orchestrator/purge.go"><code>internal/orchestrator/purge.go</code></a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.expand", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
