@@ -1,6 +1,6 @@
 # ADR 0012 — yage-manifests: Template Layout, File Naming, and Data Contract
 
-**Status:** Accepted
+**Status:** Accepted (amended — Errata E1 2026-05-01)
 **Date:** 2026-05-01
 **Owners:** Architect (template contract, directory layout), Backend (per-package migration #137–#141)
 
@@ -210,6 +210,57 @@ the same silent-acceptance failure mode.
 This pins the design pick raised by yage-backend (C) on issue #136 in the
 affirmative.
 
+### 4.1 Template FuncMap
+
+**Errata E1 — 2026-05-01.** Amends §4 to allow a small, explicitly enumerated
+`template.FuncMap` in the `Fetcher`. The `missingkey=error` policy is unchanged.
+
+**Motivation.** Four config fields in `internal/capi/helmvalues/` carry
+env-var-origin string values (`"true"`, `"false"`, `"1"`, `"yes"`, …). In Go
+`text/template`, `{{ if "false" }}` is truthy (any non-empty string), so the
+package-local `isTrue()` semantics cannot be expressed in a template without a
+FuncMap. Migrating these fields to `bool` in `config.Config` expands scope
+dramatically; pre-evaluating them in every wrapper struct pollutes the data
+contract. A single named function is the minimal, auditable fix.
+
+**Admitted function — `isTrue`.**
+
+```
+isTrue(string) bool
+```
+
+Semantics: identical to `internal/platform/sysinfo.IsTrue` — case-insensitive
+match on `"1"`, `"t"`, `"true"`, `"y"`, `"yes"`, `"on"` after whitespace trim.
+Admissibility justification: `isTrue` is a value-coercion helper that bridges
+env-var-origin string fields to template boolean conditions. It does not
+introduce new data, does not enable arbitrary computation, and does not bypass
+the wrapper-struct contract.
+
+**Extension rule.** Each future FuncMap addition requires its own ADR amendment
+to this section. Admitting Sprig or any multi-function library wholesale is
+explicitly rejected — Sprig's 100+ functions weaken the data contract without
+providing auditable benefit.
+
+**Implementation contract.** The `Fetcher` must expose a method:
+
+```go
+func (f *Fetcher) RegisterFunc(name string, fn any)
+```
+
+that registers `fn` under `name` in an internal `template.FuncMap` applied on
+every `Render` call. `RegisterFunc` is the only permitted extension point; callers
+may not supply arbitrary `FuncMap` values directly. Backend implements this
+method per the amended ADR; the Architect does not touch Fetcher code.
+
+**Template usage example.**
+
+```
+{{ if isTrue .Cfg.WorkloadMetricsServerInsecureTLS }}
+args:
+  - --kubelet-insecure-tls
+{{ end }}
+```
+
 ### 5. Multi-document and partial handling
 
 - Every `.yaml.tmpl` outside `cluster/<provider>/cluster.yaml.tmpl` renders
@@ -249,6 +300,12 @@ target files exist and the corresponding Go renderer becomes a one-line
 The two observability values files share the `addons/observability/` directory
 because they belong to the same logical add-on (VictoriaMetrics + Grafana
 shipped as one stack); the filename suffix disambiguates.
+
+Templates that reference env-var-origin string fields use the `isTrue` FuncMap
+function (§4.1) rather than a bare `{{ if }}` expression:
+`{{ if isTrue .Cfg.WorkloadMetricsServerInsecureTLS }}`. The same pattern applies
+to any `helmvalues` field whose source is an env var that accepts
+`"true"/"false"/"1"/"0"` variants.
 
 ### `internal/capi/wlargocd/` → `addons/<addon>/application.yaml.tmpl`
 
