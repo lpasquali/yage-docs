@@ -2,22 +2,42 @@
 
 ## Living Memory
 
-yage is in active development. The core bootstrap pipeline is functional for Proxmox. The xapiri TUI is being built out as the primary configuration interface. The provider abstraction plan is largely complete: phases A, B, C, and E are done; D is substantially complete. Legacy cleanup is complete per ADR 0002 (no-backward-compatibility policy). ADR 0007 adopted: dashboard is the new default xapiri entry point. The full CSI driver registry (ADR 0001) is now complete — all 10 drivers merged.
+yage is in active development. The core bootstrap pipeline is functional for Proxmox. The xapiri TUI is being built out as the primary configuration interface. The provider abstraction plan is fully complete: phases A, B, C, D, and E are all done. Legacy cleanup is complete per ADR 0002. ADR 0007: dashboard is the new default xapiri entry point. CSI driver registry (ADR 0001) complete — all 10 drivers merged. Phase H (on-prem platform services via OpenTofu) is next — ADR 0009 accepted, implementation issues #123–#127 open.
 
 ## Freshness Policy
 
 This file must be updated whenever system state evolves (per CODING_STANDARDS.md "Atomic Persistence"). If information here conflicts with what you observe in the code or git history, trust what you observe now — then update this file to match reality.
 
-Last updated: **2026-04-30** — PO session 3: CSI wave fully merged (#108–#115, #110, #122); yage-docs ADR PRs #5 and #6 merged; epics #77 and #104 closed; #118 and #80 now unblocked
+Last updated: **2026-05-01** — PO session 4: PRs #129–#131 reconciled; Phase H issues #123–#127 added to Active Work; PR #128 ready to merge
 
 ## Version Baseline
 
 | Repo | Branch | Recent PRs | Status |
 |---|---|---|---|
-| yage | `main` | #122 (E2BIG fix), #115 (openstack-cinder), #114 (ibm-vpc-block), #113 (linode-block), #112 (longhorn), #111 (do-block), #110 (oci-block), #108 (openebs), #117 (xapiri dashboard-only) | Active development |
+| yage | `main` | #131 (D1 csi.Selector wire + delete internal/capi/csi), #130 (ADR 0002 item 7 InfraProvider guards), #129 (vsphere PatchManifest sizing), #122 (E2BIG fix), #115–#117 (CSI + xapiri) | Active development |
 | yage-docs | `main` | ADRs 0001–0009 written and accepted; WORKFLOW added | Documentation in progress |
 
 ## Recent Changes
+
+### 2026-05-01 — PO session 4: PRs #129–#131 reconciled; Phase H issues added; PR #128 ready
+
+**PRs merged to main (2026-04-30 late, not reflected in previous CURRENT_STATE update):**
+
+- **PR #129** merged — `feat(vsphere): PatchManifest — honor VSphereMachineTemplate sizing fields`. Closes #79. Backend complete.
+- **PR #130** merged — `refactor(orchestrator): remove redundant InfraProvider=="proxmox" guards (ADR 0002 item 7)`. Closes #71. ADR 0002 item 7 now done.
+- **PR #131** merged — `feat(orchestrator): wire csi.Selector; delete internal/capi/csi`. Closes #118. D1 complete; `internal/capi/csi/` deleted from codebase.
+
+**Phase H implementation issues created (all p2, children of epic #120):**
+- **#123** — opentofux: introduce Fetcher+Runner abstraction (Backend, prerequisite for #125 + #126)
+- **#124** — config: add `YAGE_REGISTRY_*` and `YAGE_ISSUING_CA_*` fields (Backend, prerequisite for all)
+- **#125** — orchestrator: provision bootstrap registry VM via OpenTofu (Backend, blocked on #123 + #124)
+- **#126** — orchestrator: provision online issuing CA + wire cert-manager ClusterIssuer (Backend, blocked on #123 + #124)
+- **#127** — xapiri+plan: surface Phase H registry and issuing CA fields in TUI + `--dry-run` (Frontend/Backend, blocked on #124)
+
+**Open PR needing merge:**
+- **PR #128** (`feat/80-openstack-ensure-identity`) — OpenStack EnsureIdentity: `clouds.yaml` Secret. Closes #80. MERGEABLE, all CI green (CodeQL, Quality, SecretScan). Programmer: move from "rune" project to yage project #1, then merge.
+
+---
 
 ### 2026-04-30 — PO session 3: CSI wave complete; ADR docs merged; epics closed
 
@@ -234,10 +254,12 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 
 | Issue / PR | Branch | Agent | Description | Status |
 |---|---|---|---|---|
-| #118 | TBD | **yage-backend** | D1: wire `csi.Selector` into orchestrator; delete `internal/capi/csi/` | **Unblocked** — p1, all CSI PRs merged, start now |
-| #71 | TBD | **yage-backend** | ADR 0002 item 7: remove redundant `cfg.InfraProvider == "proxmox"` guards | **Planned** — p2 next sprint |
-| #80 | TBD | **yage-backend** | OpenStack EnsureIdentity: template `clouds.yaml` from config fields | **Unblocked** — p3; ADR 0004 Phase G now accepted (PR #5 merged) |
-| #79 | TBD | **yage-backend** | vSphere PatchManifest: honor `VSphereMachineTemplate` sizing fields | **Planned** — p3 |
+| PR #128 | `feat/80-openstack-ensure-identity` | **Programmer** | Merge PR #128; move to yage project #1 first. Closes #80. | **Ready** — MERGEABLE, all CI green |
+| #124 | TBD | **yage-backend** | config: add `YAGE_REGISTRY_*` + `YAGE_ISSUING_CA_*` fields (Phase H prerequisite) | **Unblocked** — p2, start now |
+| #123 | TBD | **yage-backend** | opentofux: introduce Fetcher+Runner abstraction (Phase H prerequisite for #125 + #126) | **Unblocked** — p2, start after #124 or in parallel |
+| #125 | TBD | **yage-backend** | orchestrator: provision bootstrap registry VM via OpenTofu | **Blocked** on #123 + #124 — p2 |
+| #126 | TBD | **yage-backend** | orchestrator: provision online issuing CA + wire cert-manager ClusterIssuer | **Blocked** on #123 + #124 — p2 |
+| #127 | TBD | **yage-frontend** / **yage-backend** | xapiri+plan: surface Phase H fields in TUI and `--dry-run` | **Blocked** on #124 — p2 |
 | #119 | TBD | **yage-backend** | D4: CAPD smoke E2E test for bootstrap pipeline | **Backlog** — p3 |
 | #94 | TBD | **yage-backend** | PlanDescriber (DescribeIdentity/Workload/Pivot) for Linode | **Backlog** — p3 (epic #78) |
 | #95 | TBD | **yage-backend** | PlanDescriber for CAPD (docker) | **Backlog** — p3 (epic #78) |
@@ -247,7 +269,7 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 | #99 | TBD | **yage-backend** | PlanDescriber for IBM Cloud | **Backlog** — p3 (epic #78) |
 | #100 | TBD | **yage-backend** | PlanDescriber for GCP | **Backlog** — p3 (epic #78) |
 | #101 | TBD | **yage-backend** | PlanDescriber for DigitalOcean | **Backlog** — p3 (epic #78) |
-| #120 | — | — | Epic: on-prem platform services via OpenTofu (airgap path) | Open — roadmap container; #121 closed (ADR merged) |
+| #120 | — | — | Epic: on-prem platform services via OpenTofu (airgap path) | Open — children #123–#127 in Active Work above |
 | #78 | — | — | Epic: PlanDescriber missing for 8 providers (children: #94–#101) | Open — parent epic |
 
 ---
@@ -257,25 +279,25 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 - xapiri is still a work-in-progress TUI; not all provider paths are fully wired.
 - Cost estimation requires live Proxmox API; returns `ErrUnavailable` when unreachable.
 - vSphere `Inventory()`: `Cores=0` — CPU expressed in MHz only (cannot derive cores from ResourcePool quota alone without host-speed query).
-- **D1**: Orchestrator still calls `capi/csi.ApplyConfigSecretToWorkload` in `bootstrap.go` and `workloadapps.go`; `internal/capi/csi/` should be deleted per ADR 0001 once D1 (#118) merges.
 
 ## Next Steps
 
 ### Immediate (current sprint)
 
-1. **yage-backend: start #118** (p1, unblocked) — D1: wire `csi.Selector` into orchestrator; delete `internal/capi/csi/`. All CSI PRs now merged.
-2. **yage-backend: start #71** (p2) — ADR 0002 item 7: remove redundant `cfg.InfraProvider == "proxmox"` guards.
-3. **yage-backend: start #80** (p3, now unblocked) — OpenStack EnsureIdentity: template `clouds.yaml` from config fields. ADR 0004 Phase G accepted.
+1. **Programmer: merge PR #128** — OpenStack EnsureIdentity. Move to yage project #1, then merge. Closes #80.
+2. **yage-backend: start #124** (p2, unblocked) — config: add `YAGE_REGISTRY_*` + `YAGE_ISSUING_CA_*` fields. Prerequisite for all Phase H issues.
+3. **yage-backend: start #123** (p2, unblocked) — opentofux: Fetcher+Runner abstraction. Can run in parallel with #124. Prerequisite for #125 + #126.
 
-### Planned (next sprint)
+### Planned (next sprint — blocked on #123 + #124)
 
-4. **Issue #79** (p3, Backend) — vSphere PatchManifest sizing fields.
-5. **Issues #94–#101** (p3, Backend) — 8 PlanDescriber provider implementations (epic #78).
+4. **yage-backend: #125** — orchestrator: provision bootstrap registry VM via OpenTofu.
+5. **yage-backend: #126** — orchestrator: provision online issuing CA + wire cert-manager ClusterIssuer.
+6. **yage-frontend + yage-backend: #127** — xapiri+plan: surface Phase H fields in TUI and `--dry-run` (blocked on #124 only).
 
 ### Backlog
 
-6. **Issue #119** (p3, Backend) — D4: CAPD smoke E2E test for bootstrap pipeline.
-7. **Epic #120** — on-prem platform services (registry + issuing CA via OpenTofu): no implementation issues open yet; Architect to define sub-issues when prioritized.
+7. **Issue #119** (p3, Backend) — D4: CAPD smoke E2E test for bootstrap pipeline.
+8. **Issues #94–#101** (p3, Backend) — 8 PlanDescriber provider implementations (epic #78).
 
 ---
 
