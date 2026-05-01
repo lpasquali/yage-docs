@@ -2,7 +2,7 @@
 
 ## Living Memory
 
-yage is in active development. The core bootstrap pipeline is functional for Proxmox. The xapiri TUI is being built out as the primary configuration interface. The provider abstraction plan is fully complete: phases A, B, C, D, and E are all done. Legacy cleanup is complete per ADR 0002. ADR 0007: dashboard is the new default xapiri entry point. CSI driver registry (ADR 0001) complete — all 10 drivers merged. **ADR 0011 (pivot state migration) is fully implemented** — yage PR #166 (`bb60c79`) merged today closes #148. Phase H (on-prem platform services via OpenTofu) orchestrator wiring is complete on the yage side (EnsureIssuingCA #163, EnsureRepoSync #164, EnsureManagementInstall #160, JobRunner k8s backend #162); only #125 (registry VM orchestrator wiring) remains, HELD pending architect review of the cross-repo modules. **Cross-repo gap is closing, not closed**: yage-tofu PR #6 (`registry/`, closes yage-tofu#5) and PR #7 (`issuing-ca/`, closes yage-tofu#4) are now open and need architect review (5 decisions + 2 contradictions flagged in PR bodies). yage-side wiring stays dormant (`ErrNotApplicable`-guarded) until they merge. ADR 0012 — yage-manifests template layout addendum to ADR 0008 — is open as yage-docs PR #11 and pins the `missingkey=error` policy + wrapper-struct contract that #136 needs.
+yage is in active development. The core bootstrap pipeline is functional for Proxmox. The xapiri TUI is being built out as the primary configuration interface. The provider abstraction plan is fully complete: phases A, B, C, D, and E are all done. Legacy cleanup is complete per ADR 0002. ADR 0007: dashboard is the new default xapiri entry point. CSI driver registry (ADR 0001) complete — all 10 drivers merged. **ADR 0011 (pivot state migration) is fully implemented** — yage PR #166 (`bb60c79`) merged today closes #148. Phase H (on-prem platform services via OpenTofu) orchestrator wiring is complete on the yage side (EnsureIssuingCA #163, EnsureRepoSync #164, EnsureManagementInstall #160, JobRunner k8s backend #162); only #125 (registry VM orchestrator wiring) remains, HELD pending architect review of the cross-repo modules. **Cross-repo gap is closing, not closed**: yage-tofu PR #6 (`registry/`, closes yage-tofu#5) and PR #7 (`issuing-ca/`, closes yage-tofu#4) are now open and need architect review (5 decisions + 2 contradictions flagged in PR bodies). yage-side wiring stays dormant (`ErrNotApplicable`-guarded) until they merge. ADR 0012 — yage-manifests template layout addendum to ADR 0008 — **merged** as yage-docs PR #11 (`1cdf251`); pins the `missingkey=error` policy + wrapper-struct contract that #136 needs. ADR 0009 erratum E1 (kubernetes backend supersedes local tofu state) **merged** as yage-docs PR #12 (`20cb4b9`). Phase H bootstrap runbook **merged** as yage-docs PR #13 (`c1930af`).
 
 ## Freshness Policy
 
@@ -15,7 +15,7 @@ Last updated: **2026-05-01** — PO session 8: PR #166 (`bb60c79`) merged — cl
 | Repo | Branch | Recent PRs | Status |
 |---|---|---|---|
 | yage | `main` | #166 (label-based yage-system handoff + extended VerifyParity, `bb60c79`), #164 (EnsureRepoSync, `e7d116e`), #163 (EnsureIssuingCA, `7b9d19b`), #161 (admin token TUI, `d6e7d0a`), #162 (JobRunner k8s backend), #160 (EnsureManagementInstall), #159, #158, #157, #156, #150, #149, #143, #132 | Active development; (A) HALT cleared by #166; (B) executing #136; #125 HELD |
-| yage-docs | `main` + open PR #11 (ADR 0012) | PR #9 (remove codeql.yml), PR #8 (ADRs 0010+0011+CURRENT_STATE) | PR #11 awaiting architect review |
+| yage-docs | `main` | PR #13 (Phase H runbook, `c1930af`), PR #12 (ADR 0009 erratum E1, `20cb4b9`), PR #11 (ADR 0012 template layout, `1cdf251`), PR #9 (remove codeql.yml), PR #8 (ADRs 0010+0011+CURRENT_STATE) | PR #11/#12/#13 merged |
 | yage-tofu | `main` + open PRs #6, #7 | PR #2 (kubernetes backend all 8 modules), PR #3 (license) | PRs #6 (registry) + #7 (issuing-ca) awaiting architect review |
 | yage-manifests | `init` | PR #3 (license) | Scaffolded, awaiting templates (#137–#141 gated on #136) |
 
@@ -31,7 +31,7 @@ Last updated: **2026-05-01** — PO session 8: PR #166 (`bb60c79`) merged — cl
 **Cross-repo PRs opened (awaiting architect review):**
 
 - **yage-tofu PR #6** — `feat: add registry/ module for Phase H bootstrap registry (#5)` on `registry-module`. Closes yage-tofu#5. Five interpretive decisions flagged for architect:
-  1. **kubernetes backend** used despite ADR 0009 §1 wording `~/.yage/tofu/registry/terraform.tfstate` (local) — possible erratum to ADR 0009; reconcile against the kubernetes-backend convention established by yage-tofu PR #2 / yage #145. *(Note: architect agent is concurrently drafting `docs/adr-0009-erratum-kubernetes-backend` to address this.)*
+  1. **kubernetes backend** used despite ADR 0009 §1 wording `~/.yage/tofu/registry/terraform.tfstate` (local) — resolved by ADR 0009 erratum E1 (yage-docs PR #12, `20cb4b9`).
   2. `vm_flavor` split into discrete `registry_vm_cores` / `registry_vm_memory_mb` / `registry_vm_disk_gb` (defaults 2 / 4 GiB / 100 GiB) instead of single `YAGE_REGISTRY_VM_FLAVOR` knob.
   3. TLS material exposed as PEM strings (`registry_tls_cert_pem`, `registry_tls_key_pem`, `registry_ca_bundle_pem`); defaults `""` so plan succeeds without certs.
   4. Cloud-init bash bootstrap pulling Harbor 2.11.0 / Zot v2.1.0 on first boot; no baked image; image seeding remains an operator step per ADR 0009 §1.
@@ -41,8 +41,10 @@ Last updated: **2026-05-01** — PO session 8: PR #166 (`bb60c79`) merged — cl
   1. **Output names not yet consumed by yage.** `EnsureIssuingCA` at `7b9d19b` generates the intermediate inline using Go `crypto/x509` and never calls `tofu output`. Module names mirror the Go-side material so a follow-up Go-side migration to `JobRunner.Output` becomes a no-op contract change.
   2. **Root CA is an input, not generated.** yage-tofu#4 brief said "root + intermediate via `tls_self_signed_cert` / `tls_locally_signed_cert`" but yage code receives the root from operator config (`cfg.IssuingCARootCert` / `cfg.IssuingCARootKey`). Module follows Go-side semantics: offline-managed root is an input variable, not a TF resource — preserves the offline-root boundary per ADR 0009.
 
-**yage-docs PR opened (awaiting architect):**
-- **yage-docs PR #11** — `docs(adr): ADR 0012 — yage-manifests template layout and data contract` on `docs/adr-0008-addendum-template-layout`. Addendum to ADR 0008 pinning: on-disk layout (`cluster/`, `addons/<addon>/`, `csi/<driver>/`, `postsync/`), `missingkey=error` rendering policy, six wrapper-struct data contracts, full migration mapping table (helmvalues + wlargocd + postsync + caaph + cilium LBIPAMPool + 14 CSI drivers). Closes the open design pick #2 on #136 in the affirmative. Per-source-package grouping rejected (would split an add-on across two trees).
+**yage-docs PRs merged (post-session-8):**
+- **yage-docs PR #11** (`1cdf251`) — `docs(adr): ADR 0012 — yage-manifests template layout and data contract`. Addendum to ADR 0008 pinning: on-disk layout (`cluster/`, `addons/<addon>/`, `csi/<driver>/`, `postsync/`), `missingkey=error` rendering policy, six wrapper-struct data contracts, full migration mapping table (helmvalues + wlargocd + postsync + caaph + cilium LBIPAMPool + 14 CSI drivers). Closes the open design pick #2 on #136 in the affirmative.
+- **yage-docs PR #12** (`20cb4b9`) — `docs(adr-0009): erratum E1 — kubernetes backend supersedes local tofu state`. Resolves decision #1 on yage-tofu PR #6.
+- **yage-docs PR #13** (`c1930af`) — `docs(operations): add Phase H bootstrap runbook (registry + issuing CA)`.
 
 **Unblocking moves this session:**
 
@@ -51,9 +53,9 @@ Last updated: **2026-05-01** — PO session 8: PR #166 (`bb60c79`) merged — cl
 - **#125 unblocked by code dependencies** (#123 ✅, #124 ✅, #144 ✅, #148 ✅ — the bootstrap.go phase reorder by #148 removes the merge-conflict risk on `bootstrap.go`) but **HELD** pending architect review of yage-tofu PR #6 (registry module). The 3 questions raised in session 7 are partly answered: the yage-tofu module now exists in PR #6, but the architect must accept the 5 flagged decisions before yage-side wiring lands.
 - **#137–#141** (manifests migration chain) remain gated on #136 merging.
 
-**Architect lane (loaded):** review yage-tofu PR #6 (5 decisions), yage-tofu PR #7 (2 contradictions), yage-docs PR #11 (ADR 0012). All three have CI-clean, well-documented PR bodies; reviews are decision-gating, not detail-gating. Architect already drafting ADR 0009 erratum E1 (decision #1 on PR #6).
+**Architect lane (loaded):** review yage-tofu PR #6 (5 decisions), yage-tofu PR #7 (2 contradictions). yage-docs PR #11 (ADR 0012), PR #12 (ADR 0009 erratum E1), PR #13 (Phase H runbook) all **merged** post-session.
 
-**Next session moves:** (1) architect resolves 3 PR reviews; (2) Programmer merges yage-docs PR #11 once accepted; (3) Programmer merges yage-tofu PRs #6/#7 once accepted (this unblocks #125 Execute); (4) backend (B) lands #136 → unblocks #137–#141 chain.
+**Next session moves:** (1) architect resolves yage-tofu PR #6/#7 reviews; (2) Programmer merges yage-tofu PRs #6/#7 once accepted (this unblocks #125 Execute); (3) backend (B) lands #136 → unblocks #137–#141 chain.
 
 ---
 
@@ -163,7 +165,9 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 |---|---|---|---|---|
 | yage-tofu PR #6 | `registry-module` (yage-tofu) | **yage-architect** review | `registry/` OpenTofu module — Phase H bootstrap registry; closes yage-tofu#5; 5 decisions flagged in PR body | **Awaiting architect review** — p2 |
 | yage-tofu PR #7 | `feat/4-issuing-ca-module` (yage-tofu) | **yage-architect** review | `issuing-ca/` OpenTofu module — online intermediate CA; closes yage-tofu#4; 2 contradictions surfaced in PR body | **Awaiting architect review** — p2 |
-| yage-docs PR #11 | `docs/adr-0008-addendum-template-layout` (yage-docs) | **yage-architect** review | ADR 0012 — yage-manifests template layout + data contract; addendum to ADR 0008; closes #136 design pick #2 | **Awaiting architect review** — p2 |
+| yage-docs PR #11 | `docs/adr-0008-addendum-template-layout` (yage-docs) | merged | ADR 0012 — yage-manifests template layout + data contract; addendum to ADR 0008; closes #136 design pick #2 | **Merged** (`1cdf251`) |
+| yage-docs PR #12 | `docs/adr-0009-erratum-kubernetes-backend` (yage-docs) | merged | ADR 0009 erratum E1 — kubernetes backend supersedes local tofu state | **Merged** (`20cb4b9`) |
+| yage-docs PR #13 | `docs/operations-phase-h-runbook` (yage-docs) | merged | Phase H bootstrap runbook (registry + issuing CA) | **Merged** (`c1930af`) |
 | #136 | `feat/136-manifests-fetcher` (yage) | **yage-backend (B)** | `internal/platform/manifests` Fetcher package (MountRoot-based, no local clone); ADR 0008 step 2 | **In progress** — p2; constructor-shape pick still open (not blocking) |
 | #125 | `feat/125-registry-vm` (yage) | **yage-backend** (TBD) | provision bootstrap registry VM via OpenTofu; mirror `EnsureIssuingCA` shape; auto-wire `ImageRegistryMirror` | **HELD** — code unblocked, awaiting architect on yage-tofu PR #6 |
 | #137 | TBD | **yage-backend** | migrate `internal/capi/helmvalues/` to yage-manifests templates | **Blocked** on #136 |
@@ -185,12 +189,11 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 
 ## Critical Path (in order)
 
-1. **Architect**: review yage-tofu PR #6 (5 decisions; ADR 0009 erratum E1 already in flight on `docs/adr-0009-erratum-kubernetes-backend`), yage-tofu PR #7 (2 contradictions), yage-docs PR #11 (ADR 0012). All three are decision-gating, not detail-gating.
-2. **Programmer**: merge yage-docs PR #11 once accepted (formalizes #136 design pick #2).
-3. **Programmer**: merge yage-tofu PRs #6 and #7 once accepted — unblocks #125 Execute.
-4. **yage-backend (B)**: land #136 (in progress) — unblocks the #137–#141 manifests migration chain.
-5. **yage-backend** (TBD): start #125 once yage-tofu PR #6 is merged and architect direction is clear.
-6. **Phase H epic #120** closes once #125 lands AND yage-tofu PRs #6/#7 ship.
+1. **Architect**: review yage-tofu PR #6 (5 decisions — decision #1 already settled by ADR 0009 erratum E1 merged in yage-docs PR #12 `20cb4b9`), yage-tofu PR #7 (2 contradictions). yage-docs PR #11 (ADR 0012, `1cdf251`), PR #12 (`20cb4b9`), PR #13 (`c1930af`) all merged.
+2. **Programmer**: merge yage-tofu PRs #6 and #7 once accepted — unblocks #125 Execute.
+3. **yage-backend (B)**: land #136 (in progress) — unblocks the #137–#141 manifests migration chain.
+4. **yage-backend** (TBD): start #125 once yage-tofu PR #6 is merged and architect direction is clear.
+5. **Phase H epic #120** closes once #125 lands AND yage-tofu PRs #6/#7 ship.
 
 ---
 
@@ -212,7 +215,7 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 | 0006 | Capacity preflight architecture | Accepted |
 | 0007 | xapiri dashboard as default entry | Accepted |
 | 0008 | yage-manifests GitOps template repository | Accepted |
-| 0009 | On-prem platform services (Phase H): registry + issuing CA | Accepted (erratum E1 in flight: kubernetes backend supersedes local tofu state) |
+| 0009 | On-prem platform services (Phase H): registry + issuing CA | Accepted (erratum E1 merged in yage-docs PR #12 `20cb4b9`: kubernetes backend supersedes local tofu state) |
 | 0010 | In-cluster repository cache (zero workstation residue) | Accepted |
 | 0011 | Pivot: yage state migration to management cluster | Accepted (fully implemented as of PR #166) |
-| 0012 | yage-manifests template layout and data contract (addendum to 0008) | **Proposed** (yage-docs PR #11) |
+| 0012 | yage-manifests template layout and data contract (addendum to 0008) | Accepted (yage-docs PR #11 merged `1cdf251`) |
