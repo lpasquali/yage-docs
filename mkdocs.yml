@@ -63,5 +63,7 @@ nav:
   - Operations:
       - Capacity Preflight: operations/capacity-preflight.md
       - Cost and Pricing: operations/cost-and-pricing.md
+      - Runbooks:
+          - Phase H Bootstrap: operations/runbooks/phase-h-bootstrap.md
   - Reference:
       - Providers: reference/providers.md
