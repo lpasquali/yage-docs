@@ -1271,6 +1271,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#errata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Errata
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Errata">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#e1-opentofu-state-backend-2026-05-01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E1 — OpenTofu state backend (2026-05-01)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1289,9 +1317,13 @@
 
 
 <h1 id="adr-0009-on-prem-platform-services-bootstrap-registry-and-online-issuing-ca-phase-h">ADR 0009 — On-Prem Platform Services: Bootstrap Registry and Online Issuing CA (Phase H)<a class="headerlink" href="#adr-0009-on-prem-platform-services-bootstrap-registry-and-online-issuing-ca-phase-h" title="Permanent link">&para;</a></h1>
-<p><strong>Status:</strong> Accepted
+<p><strong>Status:</strong> Accepted (with errata — see end of document)
 <strong>Date:</strong> 2026-04-30
 <strong>Owners:</strong> Backend (EnsureRegistry, EnsureIssuingCA wiring), Architect (interface contract)</p>
+<p><strong>Related ADRs:</strong>
+- ADR 0004 — OpenTofu identity bootstrap; Fetcher+Runner pattern Phase H extends
+- ADR 0010 — In-cluster repo cache; registry VM provisioned post-kind so its IP is available before pivot
+- ADR 0011 — Pivot yage-state migration; §1 supersedes the local <code>~/.yage/tofu/&lt;module&gt;/</code> state-storage wording in §1 and §3 below (see Errata)</p>
 <hr />
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
 <p>yage targets on-premises Proxmox deployments that are often deployed in air-gapped or
@@ -1377,9 +1409,13 @@ Fetcher + Runner pattern established by ADR 0004 (Phase G):</p>
 <a href="https://zotregistry.dev/">Zot</a> (opt-in via <code>YAGE_REGISTRY_FLAVOR=zot</code>). Harbor is the
 default because it supports native multi-region replication (see §5 below). Zot is available
 for operators who prefer a lighter footprint and do not need replication.</p>
-<p>OpenTofu state for the registry lives at <code>~/.yage/tofu/registry/terraform.tfstate</code>. On
-<code>--purge</code>, yage runs <code>tofu destroy</code> before removing the state directory, following the
-same ordering constraint as all Phase G providers (destroy before <code>os.RemoveAll</code>).</p>
+<p>~~OpenTofu state for the registry lives at <code>~/.yage/tofu/registry/terraform.tfstate</code>.~~
+<strong>Superseded by ADR 0011 §1 — see Errata E1.</strong> OpenTofu state for the registry is stored
+via the <code>kubernetes</code> backend as a Secret <code>tfstate-default-registry</code> in namespace
+<code>yage-system</code>, labeled <code>app.kubernetes.io/managed-by=yage</code> and
+<code>app.kubernetes.io/component=tofu-state</code>. On <code>--purge</code>, yage runs <code>tofu destroy</code> before
+deleting the state Secret, following the same destroy-before-cleanup ordering constraint
+as all Phase G providers.</p>
 <p>Image seeding (pushing CAPI provider images, CNI images, and Helm chart tarballs into the
 registry) is an <strong>operator step</strong> for Phase H. A <code>--seed-registry</code> automation flag that
 calls <code>crane copy</code> or equivalent for each required image is deferred to a follow-up issue.
@@ -1457,10 +1493,12 @@ Secret:</p>
 full PKI control (they own the root CA) while automating the issuing CA lifecycle end-to-end
 within yage's bootstrap run.</p>
 <p>The <code>yage-tofu/issuing-ca/</code> module uses the <a href="https://registry.terraform.io/providers/hashicorp/tls/latest">TLS Terraform provider</a>
-to generate the intermediate key pair deterministically. The OpenTofu state for the issuing
-CA lives at <code>~/.yage/tofu/issuing-ca/terraform.tfstate</code>. On <code>--purge</code>, <code>tofu destroy</code> is
-called before state directory removal — this invalidates the intermediate key, which is the
-correct behavior.</p>
+to generate the intermediate key pair deterministically. ~~The OpenTofu state for the issuing
+CA lives at <code>~/.yage/tofu/issuing-ca/terraform.tfstate</code>.~~ <strong>Superseded by ADR 0011 §1 — see
+Errata E1.</strong> OpenTofu state for the issuing CA is stored via the <code>kubernetes</code> backend as a
+Secret <code>tfstate-default-issuing-ca</code> in namespace <code>yage-system</code> (same label set as the
+registry module). On <code>--purge</code>, <code>tofu destroy</code> is called before deletion of the state
+Secret — this invalidates the intermediate key, which is the correct behavior.</p>
 <h3 id="4-offline-root-ca-boundary">4. Offline root CA boundary<a class="headerlink" href="#4-offline-root-ca-boundary" title="Permanent link">&para;</a></h3>
 <p><strong>Explicit non-goal</strong>: yage never automates the offline root CA. The offline root is cold,
 operator-managed, and single-region. This boundary does not change with Phase H.</p>
@@ -1589,6 +1627,36 @@ Proxmox cluster. It is not in scope for yage's bootstrap orchestration.</p>
 <li>Epic #120 — on-prem platform services</li>
 <li>Issue #121 — this ADR</li>
 <li>Issue #118 — D1: orchestrator CSI wiring (same sprint; independent)</li>
+</ul>
+<hr />
+<h2 id="errata">Errata<a class="headerlink" href="#errata" title="Permanent link">&para;</a></h2>
+<h3 id="e1-opentofu-state-backend-2026-05-01">E1 — OpenTofu state backend (2026-05-01)<a class="headerlink" href="#e1-opentofu-state-backend-2026-05-01" title="Permanent link">&para;</a></h3>
+<p><strong>Affects:</strong> §1 last paragraph (registry module state); §3 last paragraph (issuing-ca
+module state).</p>
+<p><strong>Original wording (incorrect):</strong> "OpenTofu state for the registry lives at
+<code>~/.yage/tofu/registry/terraform.tfstate</code>" (and the analogous local-path wording for
+<code>issuing-ca/</code>).</p>
+<p><strong>Corrected wording:</strong> OpenTofu state for both Phase H modules is stored via the built-in
+<code>kubernetes</code> backend as Secrets in the <code>yage-system</code> namespace
+(<code>tfstate-default-registry</code>, <code>tfstate-default-issuing-ca</code>), with labels
+<code>app.kubernetes.io/managed-by=yage</code> and <code>app.kubernetes.io/component=tofu-state</code>. There is
+no <code>~/.yage/tofu/&lt;module&gt;/</code> directory on the operator's workstation — Phase H state is
+in-cluster only.</p>
+<p><strong>Reason:</strong> ADR 0011 §1 (dated 2026-05-01) migrates <em>all</em> <code>yage-tofu</code> modules to the
+kubernetes backend so that state Secrets are automatically copied to the management cluster
+by the label-based handoff (ADR 0011 §2) during pivot. The Phase H modules (<code>registry/</code>,
+<code>issuing-ca/</code>) are in scope for this convention. yage-tofu PRs #6 (registry) and #7
+(issuing-ca) implement the kubernetes backend per ADR 0011 §1; this errata aligns the
+ADR 0009 wording with the actual implementation.</p>
+<p><strong>Operational impact of the corrected wording:</strong></p>
+<ul>
+<li><code>--purge</code> ordering is unchanged (destroy before cleanup); the cleanup target is the
+  state Secret in <code>yage-system</code>, not a workstation directory.</li>
+<li>The "zero workstation residue" property described in ADR 0010 now holds for all Phase H
+  state as well.</li>
+<li>Air-gapped deployments retain the same Phase H sequencing — the kind cluster (which
+  hosts the tofu-state Secrets during bootstrap) exists by the time the registry module
+  applies, so the kubernetes backend has somewhere to land.</li>
 </ul>
 
 
