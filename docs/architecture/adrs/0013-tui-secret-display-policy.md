@@ -2,7 +2,7 @@
 
 **Status:** Accepted
 **Date:** 2026-05-01
-**Owners:** Architect (contract definition), Frontend (implementation, yage issue #167)
+**Owners:** Architect (contract definition), Frontend (implementation, yage issue #172)
 
 ---
 
@@ -167,7 +167,7 @@ log lines, Kubernetes Secret objects) — those are governed separately by
 
 ## References
 
-- yage issue #167 — `ui: mask all secret fields in xapiri (security)`
+- yage issue #172 — `ui: mask all secret fields in xapiri (security)`
 - yage PR #161 (`d6e7d0a`) — introduced `tiProxmoxAdminToken` with partial protection
 - `internal/ui/xapiri/dashboard.go` — `renderField` (line 3707), `tiProxmoxAdminToken` init (line 759), `tiIssuingCACert`/`tiIssuingCAKey` init (lines 828–829)
 - `internal/config/config.go` — `ProxmoxConfig`, `VsphereConfig`, `HetznerConfig`, `CostCredentials`, `Config.IssuingCARootCert/Key`, `Config.BootstrapKindBackupPassphrase`
