@@ -21,7 +21,7 @@
     
     
       
-        <title>ADR 0008 — yage-manifests: GitOps YAML Template Repository - yage Documentation</title>
+        <title>ADR 0011 — Pivot: yage State Migration to the Management Cluster - yage Documentation</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#adr-0008-yage-manifests-gitops-yaml-template-repository" class="md-skip">
+        <a href="#adr-0011-pivot-yage-state-migration-to-the-management-cluster" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ADR 0008 — yage-manifests: GitOps YAML Template Repository
+              ADR 0011 — Pivot: yage State Migration to the Management Cluster
             
           </span>
         </div>
@@ -1064,10 +1064,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-yage-manifests-public-repository" class="md-nav__link">
+  <a href="#1-opentofu-kubernetes-backend-state-as-secrets-not-pvcs" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. yage-manifests public repository
+        1. OpenTofu kubernetes backend — state as Secrets, not PVCs
       
     </span>
   </a>
@@ -1075,10 +1075,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-templating-engine" class="md-nav__link">
+  <a href="#2-extended-handoffbootstrapsecretstomanagement-label-based-yage-system-copy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Templating engine
+        2. Extended HandOffBootstrapSecretsToManagement — label-based yage-system copy
       
     </span>
   </a>
@@ -1086,10 +1086,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-fetch-and-render-mechanism" class="md-nav__link">
+  <a href="#3-yage-system-bootstrap-on-the-management-cluster-sa-rbac" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Fetch and render mechanism
+        3. yage-system bootstrap on the management cluster (SA + RBAC)
       
     </span>
   </a>
@@ -1097,10 +1097,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#4-patch-vs-template-distinction" class="md-nav__link">
+  <a href="#4-csi-driver-installation-on-the-management-cluster" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. Patch vs. template distinction
+        4. CSI driver installation on the management cluster
       
     </span>
   </a>
@@ -1108,10 +1108,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#5-yage_manifests_ref-config-field" class="md-nav__link">
+  <a href="#5-ensurereposync-on-the-management-cluster" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5. YAGE_MANIFESTS_REF config field
+        5. EnsureRepoSync on the management cluster
       
     </span>
   </a>
@@ -1119,10 +1119,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#6-csidriverrendervalues-migration" class="md-nav__link">
+  <a href="#6-extended-verifyparity" class="md-nav__link">
     <span class="md-ellipsis">
       
-        6. csi.Driver.RenderValues() migration
+        6. Extended VerifyParity
       
     </span>
   </a>
@@ -1130,10 +1130,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#7-migration-sequencing" class="md-nav__link">
+  <a href="#7-updated-pivot-bootstrap-sequence" class="md-nav__link">
     <span class="md-ellipsis">
       
-        7. Migration sequencing
+        7. Updated pivot bootstrap sequence
       
     </span>
   </a>
@@ -1223,291 +1223,278 @@
 
 
 
-<h1 id="adr-0008-yage-manifests-gitops-yaml-template-repository">ADR 0008 — yage-manifests: GitOps YAML Template Repository<a class="headerlink" href="#adr-0008-yage-manifests-gitops-yaml-template-repository" title="Permanent link">&para;</a></h1>
+<h1 id="adr-0011-pivot-yage-state-migration-to-the-management-cluster">ADR 0011 — Pivot: yage State Migration to the Management Cluster<a class="headerlink" href="#adr-0011-pivot-yage-state-migration-to-the-management-cluster" title="Permanent link">&para;</a></h1>
 <p><strong>Status:</strong> Accepted
-<strong>Date:</strong> 2026-04-30
-<strong>Accepted:</strong> 2026-05-01
-<strong>Owners:</strong> Architect (interface contract, repository structure), Backend (Fetcher implementation, per-package migration)</p>
+<strong>Date:</strong> 2026-05-01
+<strong>Owners:</strong> Backend (handoff extension, EnsureManagementStorageClass, EnsureRepoSync wiring), Architect (interface contract)</p>
+<p><strong>Related ADRs:</strong>
+- ADR 0001 — CSI driver registry; management-cluster CSI installation path introduced by §4
+- ADR 0004 — OpenTofu identity bootstrap; tofu-state storage model replaced by §1
+- ADR 0010 — In-cluster repo cache; EnsureRepoSync called on mgmt cluster by §5</p>
 <hr />
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
-<p>yage generates all Kubernetes YAML manifests, Helm values, ArgoCD Application resources,
-and CAPI add-on resources as Go string-building code. The current surface is approximately
-3,100 lines spread across six packages:</p>
-<table>
-<thead>
-<tr>
-<th>Package</th>
-<th>Lines</th>
-<th>Role</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>internal/capi/manifest/</code></td>
-<td>1,228</td>
-<td>Workload cluster YAML patching + K3s template generation</td>
-</tr>
-<tr>
-<td><code>internal/capi/caaph/</code></td>
-<td>861</td>
-<td>CAAPH HelmChartProxy YAML + ArgoCD Operator install CR</td>
-</tr>
-<tr>
-<td><code>internal/capi/wlargocd/</code></td>
-<td>409</td>
-<td>Workload ArgoCD Application YAML (one per add-on)</td>
-</tr>
-<tr>
-<td><code>internal/capi/postsync/</code></td>
-<td>223</td>
-<td>ArgoCD PostSync-hook helpers + CSI smoke-test renderers</td>
-</tr>
-<tr>
-<td><code>internal/capi/cilium/</code></td>
-<td>169</td>
-<td>Cilium CNI helper manifests</td>
-</tr>
-<tr>
-<td><code>internal/capi/helmvalues/</code></td>
-<td>251</td>
-<td>Helm values YAML for metrics-server, observability stack</td>
-</tr>
-<tr>
-<td><code>internal/csi/*/RenderValues()</code></td>
-<td>~14 pkgs</td>
-<td>Per-driver Helm values YAML</td>
-</tr>
-</tbody>
-</table>
-<p>All of these use <code>strings.Builder</code> + <code>fmt.Fprintf</code> to assemble YAML inline. This approach
-has several compounding costs:</p>
-<ul>
-<li>YAML output is not reviewable except by reading Go source or running yage.</li>
-<li>Operators cannot audit or fork the templates without forking the binary.</li>
-<li>Tests must compare string output against hardcoded literals, which makes template changes
-  expensive and diff-noisy.</li>
-<li>Adding a new add-on requires modifying and rebuilding yage even when the logic is purely
-  structural YAML.</li>
-<li>There is no mechanism to pin a manifest version independently of a yage release.</li>
-</ul>
-<p>The project owner's architectural direction: move all YAML templating out of Go code into a
-dedicated GitOps repository, following the same pattern established by ADR 0004 for
-OpenTofu modules (<code>yage-tofu</code>).</p>
+<p>After a successful pivot, the kind bootstrap cluster is torn down and the CAPI management
+cluster (provisioned on the active provider — Proxmox, AWS, vSphere, etc.) becomes the
+permanent management plane. The current pivot implementation (<code>internal/capi/pivot/</code>) and
+<code>kindsync.HandOffBootstrapSecretsToManagement</code> leave two categories of yage state behind:</p>
+<p><strong>1. OpenTofu state PVCs (<code>tofu-state-&lt;module&gt;</code>).</strong>
+ADR 0004 §2 stores <code>terraform.tfstate</code> in a per-module PVC in the <code>yage-system</code> namespace.
+These PVCs live inside the kind Docker container and are destroyed with it.
+<code>HandOffBootstrapSecretsToManagement</code> does not copy PVC content.</p>
+<p><strong>2. <code>yage-repos</code> PVC.</strong>
+ADR 0010 stores the <code>yage-tofu</code> and <code>yage-manifests</code> Git checkouts in a <code>yage-repos</code> PVC
+in <code>yage-system</code>. Any post-pivot orchestrator phase that calls <code>manifests.Fetcher.Render</code>
+or runs a tofu <code>JobRunner</code> requires this PVC on the management cluster.</p>
+<p>Additionally, the management cluster is a freshly-provisioned CAPI workload cluster. Unlike
+kind (which always has the <code>standard</code> StorageClass via local-path-provisioner), the management
+cluster has no StorageClass unless a CSI driver is explicitly installed before PVC-dependent
+operations run.</p>
 <hr />
 <h2 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">&para;</a></h2>
-<h3 id="1-yage-manifests-public-repository">1. <code>yage-manifests</code> public repository<a class="headerlink" href="#1-yage-manifests-public-repository" title="Permanent link">&para;</a></h3>
-<p>A new public GitHub repository <code>lpasquali/yage-manifests</code> holds all YAML templates and
-Helm values files. yage contains <strong>no inline YAML assembly</strong>. The repository structure is:</p>
-<div class="highlight"><pre><span></span><code>yage-manifests/
-├── cluster/            # CAPI workload cluster manifests per provider
-│   ├── proxmox/
-│   ├── aws/
-│   └── ...
-├── addons/             # Helm values + ArgoCD Application YAMLs per add-on
-│   ├── cilium/
-│   ├── argocd/
-│   ├── metrics-server/
-│   ├── observability/
-│   └── ...
-├── csi/                # Per-driver Helm values (replaces csi.RenderValues)
-│   ├── hcloud/
-│   ├── aws-ebs/
-│   └── ...
-└── postsync/           # ArgoCD PostSync hook manifests
-</code></pre></div>
-<p>Modules are versioned and tagged independently of yage releases. Operators can audit and
-fork <code>yage-manifests</code> without touching the yage binary.</p>
-<h3 id="2-templating-engine">2. Templating engine<a class="headerlink" href="#2-templating-engine" title="Permanent link">&para;</a></h3>
-<p>Template files use Go <code>text/template</code> syntax with the extension <code>.yaml.tmpl</code>. Rationale:
-yage is a Go binary; <code>text/template</code> is stdlib, requires no external process or binary,
-and template rendering is in-process with zero additional dependencies. No Helm,
-no envsubst, no Kustomize — just Go template syntax.</p>
-<p>One authoring constraint to note: the CAAPH <code>HelmChartProxy</code> resource embeds a
-<code>valuesTemplate:</code> block that itself contains <code>{{ }}</code> CAAPH-side template expressions.
-When these files move to <code>yage-manifests</code>, those inner <code>{{</code>/<code>}}</code> delimiters must be
-escaped as <code>{{"{{"}}</code> / <code>{{"}}"}}</code> (or the template must use a custom delimiter pair).
-This is documented in the per-template comment header and is the responsibility of the
-Backend agent during migration.</p>
-<h3 id="3-fetch-and-render-mechanism">3. Fetch and render mechanism<a class="headerlink" href="#3-fetch-and-render-mechanism" title="Permanent link">&para;</a></h3>
-<p>The <code>internal/platform/manifests</code> package introduces a <code>Fetcher</code> struct that mirrors the
-pattern established in <code>internal/platform/opentofux</code> for the <code>yage-tofu</code> checkout. The two
-Fetchers are independent implementations — the manifests Fetcher is a new package, not a
-generic extraction of opentofux. Extracting a shared git-fetch base is deferred until the
-duplication causes pain.</p>
-<div class="highlight"><pre><span></span><code><span class="c1">// internal/platform/manifests/fetcher.go</span>
-<span class="kd">type</span><span class="w"> </span><span class="nx">Fetcher</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nx">RepoURL</span><span class="w">  </span><span class="kt">string</span><span class="w">  </span><span class="c1">// https://github.com/lpasquali/yage-manifests</span>
-<span class="w">    </span><span class="nx">Ref</span><span class="w">      </span><span class="kt">string</span><span class="w">  </span><span class="c1">// cfg.ManifestsRef (env: YAGE_MANIFESTS_REF, default: latest tag)</span>
-<span class="w">    </span><span class="nx">CacheDir</span><span class="w"> </span><span class="kt">string</span><span class="w">  </span><span class="c1">// ~/.yage/manifests-cache/</span>
-<span class="p">}</span>
-
-<span class="c1">// Render fetches (clone on first use; git fetch + checkout on subsequent runs)</span>
-<span class="c1">// the yage-manifests repo at the configured Ref, reads the .yaml.tmpl at</span>
-<span class="c1">// templatePath (relative to repo root), executes it with data via text/template,</span>
-<span class="c1">// and returns the rendered YAML string.</span>
-<span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">f</span><span class="w"> </span><span class="o">*</span><span class="nx">Fetcher</span><span class="p">)</span><span class="w"> </span><span class="nx">Render</span><span class="p">(</span><span class="nx">templatePath</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="kt">any</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
-</code></pre></div>
-<p>yage replaces each <code>strings.Builder</code>-based renderer with a <code>manifests.Fetcher.Render()</code>
-call, passing the appropriate <code>templatePath</code> and the relevant section of <code>*config.Config</code>
-(or a purpose-built data struct) as <code>data</code>.</p>
-<h3 id="4-patch-vs-template-distinction">4. Patch vs. template distinction<a class="headerlink" href="#4-patch-vs-template-distinction" title="Permanent link">&para;</a></h3>
-<p><code>internal/capi/manifest/patches.go</code> does <strong>regex-based mutation of externally-supplied
-YAML documents</strong> — the inputs are manifests rendered by <code>clusterctl generate cluster</code>,
-not content yage generates from scratch. This is a fundamentally different operation from
-templating, and it stays in Go.</p>
-<p>The four patch functions that remain in <code>internal/capi/manifest/</code>:</p>
-<table>
-<thead>
-<tr>
-<th>Function</th>
-<th>What it mutates</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>ApplyRoleResourceOverrides</code></td>
-<td>Sizing fields in <code>ProxmoxMachineTemplate</code> blocks</td>
-</tr>
-<tr>
-<td><code>PatchProxmoxCSITopologyLabels</code></td>
-<td>CSI topology <code>node-labels</code> in <code>KubeadmConfig</code></td>
-</tr>
-<tr>
-<td><code>PatchKubeadmSkipKubeProxyForCilium</code></td>
-<td><code>skipPhases: - addon/kube-proxy</code> in <code>KubeadmControlPlane</code></td>
-</tr>
-<tr>
-<td><code>PatchProxmoxMachineTemplateSpecRevisions</code></td>
-<td>PMT name revision hashes</td>
-</tr>
-</tbody>
-</table>
-<p>These functions receive clusterctl output and apply structural corrections. They are not
-candidates for <code>yage-manifests</code> because their input is dynamic (operator-provided, not
-yage-generated). Future work may introduce a cleaner patch API internally, but that is
-out of scope for this ADR.</p>
-<p><code>caaph.PatchClusterCAAPHHelmLabels</code> likewise stays in Go — it mutates a live Cluster
-object in the management cluster via a JSON merge-patch and also updates the on-disk
-manifest in-place. The logic is imperative, not template-shaped.</p>
-<h3 id="5-yage_manifests_ref-config-field">5. <code>YAGE_MANIFESTS_REF</code> config field<a class="headerlink" href="#5-yage_manifests_ref-config-field" title="Permanent link">&para;</a></h3>
-<p>A new config field <code>cfg.ManifestsRef string</code> (env: <code>YAGE_MANIFESTS_REF</code>, default: <code>v0.1.0</code>
-initially, then tracking the latest stable tag). Analogous to <code>YAGE_TOFU_REF</code> from
-ADR 0004.</p>
-<p>The Fetcher uses this ref to check out the <code>yage-manifests</code> repository. Operators can pin
-to a specific tag for reproducibility. Air-gapped environments must mirror
-<code>lpasquali/yage-manifests</code> and set <code>YAGE_MANIFESTS_REF</code> to an internally reachable URL.</p>
-<h3 id="6-csidriverrendervalues-migration">6. <code>csi.Driver.RenderValues()</code> migration<a class="headerlink" href="#6-csidriverrendervalues-migration" title="Permanent link">&para;</a></h3>
-<p>The current CSI driver interface declares:</p>
-<div class="highlight"><pre><span></span><code><span class="nx">RenderValues</span><span class="p">(</span><span class="nx">cfg</span><span class="w"> </span><span class="o">*</span><span class="nx">config</span><span class="p">.</span><span class="nx">Config</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
-</code></pre></div>
-<p>After migration, this becomes:</p>
-<div class="highlight"><pre><span></span><code><span class="nx">Render</span><span class="p">(</span><span class="nx">fetcher</span><span class="w"> </span><span class="o">*</span><span class="nx">manifests</span><span class="p">.</span><span class="nx">Fetcher</span><span class="p">,</span><span class="w"> </span><span class="nx">cfg</span><span class="w"> </span><span class="o">*</span><span class="nx">config</span><span class="p">.</span><span class="nx">Config</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
-</code></pre></div>
-<p>Each driver's implementation becomes a one-line call:</p>
-<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">d</span><span class="w"> </span><span class="nx">driver</span><span class="p">)</span><span class="w"> </span><span class="nx">Render</span><span class="p">(</span><span class="nx">f</span><span class="w"> </span><span class="o">*</span><span class="nx">manifests</span><span class="p">.</span><span class="nx">Fetcher</span><span class="p">,</span><span class="w"> </span><span class="nx">cfg</span><span class="w"> </span><span class="o">*</span><span class="nx">config</span><span class="p">.</span><span class="nx">Config</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">f</span><span class="p">.</span><span class="nx">Render</span><span class="p">(</span><span class="s">&quot;csi/&quot;</span><span class="o">+</span><span class="nx">d</span><span class="p">.</span><span class="nx">Name</span><span class="p">()</span><span class="o">+</span><span class="s">&quot;/values.yaml.tmpl&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">cfg</span><span class="p">)</span>
+<h3 id="1-opentofu-kubernetes-backend-state-as-secrets-not-pvcs">1. OpenTofu <code>kubernetes</code> backend — state as Secrets, not PVCs<a class="headerlink" href="#1-opentofu-kubernetes-backend-state-as-secrets-not-pvcs" title="Permanent link">&para;</a></h3>
+<p>All <code>yage-tofu</code> modules are migrated from any local or PVC-based state backend to the
+OpenTofu built-in <code>kubernetes</code> backend. State is stored as Kubernetes Secrets in the
+<code>yage-system</code> namespace with a consistent label set, making them automatically copyable by
+the label-based handoff described in §2.</p>
+<p>Each module gets a <code>backend.tf</code> (or equivalent block in <code>main.tf</code>):</p>
+<div class="highlight"><pre><span></span><code><span class="nb">terraform</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kr">backend</span><span class="w"> </span><span class="nv">&quot;kubernetes&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">secret_suffix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&lt;module&gt;&quot;   # e.g. &quot;proxmox&quot;, &quot;aws&quot;, &quot;openstack&quot;</span>
+<span class="w">    </span><span class="na">namespace</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;yage-system&quot;</span>
+<span class="w">    </span><span class="nb">labels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="s2">&quot;app.kubernetes.io/managed-by&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;yage&quot;</span>
+<span class="w">      </span><span class="s2">&quot;app.kubernetes.io/component&quot;</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;tofu-state&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
-<p>This is a breaking interface change for all 14 registered driver packages. It is sequenced
-as a single atomic PR that updates <code>internal/csi/driver.go</code> and all 14 implementations
-together.</p>
-<h3 id="7-migration-sequencing">7. Migration sequencing<a class="headerlink" href="#7-migration-sequencing" title="Permanent link">&para;</a></h3>
+<p>The resulting Secret is named <code>tfstate-default-&lt;module&gt;</code>. With the
+<code>app.kubernetes.io/managed-by=yage</code> label, it is automatically included in the extended
+handoff (§2).</p>
+<p>The <code>JobRunner</code> in <code>internal/platform/opentofux</code> is updated to pass the in-cluster
+backend configuration to <code>tofu init</code>. The Job pod runs with the <code>yage-job-runner</code>
+ServiceAccount, which has RBAC to manage Secrets in <code>yage-system</code> (see §3 below).</p>
+<p><strong>Consequence:</strong> the <code>tofu-state-&lt;module&gt;</code> PVCs are eliminated. The only PVC remaining in
+<code>yage-system</code> is <code>yage-repos</code>.</p>
+<h3 id="2-extended-handoffbootstrapsecretstomanagement-label-based-yage-system-copy">2. Extended <code>HandOffBootstrapSecretsToManagement</code> — label-based yage-system copy<a class="headerlink" href="#2-extended-handoffbootstrapsecretstomanagement-label-based-yage-system-copy" title="Permanent link">&para;</a></h3>
+<p><code>kindsync.HandOffBootstrapSecretsToManagement</code> gains a second pass after the existing
+named-Secret copy: a label-scoped list of all <code>yage-system</code> Secrets carrying
+<code>app.kubernetes.io/managed-by=yage</code>, applied to the management cluster via server-side apply.</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// copyYageSystemSecrets lists all Secrets in namespace matching</span>
+<span class="c1">// app.kubernetes.io/managed-by=yage on srcCli and applies them to dstCli.</span>
+<span class="kd">func</span><span class="w"> </span><span class="nx">copyYageSystemSecrets</span><span class="p">(</span>
+<span class="w">    </span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">srcCli</span><span class="p">,</span><span class="w"> </span><span class="nx">dstCli</span><span class="w"> </span><span class="o">*</span><span class="nx">k8sclient</span><span class="p">.</span><span class="nx">Client</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">namespace</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span>
+<span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
+</code></pre></div>
+<p>For each matched Secret, the function strips server-side metadata (same
+<code>stripServerAnnotations</code> pattern as the existing code) and applies it with
+<code>types.ApplyPatchType</code>, <code>Force=true</code>.</p>
+<p>This covers:
+- <code>tfstate-default-&lt;module&gt;</code> Secrets (tofu state, §1 above)
+- Any future yage-managed Secrets that carry the label</p>
+<p>The existing named-target list (<code>expectedHandoffTargets</code>) is retained for Proxmox-specific
+Secrets in other namespaces (e.g. <code>capmox-system/capmox-manager-credentials</code>) that do not
+carry the label.</p>
+<p><code>HandOffBootstrapSecretsToManagement</code> returns an augmented summary:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">HandoffResult</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">NamedCopied</span><span class="w"> </span><span class="kt">int</span>
+<span class="w">    </span><span class="nx">LabelCopied</span><span class="w"> </span><span class="kt">int</span>
+<span class="w">    </span><span class="nx">FirstErr</span><span class="w">    </span><span class="kt">error</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Errors are warnings (consistent with existing behavior); the orchestrator logs both counts.</p>
+<h3 id="3-yage-system-bootstrap-on-the-management-cluster-sa-rbac">3. <code>yage-system</code> bootstrap on the management cluster (SA + RBAC)<a class="headerlink" href="#3-yage-system-bootstrap-on-the-management-cluster-sa-rbac" title="Permanent link">&para;</a></h3>
+<p>The <code>yage-job-runner</code> ServiceAccount and its associated ClusterRole / ClusterRoleBinding
+must exist on the management cluster before the first tofu Job runs there. They are not
+Secrets and are not copied by the handoff mechanism (§2).</p>
+<p><strong>Resolution:</strong> the orchestrator calls a new helper <code>kindsync.EnsureYageSystemOnCluster</code>
+immediately after the <code>yage-system</code> namespace is created on the management cluster (during
+the handoff step §2). This helper re-creates all non-Secret yage-system primitives from
+a known in-code spec — not by copying from kind — ensuring idempotency:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// EnsureYageSystemOnCluster creates or updates the yage-system ServiceAccount,</span>
+<span class="c1">// ClusterRole, and ClusterRoleBinding required for JobRunner operation.</span>
+<span class="c1">// Idempotent; safe to call on both kind and the management cluster.</span>
+<span class="kd">func</span><span class="w"> </span><span class="nx">EnsureYageSystemOnCluster</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">cli</span><span class="w"> </span><span class="o">*</span><span class="nx">k8sclient</span><span class="p">.</span><span class="nx">Client</span><span class="p">)</span><span class="w"> </span><span class="kt">error</span>
+</code></pre></div>
+<p>The ClusterRole grants <code>get</code>, <code>list</code>, <code>watch</code>, <code>create</code>, <code>update</code>, <code>patch</code>, <code>delete</code> on
+<code>secrets</code> scoped to <code>yage-system</code>. The ClusterRoleBinding binds it to the
+<code>yage-job-runner</code> ServiceAccount in <code>yage-system</code>.</p>
+<p><code>EnsureYageSystemOnCluster</code> is also called during the initial kind bootstrap (before
+<code>EnsureRepoSync</code>) so both clusters share the same setup path.</p>
+<h3 id="4-csi-driver-installation-on-the-management-cluster">4. CSI driver installation on the management cluster<a class="headerlink" href="#4-csi-driver-installation-on-the-management-cluster" title="Permanent link">&para;</a></h3>
+<p>The management cluster needs a working StorageClass before <code>EnsureRepoSync</code> creates the
+<code>yage-repos</code> PVC. On kind the <code>standard</code> (local-path-provisioner) StorageClass is always
+present. On a real CAPI cluster it must be installed.</p>
+<p><code>internal/provider/provider.go</code> explicitly excludes CSI from the <code>Provider</code> interface
+(see comment at line ~130: <em>"The Provider interface intentionally has no CSI hook"</em>). This
+decision is preserved. Instead, the management-cluster CSI install is added to the
+<code>internal/csi.Driver</code> interface, consistent with ADR 0001's registry pattern:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// EnsureManagementInstall installs this CSI driver (chart + credentials Secret)</span>
+<span class="c1">// on the management cluster identified by mgmtKubeconfig. Called after</span>
+<span class="c1">// InstallCAPIOnManagement and before EnsureRepoSync. Idempotent.</span>
+<span class="c1">// Returns ErrNotApplicable when this driver is not relevant for the</span>
+<span class="c1">// management cluster (e.g. the provider does not pivot, or the management</span>
+<span class="c1">// cluster uses a different CSI than the workload cluster).</span>
+<span class="nx">EnsureManagementInstall</span><span class="p">(</span><span class="nx">cfg</span><span class="w"> </span><span class="o">*</span><span class="nx">config</span><span class="p">.</span><span class="nx">Config</span><span class="p">,</span><span class="w"> </span><span class="nx">mgmtKubeconfig</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="kt">error</span>
+</code></pre></div>
+<p>A default <code>ErrNotApplicable</code> implementation is provided via the driver base type so
+existing drivers require no change unless they implement a management path.</p>
+<p><strong>Helm rationale:</strong> the workload-cluster CSI is installed via CAAPH <code>HelmChartProxy</code>,
+which is an ArgoCD-driven mechanism. The management cluster does not run ArgoCD at the
+point <code>EnsureManagementInstall</code> is called (ArgoCD on the management cluster, if desired,
+is a post-pivot operator concern). Therefore <code>EnsureManagementInstall</code> uses a direct
+Helm invocation — <code>helm upgrade --install</code> via <code>shell.Run</code> — the same mechanism already
+used for workload-cluster operations that precede ArgoCD readiness. The <code>helm</code> binary is
+a documented dependency for <code>EnsureIdentity</code>-class operations and is available in the yage
+execution environment.</p>
+<p><strong>Proxmox implementation (<code>internal/csi/proxmoxcsi</code>):</strong></p>
 <ol>
-<li><strong>Scaffold</strong> — Create <code>lpasquali/yage-manifests</code> with the directory structure above.
-   Populate README stubs per subdirectory; no templates yet.</li>
-<li><strong>Fetcher</strong> — Backend: implement <code>internal/platform/manifests.Fetcher</code> (clone/pull
-   logic, <code>Render</code> method, cache at <code>~/.yage/manifests-cache/</code>, <code>YAGE_MANIFESTS_REF</code> config
-   field). Unit-testable with a local file fixture (no network required in CI).</li>
-<li><strong>Per-package migration</strong> (can be parallelised per package):</li>
-<li>Port template content from Go string-builder to <code>.yaml.tmpl</code> in <code>yage-manifests</code>.</li>
-<li>Replace the Go renderer with a <code>Fetcher.Render()</code> call.</li>
-<li>Update tests to use a local file fixture pointing at a <code>testdata/</code> copy of the
-     template, so tests do not require network access.</li>
-<li><strong>CSI interface change</strong> — Update <code>internal/csi/driver.go</code> interface and all 14 driver
-   packages in one PR. Retire the <code>RenderValues</code> name.</li>
-<li><strong>Package retirement</strong> — Once all callers are migrated, retire <code>internal/capi/helmvalues/</code>,
-   <code>internal/capi/wlargocd/</code>, and <code>internal/capi/postsync/</code> as Go packages. Keep
-   <code>internal/capi/caaph/</code> for the Kubernetes client logic; only its string-building
-   helpers move out.</li>
+<li>Call <code>proxmoxcsi.EnsureSecret</code> to apply the Proxmox API credential Secret to the
+   management cluster (reuses the existing function, passing the management kubeconfig).</li>
+<li>Run <code>helm upgrade --install proxmox-csi-plugin &lt;chart&gt; --namespace kube-system
+   --create-namespace --set storageClass.name=&lt;cfg.Providers.Proxmox.CSIStorageClassName&gt;
+   --kubeconfig &lt;mgmtKubeconfig&gt;</code> via <code>shell.Run</code>.</li>
 </ol>
+<p>The storage class name defaults to <code>cfg.Providers.Proxmox.CSIStorageClassName</code> (same as
+the workload cluster). Operators who need a different pool for the management cluster can
+set a new optional field <code>PROXMOX_CSI_MGMT_STORAGE_CLASS</code> (defaults to workload value).</p>
+<p><strong>Orchestrator lookup:</strong> the orchestrator finds the active driver for the current provider
+using the existing CSI registry (<code>csi.For(cfg)</code> or equivalent) and calls
+<code>EnsureManagementInstall</code>. If the driver returns <code>ErrNotApplicable</code>, the orchestrator waits
+up to <code>cfg.Pivot.StorageClassReadyTimeout</code> (default: 5 minutes) for any non-local-path
+default StorageClass to appear — this handles cloud providers whose controller manager
+injects a StorageClass automatically (e.g. AWS EBS SC created by the cloud controller
+manager). If none appears within the timeout, the orchestrator logs a fatal error.</p>
+<h3 id="5-ensurereposync-on-the-management-cluster">5. <code>EnsureRepoSync</code> on the management cluster<a class="headerlink" href="#5-ensurereposync-on-the-management-cluster" title="Permanent link">&para;</a></h3>
+<p>After the handoff (§2), RBAC setup (§3), and CSI install (§4), the orchestrator calls
+<code>EnsureRepoSync</code> (ADR 0010 §2) targeting the management cluster:</p>
+<div class="highlight"><pre><span></span><code><span class="nx">mgmtCli</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">k8sclient</span><span class="p">.</span><span class="nx">ForKubeconfigFile</span><span class="p">(</span><span class="nx">mgmtKubeconfig</span><span class="p">)</span>
+<span class="c1">// ...</span>
+<span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">opentofux</span><span class="p">.</span><span class="nx">EnsureRepoSync</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">mgmtCli</span><span class="p">,</span><span class="w"> </span><span class="nx">cfg</span><span class="p">);</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">logx</span><span class="p">.</span><span class="nx">Die</span><span class="p">(</span><span class="s">&quot;pivot: EnsureRepoSync on management cluster: %v&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>This creates the <code>yage-repos</code> PVC on the management cluster (using the StorageClass
+provided by §4) and runs the <code>yage-repo-sync</code> Job. The <code>alpine/git:2</code> image pull uses
+<code>cfg.ImageRegistryMirror</code> if set. The registry VM (ADR 0009 §1, provisioned post-kind
+per ADR 0010 §7) is available by the time pivot runs, so <code>cfg.ImageRegistryMirror</code> is
+already populated in air-gapped environments.</p>
+<p><code>EnsureRepoSync</code> is idempotent: it checks for PVC existence before creating and re-uses
+an existing <code>yage-repos</code> PVC if found. A re-run after a partial failure retries safely.</p>
+<h3 id="6-extended-verifyparity">6. Extended <code>VerifyParity</code><a class="headerlink" href="#6-extended-verifyparity" title="Permanent link">&para;</a></h3>
+<p><code>pivot.VerifyParity</code> gains three additional checks after the existing CAPI inventory +
+provider Secret checks:</p>
+<p><strong>a. yage-system namespace present:</strong> Assert that <code>yage-system</code> exists on the management
+cluster (created by handoff §2).</p>
+<p><strong>b. Minimum labeled Secrets present:</strong> List Secrets in <code>yage-system</code> with
+<code>app.kubernetes.io/managed-by=yage</code> on the management cluster. Zero is a warning (not
+fatal) — a first-run with no tofu modules executed yet has no tfstate Secrets to copy.
+One or more is the expected steady-state.</p>
+<p><strong>c. <code>yage-repos</code> PVC in <code>Bound</code> phase:</strong> Assert that the <code>yage-repos</code> PVC in <code>yage-system</code>
+is <code>Bound</code>. A <code>Pending</code> PVC here indicates a StorageClass problem; surface it with a clear
+diagnostic before the first post-pivot tofu Job runs.</p>
+<h3 id="7-updated-pivot-bootstrap-sequence">7. Updated pivot bootstrap sequence<a class="headerlink" href="#7-updated-pivot-bootstrap-sequence" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>MoveCAPIState                              [existing — clusterctl move]
+  ↓
+HandOffBootstrapSecretsToManagement        [extended: §2 label-based yage-system copy]
+  ↓
+EnsureYageSystemOnCluster (on mgmt)        [NEW — §3: SA + RBAC from spec]
+  ↓
+csi.Driver.EnsureManagementInstall         [NEW — §4: CSI + StorageClass on mgmt]
+  ↓
+EnsureRepoSync (on mgmt)                   [NEW — §5: yage-repos PVC + repo-sync Job]
+  ↓
+VerifyParity                               [extended: §6 yage-system + PVC checks]
+  ↓
+rebindKindContextToMgmt                    [existing]
+  ↓
+[downstream phases: workload apply, ArgoCD on workload]
+  ↓
+TeardownKind                               [existing; deferred to post-workload]
+</code></pre></div>
 <hr />
 <h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
 <h3 id="positive">Positive<a class="headerlink" href="#positive" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
-<p><strong>YAML is auditable outside the binary.</strong> Operators can read, diff, and fork
-  <code>yage-manifests</code> without building or running yage.</p>
+<p><strong>Complete yage state arrives on the management cluster.</strong> Tofu state (as Secrets),
+  repo content (via <code>yage-repos</code> PVC), and all yage-system bootstrap Secrets are present
+  before any post-pivot phase runs.</p>
 </li>
 <li>
-<p><strong>Manifest version is independently pinnable.</strong> <code>YAGE_MANIFESTS_REF</code> decouples
-  template evolution from yage releases, giving operators a stable surface for controlled
-  upgrades.</p>
+<p><strong>Tofu-state PVCs are eliminated.</strong> The switch to the <code>kubernetes</code> backend removes the
+  <code>tofu-state-&lt;module&gt;</code> PVC lifecycle entirely.</p>
 </li>
 <li>
-<p><strong>Go packages are smaller and focused.</strong> <code>helmvalues/</code>, <code>wlargocd/</code>, and <code>postsync/</code>
-  become no-op packages on the retirement path; <code>caaph/</code> is left with only Kubernetes
-  client logic.</p>
+<p><strong>Label-based handoff scales automatically.</strong> New yage-managed Secrets that carry
+  <code>app.kubernetes.io/managed-by=yage</code> are migrated without code changes to <code>handoff.go</code>.</p>
 </li>
 <li>
-<p><strong>New add-ons require no Go change.</strong> A new ArgoCD Application or Helm values block is
-  a PR against <code>yage-manifests</code> only, not a yage rebuild.</p>
+<p><strong>ADR 0001 invariant preserved.</strong> The <code>Provider</code> interface gains no CSI hook;
+  management CSI install lives on <code>csi.Driver</code> where it belongs.</p>
 </li>
 <li>
-<p><strong>Tests become structural.</strong> Instead of comparing <code>strings.Builder</code> output against
-  hardcoded literals, tests validate template rendering against known fixtures and verify
-  that the Fetcher resolves the correct path.</p>
+<p><strong>Consistent zero-workstation-residue (ADR 0010).</strong> No tofu state, no repo content, and
+  no yage Secrets live on the operator's workstation disk.</p>
+</li>
+<li>
+<p><strong>Post-pivot idempotency.</strong> All new steps (<code>EnsureYageSystemOnCluster</code>,
+  <code>EnsureManagementInstall</code>, <code>EnsureRepoSync</code>) are idempotent. A re-run after a partial
+  failure re-creates what is missing.</p>
 </li>
 </ul>
 <h3 id="negative">Negative<a class="headerlink" href="#negative" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
-<p><strong>Network dependency at bootstrap.</strong> yage must clone <code>yage-manifests</code> on first use.
-  Mitigated by local cache; subsequent runs only require a <code>git fetch</code>. Air-gapped
-  environments must mirror the repository.</p>
+<p><strong><code>csi.Driver</code> interface gains a new method.</strong> All registered drivers receive a
+  <code>EnsureManagementInstall</code> method that defaults to <code>ErrNotApplicable</code>. Only drivers used
+  on providers that pivot need a real implementation.</p>
 </li>
 <li>
-<p><strong>Additional config surface.</strong> <code>YAGE_MANIFESTS_REF</code> is a new env var / flag that
-  operators must understand and optionally pin. Documentation and a sensible default
-  (<code>v0.1.0</code>) reduce friction.</p>
+<p><strong>Management cluster Helm dependency.</strong> <code>EnsureManagementInstall</code> for Proxmox uses
+  <code>helm</code> via <code>shell.Run</code>. The <code>helm</code> binary must be present in the yage execution
+  environment — already a documented requirement for identity-bootstrap-class operations.</p>
 </li>
 <li>
-<p><strong>Migration work across ~15 packages.</strong> All <code>strings.Builder</code> renderers must be ported.
-  The migration is mechanical but large. Sequencing per-package migration (step 3) allows
-  incremental merges and keeps PRs reviewable.</p>
+<p><strong><code>kubernetes</code> backend requires RBAC on both clusters.</strong> <code>EnsureYageSystemOnCluster</code> (§3)
+  must run before any tofu Job on the management cluster. The orchestrator enforces this
+  sequencing in §7.</p>
 </li>
 <li>
-<p><strong>CSI interface break.</strong> Renaming <code>RenderValues</code> to <code>Render</code> requires a coordinated
-  change across all 14 driver packages. This is a one-time cost with no ongoing
-  maintenance burden.</p>
+<p><strong><code>EnsureRepoSync</code> is fatal on mgmt.</strong> A network or image-pull failure in
+  <code>yage-repo-sync</code> on the management cluster blocks pivot completion. The Job is idempotent
+  so a re-run of yage post-pivot retries safely.</p>
 </li>
 </ul>
 <h3 id="risks">Risks<a class="headerlink" href="#risks" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
-<p><strong>Template drift.</strong> If <code>yage-manifests</code> advances independently of yage, a <code>YAGE_MANIFESTS_REF</code>
-  bump may introduce templates that reference config fields not yet present in the installed
-  yage binary. Mitigation: templates should only reference fields present in <code>config.Config</code>;
-  any new field required by a template must land in yage first. The <code>yage-manifests</code>
-  changelog must document required minimum yage versions for each tag.</p>
+<p><strong>Air-gap: management-cluster image pull.</strong> The <code>yage-repo-sync</code> Job on the management
+  cluster needs <code>alpine/git:2</code>. <code>cfg.ImageRegistryMirror</code> must be set before pivot. The
+  registry VM (ADR 0009, post-kind) is provisioned before pivot runs, so this is satisfied
+  in the normal bootstrap flow.</p>
 </li>
 <li>
-<p><strong>Double-template authoring trap.</strong> CAAPH <code>HelmChartProxy</code> resources embed
-  <code>valuesTemplate:</code> blocks that contain CAAPH's own <code>{{ }}</code> expressions. Template authors
-  must escape these inner delimiters. Failing to do so silently produces broken YAML.
-  A lint step in the <code>yage-manifests</code> CI (e.g. <code>go template validate</code> or a custom check)
-  should catch unescaped inner delimiters before merge.</p>
+<p><strong>Management cluster StorageClass name.</strong> If the CSI driver creates a StorageClass the
+  operator does not expect (e.g. <code>proxmox-data-xfs</code> when they wanted a different name),
+  subsequent HCL modules referencing a specific StorageClass name may fail. Mitigated by
+  <code>PROXMOX_CSI_MGMT_STORAGE_CLASS</code> config field defaulting to the workload value.</p>
 </li>
 </ul>
 <hr />
 <h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ADR 0004 — Universal OpenTofu Identity Bootstrap; establishes the <code>yage-tofu</code> / <code>Fetcher</code> / pinned-ref pattern this ADR mirrors</li>
-<li><code>lpasquali/yage-manifests</code> — public repository of YAML templates (target)</li>
-<li><code>internal/capi/manifest/patches.go</code> — patch functions that stay in Go</li>
-<li><code>internal/capi/caaph/caaph.go</code> — CAAPH HelmChartProxy + ArgoCD CR renderers (migration target)</li>
-<li><code>internal/capi/wlargocd/render.go</code> — ArgoCD Application renderers (migration target)</li>
-<li><code>internal/capi/helmvalues/</code> — Helm values generators (migration target; retirement path)</li>
-<li><code>internal/csi/driver.go</code> — CSI <code>Driver</code> interface (<code>RenderValues</code> → <code>Render</code>)</li>
+<li>ADR 0001 — CSI driver registry; <code>Driver</code> interface extension in §4</li>
+<li>ADR 0004 — Universal OpenTofu Identity Bootstrap; state backend replaced by §1</li>
+<li>ADR 0009 — On-prem platform services; registry VM sequencing (post-kind) ensures <code>ImageRegistryMirror</code> is set before pivot</li>
+<li>ADR 0010 — In-cluster repo cache; <code>EnsureRepoSync</code> spec, <code>yage-repos</code> PVC; §5 of this ADR calls it on the management cluster</li>
+<li><code>internal/cluster/kindsync/handoff.go</code> — <code>HandOffBootstrapSecretsToManagement</code> (§2 extension)</li>
+<li><code>internal/capi/pivot/pivot.go</code> — <code>VerifyParity</code> (§6 extension)</li>
+<li><code>internal/csi/driver.go</code> — <code>Driver</code> interface; <code>EnsureManagementInstall</code> method (§4)</li>
+<li><code>internal/orchestrator/bootstrap.go</code> — pivot sequence (§7 updated)</li>
+<li>Issue #144 — <code>EnsureRepoSync</code> implementation; must target both kind and management clusters</li>
 </ul>
 
 

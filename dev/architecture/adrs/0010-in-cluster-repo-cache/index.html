@@ -21,7 +21,7 @@
     
     
       
-        <title>ADR 0008 — yage-manifests: GitOps YAML Template Repository - yage Documentation</title>
+        <title>ADR 0010 — In-Cluster Repository Cache: Zero Workstation Residue - yage Documentation</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#adr-0008-yage-manifests-gitops-yaml-template-repository" class="md-skip">
+        <a href="#adr-0010-in-cluster-repository-cache-zero-workstation-residue" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ADR 0008 — yage-manifests: GitOps YAML Template Repository
+              ADR 0010 — In-Cluster Repository Cache: Zero Workstation Residue
             
           </span>
         </div>
@@ -1064,10 +1064,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-yage-manifests-public-repository" class="md-nav__link">
+  <a href="#1-single-shared-pvc-yage-repos" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. yage-manifests public repository
+        1. Single shared PVC: yage-repos
       
     </span>
   </a>
@@ -1075,10 +1075,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-templating-engine" class="md-nav__link">
+  <a href="#2-yage-repo-sync-job" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Templating engine
+        2. yage-repo-sync Job
       
     </span>
   </a>
@@ -1086,10 +1086,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-fetch-and-render-mechanism" class="md-nav__link">
+  <a href="#3-updated-opentofuxfetcher" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Fetch and render mechanism
+        3. Updated opentofux.Fetcher
       
     </span>
   </a>
@@ -1097,10 +1097,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#4-patch-vs-template-distinction" class="md-nav__link">
+  <a href="#4-updated-manifestsfetcher" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. Patch vs. template distinction
+        4. Updated manifests.Fetcher
       
     </span>
   </a>
@@ -1108,10 +1108,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#5-yage_manifests_ref-config-field" class="md-nav__link">
+  <a href="#5-bootstrap-sequence-amendment" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5. YAGE_MANIFESTS_REF config field
+        5. Bootstrap sequence amendment
       
     </span>
   </a>
@@ -1119,10 +1119,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#6-csidriverrendervalues-migration" class="md-nav__link">
+  <a href="#6-opentofu-provider-plugin-cache" class="md-nav__link">
     <span class="md-ellipsis">
       
-        6. csi.Driver.RenderValues() migration
+        6. OpenTofu provider plugin cache
       
     </span>
   </a>
@@ -1130,10 +1130,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#7-migration-sequencing" class="md-nav__link">
+  <a href="#7-exception-phases-that-run-before-kind" class="md-nav__link">
     <span class="md-ellipsis">
       
-        7. Migration sequencing
+        7. Exception: phases that run before kind
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-airgap-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Airgap support
       
     </span>
   </a>
@@ -1223,291 +1234,286 @@
 
 
 
-<h1 id="adr-0008-yage-manifests-gitops-yaml-template-repository">ADR 0008 — yage-manifests: GitOps YAML Template Repository<a class="headerlink" href="#adr-0008-yage-manifests-gitops-yaml-template-repository" title="Permanent link">&para;</a></h1>
+<h1 id="adr-0010-in-cluster-repository-cache-zero-workstation-residue">ADR 0010 — In-Cluster Repository Cache: Zero Workstation Residue<a class="headerlink" href="#adr-0010-in-cluster-repository-cache-zero-workstation-residue" title="Permanent link">&para;</a></h1>
 <p><strong>Status:</strong> Accepted
-<strong>Date:</strong> 2026-04-30
-<strong>Accepted:</strong> 2026-05-01
-<strong>Owners:</strong> Architect (interface contract, repository structure), Backend (Fetcher implementation, per-package migration)</p>
+<strong>Date:</strong> 2026-05-01
+<strong>Owners:</strong> Backend (Fetcher redesign, RepoSync Job, PVC lifecycle), Architect (interface contract)</p>
+<p><strong>Supersedes (partial):</strong>
+- ADR 0004 §2 steps 1–4 (local <code>~/.yage/tofu-cache/</code> fetch) and §2 tofu state path
+- ADR 0008 §3 (<code>manifests.Fetcher</code> <code>CacheDir</code> field and <code>~/.yage/manifests-cache/</code>)</p>
 <hr />
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
-<p>yage generates all Kubernetes YAML manifests, Helm values, ArgoCD Application resources,
-and CAPI add-on resources as Go string-building code. The current surface is approximately
-3,100 lines spread across six packages:</p>
+<p>ADR 0004 (Phase G) and ADR 0008 (yage-manifests) both design a fetch-and-cache pattern
+where yage clones external Git repositories to the operator's workstation at bootstrap time:</p>
+<ul>
+<li><code>yage-tofu</code> → <code>~/.yage/tofu-cache/</code></li>
+<li>Per-provider tofu state → <code>~/.yage/tofu/&lt;provider&gt;/terraform.tfstate</code></li>
+<li><code>yage-manifests</code> → <code>~/.yage/manifests-cache/</code></li>
+</ul>
+<p>These paths leave residue on the operator's workstation that persists beyond the kind
+cluster's lifetime. An operator who runs <code>kind delete cluster</code> expects a clean slate;
+the cache dirs remain.</p>
+<p>The architectural goal is <strong>zero workstation residue</strong>: when the kind cluster is deleted,
+all yage-managed state disappears with it. The four external repositories yage depends on
+during a bootstrap run are:</p>
 <table>
 <thead>
 <tr>
-<th>Package</th>
-<th>Lines</th>
-<th>Role</th>
+<th>Repository</th>
+<th>Consumer</th>
+<th>Already in-cluster?</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>internal/capi/manifest/</code></td>
-<td>1,228</td>
-<td>Workload cluster YAML patching + K3s template generation</td>
+<td><code>lpasquali/yage-tofu</code></td>
+<td><code>opentofux.JobRunner</code> (tofu HCL modules)</td>
+<td>No — cloned locally</td>
 </tr>
 <tr>
-<td><code>internal/capi/caaph/</code></td>
-<td>861</td>
-<td>CAAPH HelmChartProxy YAML + ArgoCD Operator install CR</td>
+<td><code>lpasquali/yage-manifests</code></td>
+<td><code>manifests.Fetcher</code> (YAML templates)</td>
+<td>No — cloned locally</td>
 </tr>
 <tr>
-<td><code>internal/capi/wlargocd/</code></td>
-<td>409</td>
-<td>Workload ArgoCD Application YAML (one per add-on)</td>
+<td>operator's <code>workload-app-of-apps</code></td>
+<td>ArgoCD repo-server</td>
+<td><strong>Yes</strong> — ArgoCD fetches internally</td>
 </tr>
 <tr>
-<td><code>internal/capi/postsync/</code></td>
-<td>223</td>
-<td>ArgoCD PostSync-hook helpers + CSI smoke-test renderers</td>
-</tr>
-<tr>
-<td><code>internal/capi/cilium/</code></td>
-<td>169</td>
-<td>Cilium CNI helper manifests</td>
-</tr>
-<tr>
-<td><code>internal/capi/helmvalues/</code></td>
-<td>251</td>
-<td>Helm values YAML for metrics-server, observability stack</td>
-</tr>
-<tr>
-<td><code>internal/csi/*/RenderValues()</code></td>
-<td>~14 pkgs</td>
-<td>Per-driver Helm values YAML</td>
+<td>operator's <code>workload-smoketests</code></td>
+<td>ArgoCD repo-server</td>
+<td><strong>Yes</strong> — ArgoCD fetches internally</td>
 </tr>
 </tbody>
 </table>
-<p>All of these use <code>strings.Builder</code> + <code>fmt.Fprintf</code> to assemble YAML inline. This approach
-has several compounding costs:</p>
-<ul>
-<li>YAML output is not reviewable except by reading Go source or running yage.</li>
-<li>Operators cannot audit or fork the templates without forking the binary.</li>
-<li>Tests must compare string output against hardcoded literals, which makes template changes
-  expensive and diff-noisy.</li>
-<li>Adding a new add-on requires modifying and rebuilding yage even when the logic is purely
-  structural YAML.</li>
-<li>There is no mechanism to pin a manifest version independently of a yage release.</li>
-</ul>
-<p>The project owner's architectural direction: move all YAML templating out of Go code into a
-dedicated GitOps repository, following the same pattern established by ADR 0004 for
-OpenTofu modules (<code>yage-tofu</code>).</p>
+<p>Only the first two require action. The ArgoCD-consumed repos are already in-cluster.</p>
+<p>kind's default <code>StorageClass: standard</code> (rancher <code>local-path-provisioner</code>) stores PVC data
+inside the kind node's Docker container filesystem, not on the host. A PVC created in the
+<code>yage-system</code> namespace is gone the moment <code>kind delete cluster</code> runs. This is the correct
+primitive.</p>
 <hr />
 <h2 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">&para;</a></h2>
-<h3 id="1-yage-manifests-public-repository">1. <code>yage-manifests</code> public repository<a class="headerlink" href="#1-yage-manifests-public-repository" title="Permanent link">&para;</a></h3>
-<p>A new public GitHub repository <code>lpasquali/yage-manifests</code> holds all YAML templates and
-Helm values files. yage contains <strong>no inline YAML assembly</strong>. The repository structure is:</p>
-<div class="highlight"><pre><span></span><code>yage-manifests/
-├── cluster/            # CAPI workload cluster manifests per provider
-│   ├── proxmox/
-│   ├── aws/
-│   └── ...
-├── addons/             # Helm values + ArgoCD Application YAMLs per add-on
-│   ├── cilium/
-│   ├── argocd/
-│   ├── metrics-server/
-│   ├── observability/
-│   └── ...
-├── csi/                # Per-driver Helm values (replaces csi.RenderValues)
-│   ├── hcloud/
-│   ├── aws-ebs/
-│   └── ...
-└── postsync/           # ArgoCD PostSync hook manifests
+<h3 id="1-single-shared-pvc-yage-repos">1. Single shared PVC: <code>yage-repos</code><a class="headerlink" href="#1-single-shared-pvc-yage-repos" title="Permanent link">&para;</a></h3>
+<p>yage creates one PVC named <code>yage-repos</code> in the <code>yage-system</code> namespace immediately after
+the kind cluster is up, before any repo-dependent phase runs.</p>
+<div class="highlight"><pre><span></span><code>Name:         yage-repos
+Namespace:    yage-system
+StorageClass: standard          # kind local-path-provisioner; in-Docker, not on host
+Capacity:     500Mi             # covers yage-tofu + yage-manifests with headroom
+AccessMode:   ReadWriteOnce     # kind is single-node; RWO is sufficient
 </code></pre></div>
-<p>Modules are versioned and tagged independently of yage releases. Operators can audit and
-fork <code>yage-manifests</code> without touching the yage binary.</p>
-<h3 id="2-templating-engine">2. Templating engine<a class="headerlink" href="#2-templating-engine" title="Permanent link">&para;</a></h3>
-<p>Template files use Go <code>text/template</code> syntax with the extension <code>.yaml.tmpl</code>. Rationale:
-yage is a Go binary; <code>text/template</code> is stdlib, requires no external process or binary,
-and template rendering is in-process with zero additional dependencies. No Helm,
-no envsubst, no Kustomize — just Go template syntax.</p>
-<p>One authoring constraint to note: the CAAPH <code>HelmChartProxy</code> resource embeds a
-<code>valuesTemplate:</code> block that itself contains <code>{{ }}</code> CAAPH-side template expressions.
-When these files move to <code>yage-manifests</code>, those inner <code>{{</code>/<code>}}</code> delimiters must be
-escaped as <code>{{"{{"}}</code> / <code>{{"}}"}}</code> (or the template must use a custom delimiter pair).
-This is documented in the per-template comment header and is the responsibility of the
-Backend agent during migration.</p>
-<h3 id="3-fetch-and-render-mechanism">3. Fetch and render mechanism<a class="headerlink" href="#3-fetch-and-render-mechanism" title="Permanent link">&para;</a></h3>
-<p>The <code>internal/platform/manifests</code> package introduces a <code>Fetcher</code> struct that mirrors the
-pattern established in <code>internal/platform/opentofux</code> for the <code>yage-tofu</code> checkout. The two
-Fetchers are independent implementations — the manifests Fetcher is a new package, not a
-generic extraction of opentofux. Extracting a shared git-fetch base is deferred until the
-duplication causes pain.</p>
-<div class="highlight"><pre><span></span><code><span class="c1">// internal/platform/manifests/fetcher.go</span>
+<p>Mount layout inside Jobs that consume the PVC:</p>
+<div class="highlight"><pre><span></span><code>/repos/
+  yage-tofu/        ← lpasquali/yage-tofu at cfg.TofuRef
+  yage-manifests/   ← lpasquali/yage-manifests at cfg.ManifestsRef
+</code></pre></div>
+<h3 id="2-yage-repo-sync-job">2. <code>yage-repo-sync</code> Job<a class="headerlink" href="#2-yage-repo-sync-job" title="Permanent link">&para;</a></h3>
+<p>A <code>batch/v1 Job</code> named <code>yage-repo-sync</code> in <code>yage-system</code> runs immediately after the PVC
+is created. It has one init container per repo; the main container exits immediately after
+the init containers succeed.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">initContainers</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sync-yage-tofu</span>
+<span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">alpine/git:2</span><span class="w">          </span><span class="c1"># or cfg.ImageRegistryMirror/alpine/git:2 for airgap</span>
+<span class="w">  </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REPO</span>
+<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/lpasquali/yage-tofu</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REF</span>
+<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;$(YAGE_TOFU_REF)&quot;</span>
+<span class="w">  </span><span class="nt">command</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sh</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-c</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">    </span><span class="no">if [ -d /repos/yage-tofu/.git ]; then</span>
+<span class="w">      </span><span class="no">git -C /repos/yage-tofu fetch --depth=1 origin &quot;$REF&quot; &amp;&amp; \</span>
+<span class="w">      </span><span class="no">git -C /repos/yage-tofu checkout FETCH_HEAD</span>
+<span class="w">    </span><span class="no">else</span>
+<span class="w">      </span><span class="no">git clone --depth=1 --branch &quot;$REF&quot; &quot;$REPO&quot; /repos/yage-tofu</span>
+<span class="w">    </span><span class="no">fi</span>
+<span class="w">  </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">repos</span><span class="p p-Indicator">,</span><span class="nt"> mountPath</span><span class="p">:</span><span class="w"> </span><span class="nv">/repos</span><span class="w"> </span><span class="p p-Indicator">}</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sync-yage-manifests</span>
+<span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">alpine/git:2</span>
+<span class="w">  </span><span class="c1"># identical pattern, REPO=lpasquali/yage-manifests, REF=cfg.ManifestsRef</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">containers</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">done</span>
+<span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox:stable</span>
+<span class="w">  </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;true&quot;</span><span class="p p-Indicator">]</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">repos</span>
+<span class="w">  </span><span class="nt">persistentVolumeClaim</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">claimName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yage-repos</span>
+</code></pre></div>
+<p>yage runs the Job synchronously (waits for <code>Complete</code>; treats <code>Failed</code> as fatal). Log
+streaming uses the pod log API — same pattern as <code>JobRunner</code> in <code>opentofux</code>. The Job is
+deleted after it completes (TTL or explicit deletion) to keep <code>yage-system</code> clean.</p>
+<h3 id="3-updated-opentofuxfetcher">3. Updated <code>opentofux.Fetcher</code><a class="headerlink" href="#3-updated-opentofuxfetcher" title="Permanent link">&para;</a></h3>
+<p>The <code>Fetcher</code> in <code>internal/platform/opentofux/fetcher.go</code> is revised to replace the
+local <code>CacheDir</code> clone with PVC-based path resolution. The struct no longer needs a
+<code>CacheDir</code> field; the module path is derived from the known PVC mount at <code>/repos/yage-tofu/</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// Fetcher resolves yage-tofu module paths from the in-cluster PVC.</span>
+<span class="c1">// The PVC must be mounted at /repos/yage-tofu/ in the calling Job pod.</span>
+<span class="c1">// Use EnsureRepoSync to populate it before calling ModulePath.</span>
 <span class="kd">type</span><span class="w"> </span><span class="nx">Fetcher</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nx">RepoURL</span><span class="w">  </span><span class="kt">string</span><span class="w">  </span><span class="c1">// https://github.com/lpasquali/yage-manifests</span>
-<span class="w">    </span><span class="nx">Ref</span><span class="w">      </span><span class="kt">string</span><span class="w">  </span><span class="c1">// cfg.ManifestsRef (env: YAGE_MANIFESTS_REF, default: latest tag)</span>
-<span class="w">    </span><span class="nx">CacheDir</span><span class="w"> </span><span class="kt">string</span><span class="w">  </span><span class="c1">// ~/.yage/manifests-cache/</span>
+<span class="w">    </span><span class="c1">// MountRoot is the path at which the yage-repos PVC is mounted in the</span>
+<span class="w">    </span><span class="c1">// current pod. Defaults to /repos when empty.</span>
+<span class="w">    </span><span class="nx">MountRoot</span><span class="w"> </span><span class="kt">string</span>
 <span class="p">}</span>
 
-<span class="c1">// Render fetches (clone on first use; git fetch + checkout on subsequent runs)</span>
-<span class="c1">// the yage-manifests repo at the configured Ref, reads the .yaml.tmpl at</span>
-<span class="c1">// templatePath (relative to repo root), executes it with data via text/template,</span>
-<span class="c1">// and returns the rendered YAML string.</span>
-<span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">f</span><span class="w"> </span><span class="o">*</span><span class="nx">Fetcher</span><span class="p">)</span><span class="w"> </span><span class="nx">Render</span><span class="p">(</span><span class="nx">templatePath</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="kt">any</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
+<span class="c1">// ModulePath returns the absolute path to the named module directory.</span>
+<span class="c1">// e.g. ModulePath(&quot;proxmox&quot;) → &quot;/repos/yage-tofu/proxmox&quot;</span>
+<span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">f</span><span class="w"> </span><span class="o">*</span><span class="nx">Fetcher</span><span class="p">)</span><span class="w"> </span><span class="nx">ModulePath</span><span class="p">(</span><span class="nx">module</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">root</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">f</span><span class="p">.</span><span class="nx">MountRoot</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">root</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">root</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;/repos&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">filepath</span><span class="p">.</span><span class="nx">Join</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;yage-tofu&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">module</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// EnsureRepoSync creates the yage-repos PVC (if absent) and runs the</span>
+<span class="c1">// yage-repo-sync Job to clone/fetch both yage-tofu and yage-manifests.</span>
+<span class="c1">// Must be called once per bootstrap run, after kind is up.</span>
+<span class="kd">func</span><span class="w"> </span><span class="nx">EnsureRepoSync</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">cli</span><span class="w"> </span><span class="o">*</span><span class="nx">k8sclient</span><span class="p">.</span><span class="nx">Client</span><span class="p">,</span><span class="w"> </span><span class="nx">cfg</span><span class="w"> </span><span class="o">*</span><span class="nx">config</span><span class="p">.</span><span class="nx">Config</span><span class="p">)</span><span class="w"> </span><span class="kt">error</span>
 </code></pre></div>
-<p>yage replaces each <code>strings.Builder</code>-based renderer with a <code>manifests.Fetcher.Render()</code>
-call, passing the appropriate <code>templatePath</code> and the relevant section of <code>*config.Config</code>
-(or a purpose-built data struct) as <code>data</code>.</p>
-<h3 id="4-patch-vs-template-distinction">4. Patch vs. template distinction<a class="headerlink" href="#4-patch-vs-template-distinction" title="Permanent link">&para;</a></h3>
-<p><code>internal/capi/manifest/patches.go</code> does <strong>regex-based mutation of externally-supplied
-YAML documents</strong> — the inputs are manifests rendered by <code>clusterctl generate cluster</code>,
-not content yage generates from scratch. This is a fundamentally different operation from
-templating, and it stays in Go.</p>
-<p>The four patch functions that remain in <code>internal/capi/manifest/</code>:</p>
-<table>
-<thead>
-<tr>
-<th>Function</th>
-<th>What it mutates</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>ApplyRoleResourceOverrides</code></td>
-<td>Sizing fields in <code>ProxmoxMachineTemplate</code> blocks</td>
-</tr>
-<tr>
-<td><code>PatchProxmoxCSITopologyLabels</code></td>
-<td>CSI topology <code>node-labels</code> in <code>KubeadmConfig</code></td>
-</tr>
-<tr>
-<td><code>PatchKubeadmSkipKubeProxyForCilium</code></td>
-<td><code>skipPhases: - addon/kube-proxy</code> in <code>KubeadmControlPlane</code></td>
-</tr>
-<tr>
-<td><code>PatchProxmoxMachineTemplateSpecRevisions</code></td>
-<td>PMT name revision hashes</td>
-</tr>
-</tbody>
-</table>
-<p>These functions receive clusterctl output and apply structural corrections. They are not
-candidates for <code>yage-manifests</code> because their input is dynamic (operator-provided, not
-yage-generated). Future work may introduce a cleaner patch API internally, but that is
-out of scope for this ADR.</p>
-<p><code>caaph.PatchClusterCAAPHHelmLabels</code> likewise stays in Go — it mutates a live Cluster
-object in the management cluster via a JSON merge-patch and also updates the on-disk
-manifest in-place. The logic is imperative, not template-shaped.</p>
-<h3 id="5-yage_manifests_ref-config-field">5. <code>YAGE_MANIFESTS_REF</code> config field<a class="headerlink" href="#5-yage_manifests_ref-config-field" title="Permanent link">&para;</a></h3>
-<p>A new config field <code>cfg.ManifestsRef string</code> (env: <code>YAGE_MANIFESTS_REF</code>, default: <code>v0.1.0</code>
-initially, then tracking the latest stable tag). Analogous to <code>YAGE_TOFU_REF</code> from
-ADR 0004.</p>
-<p>The Fetcher uses this ref to check out the <code>yage-manifests</code> repository. Operators can pin
-to a specific tag for reproducibility. Air-gapped environments must mirror
-<code>lpasquali/yage-manifests</code> and set <code>YAGE_MANIFESTS_REF</code> to an internally reachable URL.</p>
-<h3 id="6-csidriverrendervalues-migration">6. <code>csi.Driver.RenderValues()</code> migration<a class="headerlink" href="#6-csidriverrendervalues-migration" title="Permanent link">&para;</a></h3>
-<p>The current CSI driver interface declares:</p>
-<div class="highlight"><pre><span></span><code><span class="nx">RenderValues</span><span class="p">(</span><span class="nx">cfg</span><span class="w"> </span><span class="o">*</span><span class="nx">config</span><span class="p">.</span><span class="nx">Config</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
-</code></pre></div>
-<p>After migration, this becomes:</p>
-<div class="highlight"><pre><span></span><code><span class="nx">Render</span><span class="p">(</span><span class="nx">fetcher</span><span class="w"> </span><span class="o">*</span><span class="nx">manifests</span><span class="p">.</span><span class="nx">Fetcher</span><span class="p">,</span><span class="w"> </span><span class="nx">cfg</span><span class="w"> </span><span class="o">*</span><span class="nx">config</span><span class="p">.</span><span class="nx">Config</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span>
-</code></pre></div>
-<p>Each driver's implementation becomes a one-line call:</p>
-<div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">d</span><span class="w"> </span><span class="nx">driver</span><span class="p">)</span><span class="w"> </span><span class="nx">Render</span><span class="p">(</span><span class="nx">f</span><span class="w"> </span><span class="o">*</span><span class="nx">manifests</span><span class="p">.</span><span class="nx">Fetcher</span><span class="p">,</span><span class="w"> </span><span class="nx">cfg</span><span class="w"> </span><span class="o">*</span><span class="nx">config</span><span class="p">.</span><span class="nx">Config</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">f</span><span class="p">.</span><span class="nx">Render</span><span class="p">(</span><span class="s">&quot;csi/&quot;</span><span class="o">+</span><span class="nx">d</span><span class="p">.</span><span class="nx">Name</span><span class="p">()</span><span class="o">+</span><span class="s">&quot;/values.yaml.tmpl&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">cfg</span><span class="p">)</span>
+<p>The <code>JobRunner</code> already mounts the PVC for state (<code>tofu-state-&lt;module&gt;</code>). Its <code>Apply</code> and
+<code>Destroy</code> implementations are updated to additionally mount <code>yage-repos</code> at <code>/repos/</code> so
+the HCL source is available at <code>/repos/yage-tofu/&lt;module&gt;/</code> alongside the state PVC.</p>
+<h3 id="4-updated-manifestsfetcher">4. Updated <code>manifests.Fetcher</code><a class="headerlink" href="#4-updated-manifestsfetcher" title="Permanent link">&para;</a></h3>
+<p>The <code>internal/platform/manifests.Fetcher</code> (ADR 0008 §3) drops <code>CacheDir</code>. Template files
+are read directly from the PVC mount:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">Fetcher</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// MountRoot is the path at which the yage-repos PVC is mounted.</span>
+<span class="w">    </span><span class="c1">// Defaults to /repos when empty.</span>
+<span class="w">    </span><span class="nx">MountRoot</span><span class="w"> </span><span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="c1">// Render reads the .yaml.tmpl at templatePath (relative to yage-manifests root</span>
+<span class="c1">// on the PVC) and executes it with data via text/template.</span>
+<span class="c1">// e.g. Render(&quot;csi/proxmox/values.yaml.tmpl&quot;, cfg)</span>
+<span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">f</span><span class="w"> </span><span class="o">*</span><span class="nx">Fetcher</span><span class="p">)</span><span class="w"> </span><span class="nx">Render</span><span class="p">(</span><span class="nx">templatePath</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="kt">any</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">fullPath</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">filepath</span><span class="p">.</span><span class="nx">Join</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">mountRoot</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;yage-manifests&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">templatePath</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">raw</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">os</span><span class="p">.</span><span class="nx">ReadFile</span><span class="p">(</span><span class="nx">fullPath</span><span class="p">)</span>
+<span class="w">    </span><span class="o">...</span>
 <span class="p">}</span>
 </code></pre></div>
-<p>This is a breaking interface change for all 14 registered driver packages. It is sequenced
-as a single atomic PR that updates <code>internal/csi/driver.go</code> and all 14 implementations
-together.</p>
-<h3 id="7-migration-sequencing">7. Migration sequencing<a class="headerlink" href="#7-migration-sequencing" title="Permanent link">&para;</a></h3>
-<ol>
-<li><strong>Scaffold</strong> — Create <code>lpasquali/yage-manifests</code> with the directory structure above.
-   Populate README stubs per subdirectory; no templates yet.</li>
-<li><strong>Fetcher</strong> — Backend: implement <code>internal/platform/manifests.Fetcher</code> (clone/pull
-   logic, <code>Render</code> method, cache at <code>~/.yage/manifests-cache/</code>, <code>YAGE_MANIFESTS_REF</code> config
-   field). Unit-testable with a local file fixture (no network required in CI).</li>
-<li><strong>Per-package migration</strong> (can be parallelised per package):</li>
-<li>Port template content from Go string-builder to <code>.yaml.tmpl</code> in <code>yage-manifests</code>.</li>
-<li>Replace the Go renderer with a <code>Fetcher.Render()</code> call.</li>
-<li>Update tests to use a local file fixture pointing at a <code>testdata/</code> copy of the
-     template, so tests do not require network access.</li>
-<li><strong>CSI interface change</strong> — Update <code>internal/csi/driver.go</code> interface and all 14 driver
-   packages in one PR. Retire the <code>RenderValues</code> name.</li>
-<li><strong>Package retirement</strong> — Once all callers are migrated, retire <code>internal/capi/helmvalues/</code>,
-   <code>internal/capi/wlargocd/</code>, and <code>internal/capi/postsync/</code> as Go packages. Keep
-   <code>internal/capi/caaph/</code> for the Kubernetes client logic; only its string-building
-   helpers move out.</li>
-</ol>
+<p>Callers that run as in-cluster Jobs receive the PVC mount automatically. Callers that run
+locally (e.g. <code>--dry-run</code> before kind is up) must call <code>EnsureRepoSync</code> first or use a
+local fixture path (test/dev mode).</p>
+<h3 id="5-bootstrap-sequence-amendment">5. Bootstrap sequence amendment<a class="headerlink" href="#5-bootstrap-sequence-amendment" title="Permanent link">&para;</a></h3>
+<p>The <code>yage-system</code> namespace setup and PVC/Job creation are inserted immediately after the
+kind cluster is ready:</p>
+<div class="highlight"><pre><span></span><code>kind cluster create
+  ↓
+EnsureNamespace(yage-system)         [existing]
+EnsureNamespace(workload-namespace)  [existing]
+CreatePVC(yage-repos)                [NEW — this ADR]
+RunJob(yage-repo-sync)               [NEW — this ADR, synchronous, fatal on failure]
+  ↓
+EnsureIdentity (tofu Jobs mount yage-repos read-only for HCL source)
+  ↓
+manifests.Fetcher.Render (reads from yage-repos PVC via Job mount)
+  ↓
+... rest of bootstrap
+</code></pre></div>
+<h3 id="6-opentofu-provider-plugin-cache">6. OpenTofu provider plugin cache<a class="headerlink" href="#6-opentofu-provider-plugin-cache" title="Permanent link">&para;</a></h3>
+<p>ADR 0004 mentions <code>~/.terraform.d/plugin-cache</code> for warming the BPG provider. The
+<code>JobRunner</code> handles this in-cluster: <code>tofu init</code> downloads providers into the Job
+container's ephemeral layer. Providers are re-downloaded on each Job run unless a
+dedicated <code>tofu-providers</code> PVC is added (deferred; not in scope for this ADR).</p>
+<p>The <code>LocalRunner</code> (pre-kind exception, §7 below) continues to use
+<code>~/.terraform.d/plugin-cache</code>. This is the only acceptable workstation write path; it is
+documented as an exception and must be explicitly cleaned up on <code>--purge</code>.</p>
+<h3 id="7-exception-phases-that-run-before-kind">7. Exception: phases that run before kind<a class="headerlink" href="#7-exception-phases-that-run-before-kind" title="Permanent link">&para;</a></h3>
+<p>ADR 0009 §1 places registry VM provisioning before the kind cluster phase. A <code>JobRunner</code>
+requires a running management cluster; it cannot be used before kind exists.</p>
+<p><strong>Resolution adopted by this ADR:</strong></p>
+<p>Registry and issuing CA provisioning (ADR 0009 Phase H) are rescheduled to run <strong>after</strong>
+the kind cluster is up and the <code>yage-repos</code> PVC is populated. The kind cluster uses
+standard image pulls (internet or pre-seeded), not the yage-managed bootstrap registry,
+for the kind phase itself. The registry VM is provisioned after kind, its IP is written to
+<code>cfg.ImageRegistryMirror</code>, and subsequent CAPI workload cluster provisioning uses it.</p>
+<p>This eliminates the pre-kind exception. <code>LocalRunner</code> remains in the codebase for:
+- Development and test use (running tofu locally without a kind cluster).
+- Manual operator invocations outside the normal bootstrap flow.</p>
+<p><code>LocalRunner.Apply</code> writes to <code>os.MkdirTemp</code> when used in the production pre-kind fallback
+path, and the caller is responsible for <code>os.RemoveAll</code> after use. This path is explicitly
+not the happy path.</p>
+<h3 id="8-airgap-support">8. Airgap support<a class="headerlink" href="#8-airgap-support" title="Permanent link">&para;</a></h3>
+<p>For air-gapped environments:
+- Mirror <code>lpasquali/yage-tofu</code> and <code>lpasquali/yage-manifests</code> to an internal Git server.
+- Set <code>YAGE_TOFU_REF</code> and <code>YAGE_MANIFESTS_REF</code> to <code>https://internal.git/yage-tofu@&lt;tag&gt;</code>
+  (the Fetcher accepts a <code>REPO_URL</code> override via env, analogous to <code>YAGE_TOFU_REPO</code> and
+  <code>YAGE_MANIFESTS_REPO</code> — new config fields to be added alongside this ADR).
+- Mirror <code>alpine/git:2</code> to the internal registry and set <code>cfg.ImageRegistryMirror</code>.</p>
 <hr />
 <h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
 <h3 id="positive">Positive<a class="headerlink" href="#positive" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
-<p><strong>YAML is auditable outside the binary.</strong> Operators can read, diff, and fork
-  <code>yage-manifests</code> without building or running yage.</p>
+<p><strong>Zero workstation residue.</strong> <code>kind delete cluster</code> removes the PVC and all cloned
+  content. The operator's <code>~/.yage/</code> directory is no longer written to during a normal
+  bootstrap run.</p>
 </li>
 <li>
-<p><strong>Manifest version is independently pinnable.</strong> <code>YAGE_MANIFESTS_REF</code> decouples
-  template evolution from yage releases, giving operators a stable surface for controlled
-  upgrades.</p>
+<p><strong>Single source of truth for repo content.</strong> Both <code>yage-tofu</code> Jobs and
+  <code>manifests.Fetcher</code> render Jobs read from the same <code>yage-repos</code> PVC. The sync happens
+  once at bootstrap; all subsequent reads are local (no repeated network calls).</p>
 </li>
 <li>
-<p><strong>Go packages are smaller and focused.</strong> <code>helmvalues/</code>, <code>wlargocd/</code>, and <code>postsync/</code>
-  become no-op packages on the retirement path; <code>caaph/</code> is left with only Kubernetes
-  client logic.</p>
+<p><strong>Consistent with <code>JobRunner</code> PVC pattern.</strong> The <code>tofu-state-&lt;module&gt;</code> PVC design in
+  #123 already uses kind's local-path-provisioner. <code>yage-repos</code> follows the same pattern.</p>
 </li>
 <li>
-<p><strong>New add-ons require no Go change.</strong> A new ArgoCD Application or Helm values block is
-  a PR against <code>yage-manifests</code> only, not a yage rebuild.</p>
-</li>
-<li>
-<p><strong>Tests become structural.</strong> Instead of comparing <code>strings.Builder</code> output against
-  hardcoded literals, tests validate template rendering against known fixtures and verify
-  that the Fetcher resolves the correct path.</p>
+<p><strong>Registry provisioning resequencing simplifies the overall design.</strong> The pre-kind
+  exception is eliminated from the production path, making <code>JobRunner</code> the sole production
+  execution model.</p>
 </li>
 </ul>
 <h3 id="negative">Negative<a class="headerlink" href="#negative" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
-<p><strong>Network dependency at bootstrap.</strong> yage must clone <code>yage-manifests</code> on first use.
-  Mitigated by local cache; subsequent runs only require a <code>git fetch</code>. Air-gapped
-  environments must mirror the repository.</p>
+<p><strong><code>EnsureRepoSync</code> is a new required bootstrap phase.</strong> A network failure during
+  <code>yage-repo-sync</code> fails the entire bootstrap. This is the same failure mode as the
+  previous local clone, but the failure surface moves from the operator's shell to a
+  pod log.</p>
 </li>
 <li>
-<p><strong>Additional config surface.</strong> <code>YAGE_MANIFESTS_REF</code> is a new env var / flag that
-  operators must understand and optionally pin. Documentation and a sensible default
-  (<code>v0.1.0</code>) reduce friction.</p>
+<p><strong><code>manifests.Fetcher.Render</code> requires a running cluster.</strong> <code>--dry-run</code> before kind is
+  up cannot render actual templates. Mitigation: <code>--dry-run</code> in <code>plan.go</code> uses local
+  stubs or skips the Render calls entirely (same approach as other cluster-dependent
+  phases in dry-run mode).</p>
 </li>
 <li>
-<p><strong>Migration work across ~15 packages.</strong> All <code>strings.Builder</code> renderers must be ported.
-  The migration is mechanical but large. Sequencing per-package migration (step 3) allows
-  incremental merges and keeps PRs reviewable.</p>
-</li>
-<li>
-<p><strong>CSI interface break.</strong> Renaming <code>RenderValues</code> to <code>Render</code> requires a coordinated
-  change across all 14 driver packages. This is a one-time cost with no ongoing
-  maintenance burden.</p>
+<p><strong><code>alpine/git</code> image dependency.</strong> The <code>yage-repo-sync</code> Job requires a container image.
+  This is pinned by digest in production to prevent supply-chain drift.</p>
 </li>
 </ul>
 <h3 id="risks">Risks<a class="headerlink" href="#risks" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
-<p><strong>Template drift.</strong> If <code>yage-manifests</code> advances independently of yage, a <code>YAGE_MANIFESTS_REF</code>
-  bump may introduce templates that reference config fields not yet present in the installed
-  yage binary. Mitigation: templates should only reference fields present in <code>config.Config</code>;
-  any new field required by a template must land in yage first. The <code>yage-manifests</code>
-  changelog must document required minimum yage versions for each tag.</p>
+<p><strong>PVC ReadWriteOnce on multi-node kind.</strong> kind is always single-node, so RWO is
+  sufficient. If multi-node kind support is added in future, the PVC must change to RWX or
+  each node must get its own PVC. This is explicitly deferred.</p>
 </li>
 <li>
-<p><strong>Double-template authoring trap.</strong> CAAPH <code>HelmChartProxy</code> resources embed
-  <code>valuesTemplate:</code> blocks that contain CAAPH's own <code>{{ }}</code> expressions. Template authors
-  must escape these inner delimiters. Failing to do so silently produces broken YAML.
-  A lint step in the <code>yage-manifests</code> CI (e.g. <code>go template validate</code> or a custom check)
-  should catch unescaped inner delimiters before merge.</p>
+<p><strong>PVC capacity.</strong> 500Mi is an estimate. If <code>yage-tofu</code> or <code>yage-manifests</code> grow
+  significantly, the PVC capacity request must be updated. The <code>yage-repos</code> PVC creation
+  code should accept a <code>YAGE_REPOS_PVC_SIZE</code> override (default <code>500Mi</code>).</p>
 </li>
 </ul>
 <hr />
 <h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ADR 0004 — Universal OpenTofu Identity Bootstrap; establishes the <code>yage-tofu</code> / <code>Fetcher</code> / pinned-ref pattern this ADR mirrors</li>
-<li><code>lpasquali/yage-manifests</code> — public repository of YAML templates (target)</li>
-<li><code>internal/capi/manifest/patches.go</code> — patch functions that stay in Go</li>
-<li><code>internal/capi/caaph/caaph.go</code> — CAAPH HelmChartProxy + ArgoCD CR renderers (migration target)</li>
-<li><code>internal/capi/wlargocd/render.go</code> — ArgoCD Application renderers (migration target)</li>
-<li><code>internal/capi/helmvalues/</code> — Helm values generators (migration target; retirement path)</li>
-<li><code>internal/csi/driver.go</code> — CSI <code>Driver</code> interface (<code>RenderValues</code> → <code>Render</code>)</li>
+<li>ADR 0004 — Universal OpenTofu Identity Bootstrap (Phase G); §2 steps 1–4 and state path superseded by this ADR</li>
+<li>ADR 0008 — yage-manifests GitOps Template Repository; §3 <code>CacheDir</code> and <code>~/.yage/manifests-cache/</code> superseded by this ADR</li>
+<li>ADR 0009 — On-prem platform services; §1 registry provisioning sequence amended by §7 of this ADR</li>
+<li>Issue #123 — <code>opentofux.JobRunner</code> PVC design (<code>tofu-state-&lt;module&gt;</code>) — compatible with <code>yage-repos</code> PVC</li>
+<li>Issue #136 — <code>manifests.Fetcher</code> implementation (ADR 0008 step 2) — must follow this ADR's interface, not ADR 0008 §3</li>
+<li>Issue #125 — registry VM provisioning — must follow the post-kind sequencing decision in §7</li>
 </ul>
 
 
