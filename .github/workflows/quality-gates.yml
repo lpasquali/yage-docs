@@ -28,3 +28,27 @@ jobs:
     with:
       needs-json: ${{ toJson(needs) }}
       merge-gate-excludes: "docs,security"
+
+  # ─── Merge Gate ─────────────────────────────────────────────────────────────
+  # Top-level aggregator that publishes a stable "Merge Gate" status-check
+  # context matching branch ruleset 15762509. The reusable `compliance`
+  # workflow's own merge-gate job is published as "compliance / Merge Gate"
+  # which does not satisfy the literal "Merge Gate" required context. This
+  # mirrors the local merge-gate convention used in yage and yage-tofu.
+  merge-gate:
+    name: Merge Gate
+    needs: [security, docs, compliance]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Evaluate upstream results
+        run: |
+          set -euo pipefail
+          ok() { case "$1" in success|skipped) return 0 ;; *) return 1 ;; esac }
+          echo "security:   ${{ needs.security.result }}"
+          echo "docs:       ${{ needs.docs.result }}"
+          echo "compliance: ${{ needs.compliance.result }}"
+          ok "${{ needs.security.result }}"   || { echo "::error::security check failed"; exit 1; }
+          ok "${{ needs.docs.result }}"       || { echo "::error::docs check failed"; exit 1; }
+          ok "${{ needs.compliance.result }}" || { echo "::error::compliance check failed"; exit 1; }
+          echo "Merge Gate Satisfied"
