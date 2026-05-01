@@ -25,14 +25,14 @@ Last updated: **2026-05-01** — PO session 7: corrected CURRENT_STATE — PRs #
 
 **Correction:** Session 6 entry below originally listed PRs #161, #163, #164 as merged. GitHub shows all three are still **OPEN with CI green**. Issues #126, #144, #152 remain open until those PRs merge. Session 6 entry corrected; this entry records the dispatch.
 
-**Dispatched (yage-backend, parallel after PR #164 merges):**
-- #148 (p1) — `HandOffBootstrapSecretsToManagement` label-pass + `VerifyParity` extension (closes ADR 0011)
-- #136 (p2) — `internal/platform/manifests` Fetcher package (unblocks #137–#142)
-- #125 (p2) — bootstrap registry VM via OpenTofu (closes Phase H epic #120 alongside PR #163)
+**Per-agent dispatch (each agent merges its assigned PR, then starts the linked issue):**
+- **yage-frontend** — merge PR #161 (closes #152, xapiri admin token TUI). Idle after.
+- **yage-backend (A)** — merge PR #164 (closes #144), then issue #148 (p1) `HandOff` label-pass + `VerifyParity` extension.
+- **yage-backend (B)** — merge PR #163 (closes #126), then issue #125 (p2) bootstrap registry VM via OpenTofu.
+- **yage-backend (C)** — issue #136 (p2) `manifests.Fetcher` package; gate: confirm PR #164 is on `main` before Execute.
+- **yage-architect / yage-platform-engineer** — standby; reactivate for #125 PR manifest review and Phase I ADR scope.
 
-**Awaiting user merge:** PRs #161, #163, #164 (all CI green; rebase onto latest `main` immediately before merge per CodeQL-rescan rule).
-
-**Other agent lanes:** yage-frontend / yage-architect / yage-platform-engineer have no open issues; idle until follow-on work surfaces.
+**Merge protocol** (every agent): rebase onto latest `main` immediately before merging to avoid a second CodeQL scan; use `gh pr merge <N> --squash`.
 
 ---
 
@@ -114,12 +114,12 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 
 | Issue / PR | Branch | Agent | Description | Status |
 |---|---|---|---|---|
-| PR #161 | `worktree-agent-a2aa9a093ec134e40` | **user / yage-backend** | merge xapiri admin token TUI; closes #152 | **CI green** — awaiting merge |
-| PR #163 | `feat/126-issuing-ca` | **user / yage-backend** | merge EnsureIssuingCA; closes #126; advances epic #120 | **CI green** — awaiting merge |
-| PR #164 | `worktree-agent-af60c9cba9f0fffa6` | **user / yage-backend** | merge EnsureRepoSync; closes #144; unblocks #148/#125/#136 | **CI green** — awaiting merge |
-| #148 | TBD | **yage-backend** | Extend `HandOffBootstrapSecretsToManagement` (label-based yage-system copy) + extend `VerifyParity` (yage-system ns + labeled Secrets + yage-repos PVC) | **Dispatched** — p1; starts after PR #164 merges (#144 ✅ on merge, #145 ✅, #146 ✅, #147 ✅) |
-| #136 | TBD | **yage-backend** | `internal/platform/manifests` Fetcher package (MountRoot-based, no local clone) | **Dispatched** — p2; starts after PR #164 merges; prerequisite for #137–#142 |
-| #125 | TBD | **yage-backend** | orchestrator: provision bootstrap registry VM via OpenTofu | **Dispatched** — p2; starts after PR #164 merges (was blocked on #123 ✅, #124 ✅, #144) |
+| PR #161 | `worktree-agent-a2aa9a093ec134e40` | **yage-frontend** | rebase onto `main`, force-push, then `gh pr merge 161 --squash` — closes #152 (xapiri admin token TUI) | **CI green** — assigned for merge |
+| PR #163 | `feat/126-issuing-ca` | **yage-backend (B)** | rebase onto `main`, force-push, then `gh pr merge 163 --squash` — closes #126 (EnsureIssuingCA); advances epic #120 | **CI green** — assigned for merge |
+| PR #164 | `worktree-agent-af60c9cba9f0fffa6` | **yage-backend (A)** | rebase onto `main`, force-push, then `gh pr merge 164 --squash` — closes #144 (EnsureRepoSync); unblocks #148/#136/#125 | **CI green** — assigned for merge |
+| #148 | new branch | **yage-backend (A)** | after merging PR #164, start: extend `HandOffBootstrapSecretsToManagement` (label-based yage-system copy) + extend `VerifyParity` (yage-system ns + labeled Secrets + yage-repos PVC) | **Dispatched** — p1 |
+| #125 | new branch | **yage-backend (B)** | after merging PR #163 and confirming PR #164 merged, start: provision bootstrap registry VM via OpenTofu and auto-wire `ImageRegistryMirror` | **Dispatched** — p2 |
+| #136 | new branch | **yage-backend (C)** | after PR #164 merge confirmed, start: `internal/platform/manifests` Fetcher package (MountRoot-based, no local clone); ADR 0008 step 2 | **Dispatched** — p2; prerequisite for #137–#142 |
 | #137 | TBD | **yage-backend** | migrate `internal/capi/helmvalues/` to yage-manifests templates | **Blocked** on #136 |
 | #138 | TBD | **yage-backend** | migrate `internal/capi/wlargocd/` renderers to yage-manifests templates | **Blocked** on #136 |
 | #139 | TBD | **yage-backend** | migrate `internal/capi/postsync/` renderers to yage-manifests templates | **Blocked** on #136 |
@@ -131,18 +131,22 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 
 ---
 
-## Critical Path (in order)
+## Per-agent dispatch (session 7)
 
-1. **Merge PRs #161, #163, #164** — all CI green; closes #126/#144/#152 and unblocks the next wave
-2. **yage-backend: start #148** (`HandOff` label pass + `VerifyParity` extension) — p1, after PR #164 merges
-3. **yage-backend: start #136** (`manifests.Fetcher` package) — p2; prerequisite for #137–#142
-4. **yage-backend: start #125** (registry VM via OpenTofu) — p2; closes Phase H epic #120 alongside PR #163
+**Each agent: rebase the assigned PR branch onto latest `main`, force-push, then `gh pr merge --squash`. Wait for CI confirmation.** The rebase-immediately-before-merge step is mandatory — see CODING_STANDARDS / SOP step 8 to avoid the second CodeQL scan.
 
-## Other agent lanes (no open issues)
+| Agent | Merge | Then start |
+|---|---|---|
+| **yage-frontend** | PR #161 → closes #152 | (idle) |
+| **yage-backend (A)** | PR #164 → closes #144 | issue #148 (p1) — `HandOff` + `VerifyParity` |
+| **yage-backend (B)** | PR #163 → closes #126 | issue #125 (p2) — registry VM via OpenTofu |
+| **yage-backend (C)** | (none) | issue #136 (p2) — `manifests.Fetcher` package; **gate**: confirm PR #164 merged on `main` before SOP step 5 (Execute) |
+| **yage-architect** | (none) | review ADR scope for Phase I (post yage-manifests migration); standby — no Execute work this session |
+| **yage-platform-engineer** | (none) | manifest review for #125 PR (registry mirror wiring touches CAPI patching) when posted; standby |
 
-- **yage-frontend** — idle; reopen if Phase H/H+ surfaces TUI gaps after PRs land
-- **yage-architect** — idle; next ADR likely Phase I scope after yage-manifests migration completes
-- **yage-platform-engineer** — idle; reactivate for review when CAPI manifest patches return (e.g. registry mirror wiring in #125)
+**Order of operations within each backend agent**: merge first (the merge work is independent of the Execute gate, since the PR is already through Halt+Verify on a previous session), then SOP for the new issue. Halt before Execute on the new issue and report back.
+
+**Coordination note**: agent C must verify `gh pr view 164 --json state` returns `MERGED` before SOP step 5. If not yet merged, hold at SOP step 4 (Halt) until agent A completes its merge.
 
 ---
 
