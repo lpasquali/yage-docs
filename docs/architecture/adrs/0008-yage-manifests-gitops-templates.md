@@ -1,7 +1,8 @@
 # ADR 0008 — yage-manifests: GitOps YAML Template Repository
 
-**Status:** Proposed
+**Status:** Accepted
 **Date:** 2026-04-30
+**Accepted:** 2026-05-01
 **Owners:** Architect (interface contract, repository structure), Backend (Fetcher implementation, per-package migration)
 
 ---
