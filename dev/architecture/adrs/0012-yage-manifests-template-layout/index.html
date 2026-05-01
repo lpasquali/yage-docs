@@ -1,0 +1,2039 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for yage — CAPI bootstrapper for Proxmox and 11 other providers">
+      
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>ADR 0012 — yage-manifests: Template Layout, File Naming, and Data Contract - yage Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../overrides/main.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/tokens.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/print.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#adr-0012-yage-manifests-template-layout-file-naming-and-data-contract" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="yage Documentation" class="md-header__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            yage Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ADR 0012 — yage-manifests: Template Layout, File Naming, and Data Contract
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="yage Documentation" class="md-nav__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    yage Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Context
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Context
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/AGENT_SYSTEM_PROMPT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent System Prompt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/CURRENT_STATE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Current State
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/CODING_STANDARDS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Coding Standards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agents
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Agents
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/PO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Product Owner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/ARCHITECT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architect
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/PLATFORM_ENGINEER/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform Engineer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/BACKEND/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go Backend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/FRONTEND/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go Frontend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ARCHITECTURE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architectures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architectures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADRs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ADRs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../abstraction-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abstraction Plan (Phase C/E/B/A/D)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/capacity-preflight/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capacity Preflight
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/cost-and-pricing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost and Pricing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Runbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/runbooks/phase-h-bootstrap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase H Bootstrap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/providers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Providers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decision
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Decision">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-top-level-layout-pinned-unchanged-from-adr-0008-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Top-level layout — pinned, unchanged from ADR 0008 §1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-file-naming-convention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. File-naming convention
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-data-contract-per-group-wrapper-structs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Data contract: per-group wrapper structs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-missing-key-policy-hard-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Missing-key policy: hard error
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-multi-document-and-partial-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Multi-document and partial handling
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migration-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration mapping
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration mapping">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#internalcapihelmvalues-addonsaddonvaluesyamltmpl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        internal/capi/helmvalues/ → addons/&lt;addon&gt;/values.yaml.tmpl
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#internalcapiwlargocd-addonsaddonapplicationyamltmpl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        internal/capi/wlargocd/ → addons/&lt;addon&gt;/application.yaml.tmpl
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#internalcapipostsync-postsync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        internal/capi/postsync/ → postsync/
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#internalcapicaaph-addonsaddonhelmchartproxyyamltmpl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        internal/capi/caaph/ → addons/&lt;addon&gt;/helmchartproxy.yaml.tmpl
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#internalcapiciliumappendlbipampoolmanifest-addonsciliumlb-ipam-poolyamltmpl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        internal/capi/cilium/AppendLBIPAMPoolManifest → addons/cilium/lb-ipam-pool.yaml.tmpl
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#internalcsidriverrendervalues-csidrivervaluesyamltmpl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        internal/csi/&lt;driver&gt;/RenderValues() → csi/&lt;driver&gt;/values.yaml.tmpl
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consequences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consequences
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Consequences">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#positive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Positive
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#negative" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Negative
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#risks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Risks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="adr-0012-yage-manifests-template-layout-file-naming-and-data-contract">ADR 0012 — yage-manifests: Template Layout, File Naming, and Data Contract<a class="headerlink" href="#adr-0012-yage-manifests-template-layout-file-naming-and-data-contract" title="Permanent link">&para;</a></h1>
+<p><strong>Status:</strong> Accepted
+<strong>Date:</strong> 2026-05-01
+<strong>Owners:</strong> Architect (template contract, directory layout), Backend (per-package migration #137–#141)</p>
+<p><strong>Amends:</strong> ADR 0008 §1 (directory layout — pinned, not changed), §2 (<code>text/template</code> data contract — added), §3 (Fetcher render call — clarified after ADR 0010 supersession)
+<strong>Depends on:</strong> ADR 0010 (in-cluster repo cache; the Fetcher resolves under <code>MountRoot</code>)</p>
+<hr />
+<h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
+<p>ADR 0008 declared the move of all YAML templating out of yage into the public
+<code>yage-manifests</code> repository, established the four top-level groups
+(<code>cluster/</code>, <code>addons/</code>, <code>csi/</code>, <code>postsync/</code>), and chose Go <code>text/template</code> as the
+engine. ADR 0010 then redirected the Fetcher to read from an in-cluster PVC
+mount (<code>&lt;MountRoot&gt;/yage-manifests/&lt;templatePath&gt;</code>) instead of a workstation
+cache. Issue #136 implements that Fetcher; issues #137–#141 are the per-package
+migrations that fill <code>yage-manifests</code> with content.</p>
+<p>What ADR 0008 did <strong>not</strong> pin, and what #137–#141 cannot land mechanically
+without:</p>
+<ol>
+<li><strong>File-naming convention</strong> within each group. Today <code>addons/</code> could mean
+   either "one directory per add-on with <code>values.yaml.tmpl</code> + <code>application.yaml.tmpl</code>"
+   or "two flat directories <code>helmvalues/</code> + <code>wlargocd/</code>". The scaffold READMEs
+   imply the former; nothing makes it normative.</li>
+<li><strong>Data contract.</strong> The <code>yage-manifests</code> README claims templates "receive a
+   <code>*config.Config</code> struct". The actual call sites in
+   <code>internal/capi/wlargocd/render.go</code> take 8+ ad-hoc parameters (name,
+   namespace, repo URL, chart, version, sync-wave, values YAML, hook-short)
+   that are <em>not</em> fields on <code>config.Config</code>. Without a pinned wrapper-struct
+   convention, every migration PR will invent its own data shape and produce
+   the same drift the inline strings have today.</li>
+<li><strong>Missing-key policy.</strong> <code>text/template</code>'s default behaviour for an
+   undeclared <code>.Field</code> is to emit <code>&lt;no value&gt;</code>, which produces YAML the
+   apiserver will accept (an empty <code>image:</code> value, an <code>Application</code> with no
+   destination). This is silent breakage masquerading as a successful render.</li>
+<li><strong>Multi-document handling.</strong> <code>wlargocd</code> renderers emit single
+   <code>---</code>-prefixed Application docs that callers concatenate into one
+   kubectl-apply stream. The convention (one logical resource per file,
+   callers concatenate) needs to be normative so authors don't bundle.</li>
+<li><strong>Kustomize-fragment partials.</strong> <code>internal/capi/postsync/postsync.go</code>
+   produces two artefact kinds: standalone Job manifests and
+   <em>kustomize-block fragments</em> that Argo Application templates embed inline.
+   The fragments are not stand-alone YAML documents; they need a clear home
+   so authors don't mix them with full manifests.</li>
+</ol>
+<p>This addendum pins those five points and adds a complete migration mapping
+from the current Go renderers to their target template paths so #137–#141
+become mechanical PRs with no further design questions.</p>
+<hr />
+<h2 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">&para;</a></h2>
+<h3 id="1-top-level-layout-pinned-unchanged-from-adr-0008-1">1. Top-level layout — pinned, unchanged from ADR 0008 §1<a class="headerlink" href="#1-top-level-layout-pinned-unchanged-from-adr-0008-1" title="Permanent link">&para;</a></h3>
+<p>The four top-level groups remain:</p>
+<div class="highlight"><pre><span></span><code>yage-manifests/
+├── cluster/        # CAPI workload-cluster manifests, per provider
+├── addons/         # Per-add-on directory: values.yaml.tmpl + application.yaml.tmpl + extras
+├── csi/            # Per-driver Helm values (one directory per CSI driver)
+└── postsync/       # ArgoCD PostSync hooks: standalone manifests + kustomize-block partials
+</code></pre></div>
+<p>Rejected alternative: a flat layout that mirrors the current Go packages
+(<code>helmvalues/</code>, <code>wlargocd/</code>, <code>postsync/</code>, <code>caaph/</code>). That choice would split
+a single add-on's templates across two trees (<code>helmvalues/kyverno/values.yaml.tmpl</code>
+and <code>wlargocd/kyverno/application.yaml.tmpl</code>) and lose the per-add-on
+fork affordance ADR 0008 was written to deliver. The scaffolded layout is
+correct; this addendum only fills it in.</p>
+<h3 id="2-file-naming-convention">2. File-naming convention<a class="headerlink" href="#2-file-naming-convention" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Group</th>
+<th>Filename pattern</th>
+<th>One file per</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>addons/&lt;addon&gt;/</code></td>
+<td><code>values.yaml.tmpl</code></td>
+<td>Helm values rendered from config</td>
+</tr>
+<tr>
+<td><code>addons/&lt;addon&gt;/</code></td>
+<td><code>application.yaml.tmpl</code></td>
+<td>Workload ArgoCD <code>Application</code> resource</td>
+</tr>
+<tr>
+<td><code>addons/&lt;addon&gt;/</code></td>
+<td><code>helmchartproxy.yaml.tmpl</code></td>
+<td>CAAPH <code>HelmChartProxy</code> (Cilium, argocd-apps)</td>
+</tr>
+<tr>
+<td><code>addons/&lt;addon&gt;/</code></td>
+<td><code>&lt;resource&gt;.yaml.tmpl</code></td>
+<td>Any other single-resource manifest (e.g. <code>lb-ipam-pool.yaml.tmpl</code> for Cilium)</td>
+</tr>
+<tr>
+<td><code>csi/&lt;driver&gt;/</code></td>
+<td><code>values.yaml.tmpl</code></td>
+<td>Helm values rendered from config</td>
+</tr>
+<tr>
+<td><code>cluster/&lt;provider&gt;/</code></td>
+<td><code>cluster.yaml.tmpl</code></td>
+<td>Full multi-doc CAPI workload-cluster manifest</td>
+</tr>
+<tr>
+<td><code>cluster/&lt;provider&gt;/</code></td>
+<td><code>k3s.yaml.tmpl</code></td>
+<td>K3s variant where applicable</td>
+</tr>
+<tr>
+<td><code>postsync/</code></td>
+<td><code>&lt;hookname&gt;.yaml.tmpl</code></td>
+<td>Standalone manifest (PVC, Job, Secret)</td>
+</tr>
+<tr>
+<td><code>postsync/_partials/</code></td>
+<td><code>&lt;name&gt;.kustomize.tmpl</code></td>
+<td>Kustomize-block fragment embedded by Application templates</td>
+</tr>
+</tbody>
+</table>
+<p>Rules that apply to every file:</p>
+<ul>
+<li>One logical resource per <code>.yaml.tmpl</code>. Callers concatenate with <code>\n---\n</code>
+  when a multi-document stream is needed. The single exception is
+  <code>cluster/&lt;provider&gt;/cluster.yaml.tmpl</code>, which is intrinsically a
+  multi-document manifest produced by <code>clusterctl generate cluster</code>-style
+  composition.</li>
+<li>Lowercase, hyphenated filenames; no underscores in user-facing paths.
+  The <code>_partials/</code> subdirectory uses a leading underscore to mark
+  template-fragment files that are not intended to be applied directly.</li>
+<li>Every file begins with a <code># yage-manifests/&lt;path&gt;</code> header comment for
+  grep-locatable provenance.</li>
+</ul>
+<h3 id="3-data-contract-per-group-wrapper-structs">3. Data contract: per-group wrapper structs<a class="headerlink" href="#3-data-contract-per-group-wrapper-structs" title="Permanent link">&para;</a></h3>
+<p>Templates do <strong>not</strong> receive <code>*config.Config</code> directly. They receive a
+purpose-built wrapper struct defined in a single Go package
+(<code>internal/capi/templates/</code>) and instantiated by the caller of
+<code>Fetcher.Render</code>. Wrapper-struct pattern justified by: wlargocd renderers
+already take 8+ caller-supplied parameters that are not in <code>config.Config</code>
+(release name, sync-wave, hook-short, indented values blob, etc.); these
+must continue to vary per call site.</p>
+<p>The five wrapper structs:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">templates</span>
+
+<span class="c1">// HelmValuesData is passed to addons/&lt;addon&gt;/values.yaml.tmpl and</span>
+<span class="c1">// csi/&lt;driver&gt;/values.yaml.tmpl.</span>
+<span class="kd">type</span><span class="w"> </span><span class="nx">HelmValuesData</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">Cfg</span><span class="w"> </span><span class="o">*</span><span class="nx">config</span><span class="p">.</span><span class="nx">Config</span><span class="w"> </span><span class="c1">// entire workload config</span>
+<span class="p">}</span>
+
+<span class="c1">// ArgoApplicationData is passed to addons/&lt;addon&gt;/application.yaml.tmpl.</span>
+<span class="kd">type</span><span class="w"> </span><span class="nx">ArgoApplicationData</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">Cfg</span><span class="w">          </span><span class="o">*</span><span class="nx">config</span><span class="p">.</span><span class="nx">Config</span>
+<span class="w">    </span><span class="nx">Name</span><span class="w">         </span><span class="kt">string</span><span class="w">        </span><span class="c1">// Application metadata.name</span>
+<span class="w">    </span><span class="nx">DestNS</span><span class="w">       </span><span class="kt">string</span><span class="w">        </span><span class="c1">// workload destination namespace</span>
+<span class="w">    </span><span class="nx">RepoURL</span><span class="w">      </span><span class="kt">string</span>
+<span class="w">    </span><span class="nx">Chart</span><span class="w">        </span><span class="kt">string</span><span class="w">        </span><span class="c1">// helm-repo / OCI chart name; &quot;&quot; for git/kustomize sources</span>
+<span class="w">    </span><span class="nx">Path</span><span class="w">         </span><span class="kt">string</span><span class="w">        </span><span class="c1">// git source path; &quot;&quot; for helm sources</span>
+<span class="w">    </span><span class="nx">Ref</span><span class="w">          </span><span class="kt">string</span><span class="w">        </span><span class="c1">// git ref / chart targetRevision; pre-shell-quote-escaped</span>
+<span class="w">    </span><span class="nx">SyncWave</span><span class="w">     </span><span class="kt">string</span>
+<span class="w">    </span><span class="nx">ReleaseName</span><span class="w">  </span><span class="kt">string</span><span class="w">        </span><span class="c1">// optional; &quot;&quot; omits the field</span>
+<span class="w">    </span><span class="nx">ValuesYAML</span><span class="w">   </span><span class="kt">string</span><span class="w">        </span><span class="c1">// pre-rendered values block (output of HelmValuesData → values.yaml.tmpl)</span>
+<span class="w">    </span><span class="nx">Annotations</span><span class="w">  </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="w"> </span><span class="c1">// extra annotations (Kyverno needs ServerSideDiff)</span>
+<span class="w">    </span><span class="nx">PostSync</span><span class="w">     </span><span class="nx">PostSyncBlock</span><span class="w"> </span><span class="c1">// zero value when no hook</span>
+<span class="p">}</span>
+
+<span class="c1">// PostSyncBlock is the second-source git+kustomize fields for an Argo</span>
+<span class="c1">// Application. Zero value means &quot;single-source Application; no hook&quot;.</span>
+<span class="kd">type</span><span class="w"> </span><span class="nx">PostSyncBlock</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">URL</span><span class="w">  </span><span class="kt">string</span>
+<span class="w">    </span><span class="nx">Path</span><span class="w"> </span><span class="kt">string</span>
+<span class="w">    </span><span class="nx">Ref</span><span class="w">  </span><span class="kt">string</span>
+<span class="w">    </span><span class="nx">KustomizePartial</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="c1">// rendered output of postsync/_partials/&lt;name&gt;.kustomize.tmpl</span>
+<span class="p">}</span>
+
+<span class="c1">// HelmChartProxyData is passed to addons/&lt;addon&gt;/helmchartproxy.yaml.tmpl.</span>
+<span class="kd">type</span><span class="w"> </span><span class="nx">HelmChartProxyData</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">Cfg</span><span class="w">              </span><span class="o">*</span><span class="nx">config</span><span class="p">.</span><span class="nx">Config</span>
+<span class="w">    </span><span class="nx">Name</span><span class="w">             </span><span class="kt">string</span><span class="w">  </span><span class="c1">// HelmChartProxy metadata.name</span>
+<span class="w">    </span><span class="nx">Namespace</span><span class="w">        </span><span class="kt">string</span><span class="w">  </span><span class="c1">// HelmChartProxy metadata.namespace</span>
+<span class="w">    </span><span class="nx">ClusterSelector</span><span class="w">  </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span>
+<span class="w">    </span><span class="nx">ChartName</span><span class="w">        </span><span class="kt">string</span>
+<span class="w">    </span><span class="nx">RepoURL</span><span class="w">          </span><span class="kt">string</span><span class="w">  </span><span class="c1">// pre-rewritten via airgap.RewriteHelmRepo</span>
+<span class="w">    </span><span class="nx">Version</span><span class="w">          </span><span class="kt">string</span>
+<span class="w">    </span><span class="nx">ChartNamespace</span><span class="w">   </span><span class="kt">string</span><span class="w">  </span><span class="c1">// namespace the chart installs into</span>
+<span class="w">    </span><span class="nx">ValuesTemplate</span><span class="w">   </span><span class="kt">string</span><span class="w">  </span><span class="c1">// pre-built CAAPH-side template body (delimiters already escaped)</span>
+<span class="p">}</span>
+
+<span class="c1">// PostSyncData is passed to postsync/&lt;hookname&gt;.yaml.tmpl.</span>
+<span class="kd">type</span><span class="w"> </span><span class="nx">PostSyncData</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">Cfg</span><span class="w">            </span><span class="o">*</span><span class="nx">config</span><span class="p">.</span><span class="nx">Config</span>
+<span class="w">    </span><span class="nx">Namespace</span><span class="w">      </span><span class="kt">string</span>
+<span class="w">    </span><span class="nx">StorageClass</span><span class="w">   </span><span class="kt">string</span><span class="w">  </span><span class="c1">// CSI smoke-test only</span>
+<span class="w">    </span><span class="nx">KubectlImage</span><span class="w">   </span><span class="kt">string</span>
+<span class="w">    </span><span class="nx">K8sVersionTag</span><span class="w">  </span><span class="kt">string</span><span class="w">  </span><span class="c1">// for image tag derivation</span>
+<span class="p">}</span>
+
+<span class="c1">// KustomizePartialData is passed to postsync/_partials/&lt;name&gt;.kustomize.tmpl.</span>
+<span class="kd">type</span><span class="w"> </span><span class="nx">KustomizePartialData</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">Cfg</span><span class="w">          </span><span class="o">*</span><span class="nx">config</span><span class="p">.</span><span class="nx">Config</span>
+<span class="w">    </span><span class="nx">Namespace</span><span class="w">    </span><span class="kt">string</span>
+<span class="w">    </span><span class="nx">JobName</span><span class="w">      </span><span class="kt">string</span>
+<span class="w">    </span><span class="nx">KubectlImage</span><span class="w"> </span><span class="kt">string</span>
+<span class="w">    </span><span class="nx">Extra</span><span class="w">        </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="w"> </span><span class="c1">// env-var overrides etc.</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>A migration PR for issue #137–#141 chooses the wrapper struct that matches
+the template group, populates the fields it needs, and calls
+<code>fetcher.Render(&lt;templatePath&gt;, &lt;data&gt;)</code>. The struct lives next to the
+caller in <code>internal/capi/templates/</code> so type drift surfaces at compile time.</p>
+<p>For the CAAPH <code>HelmChartProxy</code> case (<code>HelmChartProxyData.ValuesTemplate</code>),
+the inner <code>{{ }}</code> delimiters that CAAPH itself templates at apply-time must
+be pre-escaped as <code>{{</code> "<code>{{</code>" <code>}}</code> / <code>{{</code> "<code>}}</code>" <code>}}</code> in the source
+template per ADR 0008 §2. This addendum does not re-litigate that
+constraint; it is unchanged.</p>
+<h3 id="4-missing-key-policy-hard-error">4. Missing-key policy: hard error<a class="headerlink" href="#4-missing-key-policy-hard-error" title="Permanent link">&para;</a></h3>
+<p>The Fetcher executes every template with <code>Option("missingkey=error")</code>.
+Justification: the <code>text/template</code> default ("missingkey=default") emits the
+literal string <code>&lt;no value&gt;</code> for an undeclared field. In a YAML context this
+silently produces invalid-but-syntactically-acceptable manifests — an
+<code>Application</code> with <code>targetRevision: &lt;no value&gt;</code>, a <code>Job</code> with
+<code>image: &lt;no value&gt;</code> — that the apiserver will accept and the workload will
+hang on. Hard-erroring at render time forces every template to declare
+every field it references against the wrapper struct, and surfaces drift
+between yage and <code>yage-manifests</code> immediately.</p>
+<p>The <code>missingkey=zero</code> mode is rejected because the zero value for
+<code>*config.Config</code> is <code>nil</code>, which would panic on the next field access; the
+zero value for a string is <code>""</code>, which produces unquoted empty fields and
+the same silent-acceptance failure mode.</p>
+<p>This pins the design pick raised by yage-backend (C) on issue #136 in the
+affirmative.</p>
+<h3 id="5-multi-document-and-partial-handling">5. Multi-document and partial handling<a class="headerlink" href="#5-multi-document-and-partial-handling" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Every <code>.yaml.tmpl</code> outside <code>cluster/&lt;provider&gt;/cluster.yaml.tmpl</code> renders
+  exactly one Kubernetes resource, with no leading or trailing <code>---</code>. The
+  caller is responsible for concatenating multiple rendered strings with
+  <code>\n---\n</code> between them. This matches the current behaviour of
+  <code>wlargocd.Helm</code>, <code>wlargocd.HelmGit</code>, and friends, which emit one
+  Application document per call.</li>
+<li><code>postsync/_partials/*.kustomize.tmpl</code> files are <em>fragments</em>, not
+  documents. They render an indented <code>kustomize:</code> block intended for
+  embedding inside an <code>Application</code> template via the wrapper struct's
+  <code>PostSync.KustomizePartial</code> field. The leading-underscore subdirectory
+  marks them as partials; CI may add a check that no <code>_partials/</code> file is
+  ever passed to <code>kubectl apply</code> directly.</li>
+</ul>
+<hr />
+<h2 id="migration-mapping">Migration mapping<a class="headerlink" href="#migration-mapping" title="Permanent link">&para;</a></h2>
+<p>The table below maps every renderer in the five Go source packages to its
+target path in <code>yage-manifests</code>. After issues #137–#141 land, the listed
+target files exist and the corresponding Go renderer becomes a one-line
+<code>fetcher.Render(...)</code> call (or is retired entirely under #142).</p>
+<h3 id="internalcapihelmvalues-addonsaddonvaluesyamltmpl"><code>internal/capi/helmvalues/</code> → <code>addons/&lt;addon&gt;/values.yaml.tmpl</code><a class="headerlink" href="#internalcapihelmvalues-addonsaddonvaluesyamltmpl" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Go function</th>
+<th>Target template path</th>
+<th>Wrapper struct</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MetricsServerValues</code></td>
+<td><code>addons/metrics-server/values.yaml.tmpl</code></td>
+<td><code>HelmValuesData</code></td>
+</tr>
+<tr>
+<td><code>VictoriaMetricsValues</code></td>
+<td><code>addons/observability/values-victoria-metrics.yaml.tmpl</code></td>
+<td><code>HelmValuesData</code></td>
+</tr>
+<tr>
+<td><code>OpenTelemetryValues</code></td>
+<td><code>addons/opentelemetry/values.yaml.tmpl</code></td>
+<td><code>HelmValuesData</code></td>
+</tr>
+<tr>
+<td><code>GrafanaValues</code></td>
+<td><code>addons/observability/values-grafana.yaml.tmpl</code></td>
+<td><code>HelmValuesData</code></td>
+</tr>
+<tr>
+<td><code>SPIRESubchartTolerations</code></td>
+<td>inlined in <code>addons/spire/values.yaml.tmpl</code> (conditional <code>{{ if }}</code> block)</td>
+<td><code>HelmValuesData</code></td>
+</tr>
+<tr>
+<td><code>SPIREValues</code></td>
+<td><code>addons/spire/values.yaml.tmpl</code></td>
+<td><code>HelmValuesData</code></td>
+</tr>
+<tr>
+<td><code>KeycloakValues</code></td>
+<td><code>addons/keycloak/values.yaml.tmpl</code></td>
+<td><code>HelmValuesData</code></td>
+</tr>
+</tbody>
+</table>
+<p>The two observability values files share the <code>addons/observability/</code> directory
+because they belong to the same logical add-on (VictoriaMetrics + Grafana
+shipped as one stack); the filename suffix disambiguates.</p>
+<h3 id="internalcapiwlargocd-addonsaddonapplicationyamltmpl"><code>internal/capi/wlargocd/</code> → <code>addons/&lt;addon&gt;/application.yaml.tmpl</code><a class="headerlink" href="#internalcapiwlargocd-addonsaddonapplicationyamltmpl" title="Permanent link">&para;</a></h3>
+<p><code>wlargocd.HelmGit</code>, <code>wlargocd.Helm</code>, <code>wlargocd.HelmOCI</code>, <code>wlargocd.KustomizeGit</code>,
+and <code>wlargocd.Kyverno</code> are not per-add-on functions — they are five
+<em>Application-shape variants</em>. The target is therefore one
+<code>application.yaml.tmpl</code> per add-on directory, and the template's body
+selects the variant based on <code>ArgoApplicationData</code> field presence
+(<code>{{ if .Chart }}…{{ else if .Path }}…{{ end }}</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Go function</th>
+<th>Variant</th>
+<th>Add-ons that use it (target dirs)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>wlargocd.HelmGit</code></td>
+<td>git source, <code>helm:</code> block</td>
+<td><code>addons/spire/</code>, <code>addons/cert-manager/</code></td>
+</tr>
+<tr>
+<td><code>wlargocd.Helm</code></td>
+<td>http helm-repo source</td>
+<td><code>addons/metrics-server/</code>, <code>addons/observability/</code>, <code>addons/cnpg/</code>, <code>addons/external-secrets/</code>, others</td>
+</tr>
+<tr>
+<td><code>wlargocd.HelmOCI</code></td>
+<td>OCI helm source, multi-source for proxmox-csi smoke</td>
+<td><code>addons/proxmox-csi/</code></td>
+</tr>
+<tr>
+<td><code>wlargocd.KustomizeGit</code></td>
+<td>git source, <code>kustomize:</code> block</td>
+<td><code>addons/argocd-apps/</code> (legacy direct path)</td>
+</tr>
+<tr>
+<td><code>wlargocd.Kyverno</code></td>
+<td>helm with ServerSideDiff annotation + ignoreDifferences</td>
+<td><code>addons/kyverno/</code></td>
+</tr>
+<tr>
+<td><code>wlargocd.PostSyncBlock</code> (struct)</td>
+<td>embedded in <code>ArgoApplicationData.PostSync</code></td>
+<td>n/a — Go-side only</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>headerAnnot</code>, <code>syncPolicyTail</code>, <code>indent</code>, <code>indentValuesBoth</code>, and
+<code>shellQuoteEscape</code> helpers stay in Go: they prepare the data passed into
+the wrapper struct (e.g. <code>ArgoApplicationData.Ref</code> is shell-quote-escaped
+before render) but are not template-shaped.</p>
+<h3 id="internalcapipostsync-postsync"><code>internal/capi/postsync/</code> → <code>postsync/</code><a class="headerlink" href="#internalcapipostsync-postsync" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Go function</th>
+<th>Target</th>
+<th>Wrapper struct</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>KustomizeBlockForJob</code></td>
+<td><code>postsync/_partials/job-image-override.kustomize.tmpl</code></td>
+<td><code>KustomizePartialData</code></td>
+</tr>
+<tr>
+<td><code>SmokeRenderKustomizeBlock</code></td>
+<td><code>postsync/_partials/proxmox-csi-smoke.kustomize.tmpl</code></td>
+<td><code>KustomizePartialData</code></td>
+</tr>
+<tr>
+<td><code>SmokeK8sVersionForImage</code></td>
+<td>stays in Go (parses an external manifest file)</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>SmokeKubectlOCITag</code></td>
+<td>stays in Go (string normalisation)</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>ResolveKubectlImage</code></td>
+<td>stays in Go (config plumbing)</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>DiscoverURL</code> / <code>DiscoverRef</code> / <code>FullRelpath</code></td>
+<td>stay in Go (git/env discovery)</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+<p>There are no standalone-manifest functions in <code>postsync.go</code> today — the
+smoke-test PVC + Job manifests live in the <code>workload-smoketests</code> repo,
+which <code>postsync/_partials/proxmox-csi-smoke.kustomize.tmpl</code> patches via
+the kustomize block. The <code>postsync/</code> top-level remains for future
+standalone-hook manifests; the current migration only fills <code>_partials/</code>.</p>
+<p>The <code>argocd-redis-secret.yaml.tmpl</code> file mentioned in the scaffold's
+<code>postsync/README.md</code> is a placeholder for future work tracked separately;
+it is not produced by any function in the current <code>postsync.go</code>.</p>
+<h3 id="internalcapicaaph-addonsaddonhelmchartproxyyamltmpl"><code>internal/capi/caaph/</code> → <code>addons/&lt;addon&gt;/helmchartproxy.yaml.tmpl</code><a class="headerlink" href="#internalcapicaaph-addonsaddonhelmchartproxyyamltmpl" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Go function</th>
+<th>Target</th>
+<th>Wrapper struct</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CiliumHelmChartProxyYAML</code></td>
+<td><code>addons/cilium/helmchartproxy.yaml.tmpl</code></td>
+<td><code>HelmChartProxyData</code></td>
+</tr>
+<tr>
+<td><code>ApplyWorkloadArgoHelmProxies</code> (HCP body inline)</td>
+<td><code>addons/argocd-apps/helmchartproxy.yaml.tmpl</code></td>
+<td><code>HelmChartProxyData</code></td>
+</tr>
+<tr>
+<td><code>buildArgoCDCR</code></td>
+<td><code>addons/argocd/argocd-cr.yaml.tmpl</code></td>
+<td><code>HelmValuesData</code> (uses <code>Cfg.ArgoCD</code> fields)</td>
+</tr>
+<tr>
+<td><code>PatchClusterCAAPHHelmLabels</code></td>
+<td>stays in Go (mutates an external file + live K8s object)</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>ApplyWorkloadCiliumHelmChartProxy</code></td>
+<td>stays in Go (orchestrator-side wiring)</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>ApplyWorkloadCiliumLBBToWorkload</code></td>
+<td>stays in Go (orchestrator-side wiring)</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>ApplyWorkloadArgoCDOperatorAndCR</code></td>
+<td>stays in Go (orchestrator-side wiring; emits the CR doc via <code>buildArgoCDCR</code> → template)</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+<p>Both HelmChartProxy templates contain CAAPH <code>valuesTemplate:</code> blocks with
+inner <code>{{ }}</code> delimiters that are escaped per ADR 0008 §2.</p>
+<h3 id="internalcapiciliumappendlbipampoolmanifest-addonsciliumlb-ipam-poolyamltmpl"><code>internal/capi/cilium/AppendLBIPAMPoolManifest</code> → <code>addons/cilium/lb-ipam-pool.yaml.tmpl</code><a class="headerlink" href="#internalcapiciliumappendlbipampoolmanifest-addonsciliumlb-ipam-poolyamltmpl" title="Permanent link">&para;</a></h3>
+<p>The task brief did not list <code>cilium/</code> as a migration source, but
+<code>AppendLBIPAMPoolManifest</code> in <code>internal/capi/cilium/cilium.go</code> emits a
+<code>CiliumLoadBalancerIPPool</code> manifest inline via <code>fmt.Fprintf</code>. It belongs
+in <code>addons/cilium/lb-ipam-pool.yaml.tmpl</code> with <code>HelmValuesData</code> (it reads
+<code>Cfg.CiliumLBIPAMPoolName</code>, <code>Cfg.CiliumLBIPAMPoolCIDR</code>, etc.). Including it
+here closes the loop on inline-YAML emitters and prevents a stray
+<code>fmt.Fprintf</code> from surviving the migration.</p>
+<h3 id="internalcsidriverrendervalues-csidrivervaluesyamltmpl"><code>internal/csi/&lt;driver&gt;/RenderValues()</code> → <code>csi/&lt;driver&gt;/values.yaml.tmpl</code><a class="headerlink" href="#internalcsidriverrendervalues-csidrivervaluesyamltmpl" title="Permanent link">&para;</a></h3>
+<p>Per ADR 0008 §6, the 14 driver packages migrate atomically together with
+the <code>Driver.RenderValues</code> → <code>Driver.Render</code> interface rename. The
+filename is fixed at <code>values.yaml.tmpl</code>; the directory matches the
+driver's <code>Name()</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Driver <code>Name()</code></th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>proxmox-csi</code></td>
+<td><code>csi/proxmox-csi/values.yaml.tmpl</code></td>
+</tr>
+<tr>
+<td><code>aws-ebs</code></td>
+<td><code>csi/aws-ebs/values.yaml.tmpl</code></td>
+</tr>
+<tr>
+<td><code>azure-disk</code></td>
+<td><code>csi/azure-disk/values.yaml.tmpl</code></td>
+</tr>
+<tr>
+<td><code>gcp-pd</code></td>
+<td><code>csi/gcp-pd/values.yaml.tmpl</code></td>
+</tr>
+<tr>
+<td><code>hcloud</code></td>
+<td><code>csi/hcloud/values.yaml.tmpl</code></td>
+</tr>
+<tr>
+<td><code>do-block-storage</code></td>
+<td><code>csi/do-block-storage/values.yaml.tmpl</code></td>
+</tr>
+<tr>
+<td><code>oci-block-storage</code></td>
+<td><code>csi/oci-block-storage/values.yaml.tmpl</code></td>
+</tr>
+<tr>
+<td><code>linode-block-storage</code></td>
+<td><code>csi/linode-block-storage/values.yaml.tmpl</code></td>
+</tr>
+<tr>
+<td><code>openstack-cinder</code></td>
+<td><code>csi/openstack-cinder/values.yaml.tmpl</code></td>
+</tr>
+<tr>
+<td><code>vsphere-csi</code></td>
+<td><code>csi/vsphere-csi/values.yaml.tmpl</code></td>
+</tr>
+<tr>
+<td><code>ibm-vpc-block</code></td>
+<td><code>csi/ibm-vpc-block/values.yaml.tmpl</code></td>
+</tr>
+<tr>
+<td><code>longhorn</code></td>
+<td><code>csi/longhorn/values.yaml.tmpl</code></td>
+</tr>
+<tr>
+<td><code>rook-ceph</code></td>
+<td><code>csi/rook-ceph/values.yaml.tmpl</code></td>
+</tr>
+<tr>
+<td><code>openebs</code></td>
+<td><code>csi/openebs/values.yaml.tmpl</code></td>
+</tr>
+</tbody>
+</table>
+<p>All 14 use <code>HelmValuesData</code>.</p>
+<hr />
+<h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
+<h3 id="positive">Positive<a class="headerlink" href="#positive" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>Issues #137–#141 become mechanical PRs. Each migration consists of:
+  port the renderer body into the table-listed <code>.yaml.tmpl</code>, define or
+  reuse the wrapper struct, replace the Go renderer with a <code>Render</code> call.
+  No design decisions remain.</p>
+</li>
+<li>
+<p>Type drift is compile-time. Wrapper structs in
+  <code>internal/capi/templates/</code> mean adding a field to a template requires
+  adding a field to the struct, which surfaces in every caller's build.</p>
+</li>
+<li>
+<p>Missing-key=error catches yage/yage-manifests version skew at render
+  time, before any apply produces a half-formed manifest the cluster will
+  hang on.</p>
+</li>
+<li>
+<p>Operators forking <code>addons/&lt;addon&gt;/</code> get the full add-on (values + Application</p>
+</li>
+<li>HelmChartProxy where applicable) in one directory. This was ADR 0008's
+  core fork-affordance promise; pinning per-add-on grouping makes it real.</li>
+</ul>
+<h3 id="negative">Negative<a class="headerlink" href="#negative" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>One new Go package (<code>internal/capi/templates/</code>) holds the wrapper-struct
+  definitions. This is six structs and no behaviour, but it is a new
+  surface that template authors and migration-PR reviewers must learn.</p>
+</li>
+<li>
+<p>The <code>application.yaml.tmpl</code> files become non-trivial Go-template logic
+  (variant selection via <code>{{ if .Chart }}…{{ else if .Path }}…{{ end }}</code>).
+  This is an authoring cost the inline-strings approach didn't have; it is
+  the price of one file per add-on instead of five files per shape.</p>
+</li>
+<li>
+<p>Hard-error on missing keys means a typo in a template field name fails
+  the orchestrator phase rather than rendering an empty value. Operators
+  pinning a <code>YAGE_MANIFESTS_REF</code> ahead of yage will see this as a hard
+  bootstrap failure. Mitigated by the changelog-required-min-yage-version
+  policy in ADR 0008's risk section.</p>
+</li>
+</ul>
+<h3 id="risks">Risks<a class="headerlink" href="#risks" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><strong>Wrapper-struct churn during migration.</strong> Each of #137–#141 will likely
+  discover one or two fields the table missed. Mitigation: the migration
+  agent extends the relevant struct in the same PR; reviewers check that
+  field additions land in <code>internal/capi/templates/</code> and not in a local
+  ad-hoc struct.</p>
+</li>
+<li>
+<p><strong>Partials directory leakage.</strong> If a future template author drops a
+  full-document manifest into <code>postsync/_partials/</code>, the leading-underscore
+  convention won't catch it at apply time. Mitigation: a CI check in
+  <code>yage-manifests</code> that asserts every <code>_partials/*</code> file lacks
+  <code>apiVersion:</code> at the document root (template-fragment heuristic).</p>
+</li>
+</ul>
+<hr />
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ADR 0008 — yage-manifests GitOps templates (this addendum amends §1, §2, §3)</li>
+<li>ADR 0010 — In-cluster repo cache (Fetcher MountRoot resolution)</li>
+<li>yage issue #136 — <code>internal/platform/manifests.Fetcher</code> implementation</li>
+<li>yage issues #137–#141 — per-package migrations unblocked by this addendum</li>
+<li>yage issue #142 — package retirement after #137–#141</li>
+<li><code>internal/capi/helmvalues/</code>, <code>internal/capi/wlargocd/</code>,
+  <code>internal/capi/postsync/</code>, <code>internal/capi/caaph/</code>,
+  <code>internal/capi/cilium/cilium.go</code> — migration sources</li>
+<li><code>internal/csi/driver.go</code> — <code>RenderValues</code> → <code>Render</code> interface change (ADR 0008 §6)</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.expand", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
