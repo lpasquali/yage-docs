@@ -11,6 +11,10 @@
       
       
       
+        <link rel="prev" href="../0013-tui-secret-display-policy/">
+      
+      
+        <link rel="next" href="../../../operations/capacity-preflight/">
       
       
         
@@ -21,7 +25,7 @@
     
     
       
-        <title>ADR 0002 — Backward Compatibility Removal - yage Documentation</title>
+        <title>0014 xapiri dashboard.go Split - yage Documentation</title>
       
     
     
@@ -78,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#adr-0002-backward-compatibility-removal" class="md-skip">
+        <a href="#adr-0014-xapiri-dashboardgo-split" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ADR 0002 — Backward Compatibility Removal
+              0014 xapiri dashboard.go Split
             
           </span>
         </div>
@@ -608,8 +612,10 @@
       
   
   
+    
   
   
+  
     
     
     
@@ -620,13 +626,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
@@ -647,7 +651,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -718,6 +722,8 @@
                 
   
   
+    
+  
   
   
     
@@ -727,13 +733,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" checked>
         
           
           <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
@@ -754,7 +758,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -825,10 +829,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../0014-xapiri-dashboard-split/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0014 xapiri dashboard.go Split
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -844,6 +875,159 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decision
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Decision">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#file-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File layout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-does-not-move" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What does NOT move
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-explicitly-forbidden-during-the-refactor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is explicitly forbidden during the refactor
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#regression-risk-traps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regression-risk traps
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Regression-risk traps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#trap-1-renderfield-secret-display-policy-adr-0013-canary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trap 1 — renderField + secret display policy (ADR 0013 canary)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trap-2-global-focus-id-namespace-must-not-be-split" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trap 2 — Global focus ID namespace must not be split
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trap-3-update-outer-dispatch-order-is-load-bearing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trap 3 — Update outer dispatch order is load-bearing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consequences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consequences
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#acceptance-criteria-for-the-mechanical-refactor-pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria for the mechanical refactor PR
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1184,6 +1368,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#decision" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1192,25 +1387,14 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#scope" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Scope
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Scope">
+    <nav class="md-nav" aria-label="Decision">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-syncproxmoxbootstrapliteralcredentialstokind-kindsync" class="md-nav__link">
+  <a href="#file-layout" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. SyncProxmoxBootstrapLiteralCredentialsToKind (kindsync)
+        File layout
       
     </span>
   </a>
@@ -1218,10 +1402,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-pre-split-secret-name-fallback-proxmox-provider" class="md-nav__link">
+  <a href="#what-does-not-move" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Pre-split Secret name fallback (proxmox provider)
+        What does NOT move
       
     </span>
   </a>
@@ -1229,54 +1413,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-openstack-os_-env-var-aliases" class="md-nav__link">
+  <a href="#what-is-explicitly-forbidden-during-the-refactor" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. OpenStack OS_* env-var aliases
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-yage_currency-env-var-alias-pricing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. YAGE_CURRENCY env-var alias (pricing)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5-legacy-json-format-in-config-snapshot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. Legacy JSON format in config snapshot
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#6-proxmoxmachines-gvr-hardcode-in-purgego" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6. proxmoxmachines GVR hardcode in purge.go
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#7-if-cfginfraprovider-proxmox-guards-wrapping-abstracted-calls" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        7. if cfg.InfraProvider == "proxmox" guards wrapping abstracted calls
+        What is explicitly forbidden during the refactor
       
     </span>
   </a>
@@ -1289,10 +1429,60 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#no-new-backward-compatibility-code" class="md-nav__link">
+  <a href="#regression-risk-traps" class="md-nav__link">
     <span class="md-ellipsis">
       
-        No new backward-compatibility code
+        Regression-risk traps
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Regression-risk traps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#trap-1-renderfield-secret-display-policy-adr-0013-canary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trap 1 — renderField + secret display policy (ADR 0013 canary)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trap-2-global-focus-id-namespace-must-not-be-split" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trap 2 — Global focus ID namespace must not be split
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trap-3-update-outer-dispatch-order-is-load-bearing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trap 3 — Update outer dispatch order is load-bearing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consequences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consequences
       
     </span>
   </a>
@@ -1300,10 +1490,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#handoff-checklist" class="md-nav__link">
+  <a href="#acceptance-criteria-for-the-mechanical-refactor-pr" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Handoff checklist
+        Acceptance criteria for the mechanical refactor PR
       
     </span>
   </a>
@@ -1327,138 +1517,234 @@
 
 
 
-<h1 id="adr-0002-backward-compatibility-removal">ADR 0002 — Backward Compatibility Removal<a class="headerlink" href="#adr-0002-backward-compatibility-removal" title="Permanent link">&para;</a></h1>
-<p><strong>Status:</strong> Accepted
-<strong>Date:</strong> 2026-04-30
-<strong>Owners:</strong> Backend programmer, Platform Engineer (review)</p>
+<h1 id="adr-0014-xapiri-dashboardgo-split">ADR 0014 — xapiri dashboard.go Split<a class="headerlink" href="#adr-0014-xapiri-dashboardgo-split" title="Permanent link">&para;</a></h1>
+<p><strong>Status:</strong> Proposed<br />
+<strong>Date:</strong> 2026-05-01<br />
+<strong>Author:</strong> Architect agent<br />
+<strong>Relates to:</strong> ADR 0013 (TUI Secret-Display Policy), ADR 0003 (TUI Dispatch Keymap)</p>
 <hr />
+<h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
+<p><code>internal/ui/xapiri/dashboard.go</code> is 4 513 lines long and holds, in one file:</p>
+<ul>
+<li>The <code>dashModel</code> struct and its constructor <code>newDashModel</code></li>
+<li>All 79 focus ID constants (<code>focCount</code> enum), 67 text-input slots, 6 select slots, 16 toggle slots</li>
+<li>The full <code>fieldMeta</code> table (<code>dashFields</code>) and the single renderer <code>renderField</code></li>
+<li>Focus-visibility logic (<code>isHidden</code>, <code>visibleFocusList</code>, <code>moveFocus</code>, <code>jumpFocus</code>)</li>
+<li>The Bubble Tea outer <code>Update</code> dispatch and all 9 per-tab update methods</li>
+<li><code>buildSnapshotCfg</code> and <code>flushToCfg</code> (paired atomic state serialisers, ~380 lines together)</li>
+<li>Chrome renderers: tab bar, system widget, footer, bottom strip</li>
+<li>PTY / embedded terminal helpers (~210 lines)</li>
+<li>Per-tab renderers for all 9 tabs</li>
+<li>Cost-tab helpers, log-tab helpers, deploy, deps, help, about</li>
+<li>All <code>tea.Msg</code> type definitions</li>
+<li><code>runDashboard</code>, <code>dashDefault</code>, <code>marshalConfigYAML</code></li>
+</ul>
+<p>Three production regressions have been traced directly to the monolith's size making
+the cross-cutting invariants invisible:</p>
+<ol>
+<li><strong>PR #173 — secret value leak</strong>: <code>renderField</code>'s unfocused branch bypassed the
+   <code>meta.secret</code> check because the <code>fieldMeta</code> table was too far away to notice.</li>
+<li><strong>In-flight — broken arrow-key navigation</strong>: the token-overlay <code>default:</code> branch
+   consumed arrow keys before <code>updateCfgEditScreen</code> could handle them.</li>
+<li><strong>Queued — Deploy button exits</strong>: wrong <code>Update</code> branch reached before
+   <code>updateDeployTab</code>.</li>
+</ol>
+<p>The existing sibling files (<code>state.go</code>, <code>shared.go</code>, <code>validate.go</code>, <code>logring.go</code>,
+<code>feasibility_shim.go</code>, <code>georegions.go</code>) demonstrate that the package already supports
+this style of decomposition within a single Go package.</p>
 <h2 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">&para;</a></h2>
-<p><strong>yage has no production users.</strong> No installed base. No scripts in the
-wild depending on old Secret names, env var aliases, or JSON formats.
-Backward-compatibility shims are dead weight that complicate every read
-of the affected files.</p>
-<p><strong>All backward-compatibility code is removed immediately — no
-deprecation cycle, no dual-read period, no aliases.</strong></p>
-<p>This supersedes the Phase D migration plan in abstraction-plan.md §R.3
-and §3 (the two-release dual-read/dual-write schedule). That plan is
-withdrawn.</p>
-<hr />
-<h2 id="scope">Scope<a class="headerlink" href="#scope" title="Permanent link">&para;</a></h2>
-<p>Every item below is a self-contained deletion. No design decision is
-required. Each can ship in its own small PR.</p>
-<h3 id="1-syncproxmoxbootstrapliteralcredentialstokind-kindsync">1. <code>SyncProxmoxBootstrapLiteralCredentialsToKind</code> (kindsync)<a class="headerlink" href="#1-syncproxmoxbootstrapliteralcredentialstokind-kindsync" title="Permanent link">&para;</a></h3>
-<p><strong>Why it exists:</strong> pre-Phase-D function that wrote Proxmox credentials
-to kind Secrets using the old Proxmox-specific Secret layout.</p>
-<p><strong>Why it is dead:</strong> <code>WriteBootstrapConfigSecret</code> + provider
-<code>KindSyncFields</code> covers all providers generically and is already called
-from the orchestrator. The old function does overlapping work using the
-old schema.</p>
-<p><strong>Action for Backend:</strong></p>
-<ol>
-<li>Delete <code>SyncProxmoxBootstrapLiteralCredentialsToKind</code> from
-   <code>internal/cluster/kindsync/kindsync.go</code> (lines 42–163 approx).</li>
-<li>Delete all call sites:</li>
-<li><code>internal/orchestrator/bootstrap.go</code> lines 105, 200, 339, 426, 465, 491, 682</li>
-<li><code>internal/platform/opentofux/outputs.go</code> lines 43, 64</li>
-<li>Verify each deletion point already has a <code>WriteBootstrapConfigSecret</code>
-   or <code>KindSyncFields</code>-backed call nearby. If a gap exists, fill it
-   before deleting.</li>
-<li>Run <code>make test</code>. Fix any test that references the deleted function.</li>
-</ol>
-<h3 id="2-pre-split-secret-name-fallback-proxmox-provider">2. Pre-split Secret name fallback (proxmox provider)<a class="headerlink" href="#2-pre-split-secret-name-fallback-proxmox-provider" title="Permanent link">&para;</a></h3>
-<p><strong>Why it exists:</strong> the CAPI + CSI credentials used to live in a single
-combined Secret (<code>proxmox-bootstrap-credentials</code>). They were split into
-separate Secrets. The fallback reads the old combined name when the new
-names are missing.</p>
-<p><strong>Action for Backend:</strong></p>
-<ol>
-<li>Delete the fallback branch in <code>internal/provider/proxmox/state.go</code>
-   around line 326 (<code>// Fallback to the pre-split Secret name (legacy)</code>).</li>
-<li>If the surrounding function returns early when the primary Secret is
-   not found, ensure the error is surfaced (not silently swallowed).</li>
-</ol>
-<h3 id="3-openstack-os_-env-var-aliases">3. OpenStack <code>OS_*</code> env-var aliases<a class="headerlink" href="#3-openstack-os_-env-var-aliases" title="Permanent link">&para;</a></h3>
-<p><strong>Why they exist:</strong> the OpenStack CLI uses <code>OS_PROJECT_NAME</code>,
-<code>OS_REGION_NAME</code>, etc. yage honoured these as aliases so operators
-didn't need to set both. Since there are no operators yet, keep only
-the canonical <code>OPENSTACK_*</code> names.</p>
-<p><strong>Action for Backend:</strong></p>
-<p>Delete from <code>internal/config/config.go</code> lines 1303–1308:</p>
-<div class="highlight"><pre><span></span><code><span class="c1">// DELETE these fallback reads:</span>
-<span class="nx">os</span><span class="p">.</span><span class="nx">Getenv</span><span class="p">(</span><span class="s">&quot;OS_PROJECT_NAME&quot;</span><span class="p">),</span><span class="w">   </span><span class="c1">// line 1303 (second arg to firstNonEmpty)</span>
-<span class="nx">os</span><span class="p">.</span><span class="nx">Getenv</span><span class="p">(</span><span class="s">&quot;OS_REGION_NAME&quot;</span><span class="p">),</span><span class="w">    </span><span class="c1">// line 1308</span>
-</code></pre></div>
-<p>Keep the primary <code>OPENSTACK_PROJECT_NAME</code> / <code>OPENSTACK_REGION</code> reads.
-Update <code>internal/ui/cli/usage.txt</code> if it documents <code>OS_*</code>.</p>
-<h3 id="4-yage_currency-env-var-alias-pricing">4. <code>YAGE_CURRENCY</code> env-var alias (pricing)<a class="headerlink" href="#4-yage_currency-env-var-alias-pricing" title="Permanent link">&para;</a></h3>
-<p><strong>Why it exists:</strong> renamed to <code>YAGE_TALLER_CURRENCY</code>; old name kept as
-alias during transition.</p>
-<p><strong>Action for Backend:</strong></p>
-<ol>
-<li>Delete the alias branch in <code>internal/pricing/taller.go</code> around
-   line 144 (<code>if v, n, ok := pickOrFallback(os.Getenv("YAGE_CURRENCY"), ...)</code>).</li>
-<li>Delete the comment on line 28 referencing <code>YAGE_CURRENCY</code>.</li>
-<li>Update <code>usage.txt</code> if <code>YAGE_CURRENCY</code> appears there.</li>
-</ol>
-<h3 id="5-legacy-json-format-in-config-snapshot">5. Legacy JSON format in config snapshot<a class="headerlink" href="#5-legacy-json-format-in-config-snapshot" title="Permanent link">&para;</a></h3>
-<p><strong>Why it exists:</strong> a config field was stored in a different JSON
-structure in an older build. A fallback unmarshal reads the old format.</p>
-<p><strong>Action for Backend:</strong></p>
-<ol>
-<li>Delete <code>internal/config/snapshot.go</code> lines 310–315 (the <code>legacy</code>
-   struct and its <code>json.Unmarshal</code> branch).</li>
-<li>If the surrounding code depends on the result, confirm the primary
-   unmarshal path already covers it.</li>
-</ol>
-<h3 id="6-proxmoxmachines-gvr-hardcode-in-purgego">6. <code>proxmoxmachines</code> GVR hardcode in purge.go<a class="headerlink" href="#6-proxmoxmachines-gvr-hardcode-in-purgego" title="Permanent link">&para;</a></h3>
-<p><strong>Why it exists:</strong> purge deletes leftover ProxmoxMachine CRD objects
-by querying the <code>proxmoxmachines</code> GVR directly from the orchestrator.
-This is a Proxmox-specific concern leaking into a non-provider file.</p>
-<p><strong>Action for Backend:</strong></p>
-<ol>
-<li>Move the <code>proxmoxmachines</code> GVR query from
-   <code>internal/orchestrator/purge.go:347</code> into the Proxmox provider's
-   <code>Purge(cfg *config.Config) error</code> implementation
-   (<code>internal/provider/proxmox/</code>).</li>
-<li>The orchestrator at line 306 already calls <code>prov.Purge(cfg)</code> — the
-   proxmox implementation should handle its own CRD cleanup there.</li>
-<li>Delete the hardcoded GVR from the orchestrator file.</li>
-</ol>
-<h3 id="7-if-cfginfraprovider-proxmox-guards-wrapping-abstracted-calls">7. <code>if cfg.InfraProvider == "proxmox"</code> guards wrapping abstracted calls<a class="headerlink" href="#7-if-cfginfraprovider-proxmox-guards-wrapping-abstracted-calls" title="Permanent link">&para;</a></h3>
-<p><strong>Why they exist:</strong> added when the provider interface was first wired;
-the guards prevented non-Proxmox runs from hitting Proxmox-only code.
-Now that <code>ErrNotApplicable</code> from <code>MinStub</code> is the skip signal, the
-outer guards are redundant for any method already behind the interface.</p>
-<p><strong>Action for Backend:</strong></p>
-<p>Audit each of the 19 <code>cfg.InfraProvider == "proxmox"</code> checks in
-<code>internal/orchestrator/bootstrap.go</code>. For each:</p>
+<p>Split <code>dashboard.go</code> into 18 files using a <strong>hybrid</strong> strategy:</p>
 <ul>
-<li><strong>If the body only calls a <code>Provider</code> method</strong> (e.g. <code>prov.Inventory</code>,
-  <code>prov.EnsureIdentity</code>, <code>prov.EnsureScope</code>, <code>prov.EnsureCSISecret</code>):
-  delete the outer guard. Let <code>ErrNotApplicable</code> drive the skip.</li>
-<li><strong>If the body calls something with no provider method yet</strong> (e.g. BPG
-  provider install, CAPMOX image-tag resolution): keep the guard and
-  open a follow-up issue describing the provider method needed.</li>
-<li>Do not refactor unrelated code in the same PR.</li>
+<li>Per-tab files hold only that tab's <code>updateXxx</code> and <code>renderXxx</code> methods.</li>
+<li>Shared-concern files hold everything that spans multiple tabs.</li>
+<li><code>dashboard.go</code> (kept) holds only the model struct, constructor, <code>Init</code>, the
+  top-level <code>Update</code> outer dispatch, and <code>View</code>.</li>
 </ul>
-<hr />
-<h2 id="no-new-backward-compatibility-code">No new backward-compatibility code<a class="headerlink" href="#no-new-backward-compatibility-code" title="Permanent link">&para;</a></h2>
-<p>Going forward, no new backward-compatibility shims are introduced.
-When a field, Secret name, or env var changes:</p>
+<p>All files remain in <code>package xapiri</code>. No public API changes. No behaviour changes.</p>
+<h3 id="file-layout">File layout<a class="headerlink" href="#file-layout" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Approx. lines</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dashboard.go</code> (kept, shrunk)</td>
+<td>~250</td>
+<td><code>dashModel</code> struct, <code>newDashModel</code>, <code>Init</code>, top-level <code>Update</code> outer dispatch, <code>View</code>, <code>runDashboard</code>, <code>preserveTransientState</code>, <code>inTextField</code></td>
+</tr>
+<tr>
+<td><code>dashboard_fields.go</code></td>
+<td>~430</td>
+<td><code>tiCount</code>/<code>siCount</code>/<code>toiCount</code>/<code>focCount</code> enums, <code>fkind</code>, <code>fieldMeta</code>, <code>dashFields</code>, <code>renderField</code></td>
+</tr>
+<tr>
+<td><code>dashboard_focus.go</code></td>
+<td>~160</td>
+<td><code>isCloud</code>, <code>onPremProviders</code>, <code>providerListForMode</code>, <code>rebuildProviderList</code>, <code>isHidden</code>, <code>visibleFocusList</code>, <code>focusAtConfigRow</code>, <code>jumpFocus</code>, <code>moveFocus</code></td>
+</tr>
+<tr>
+<td><code>dashboard_snapshot.go</code></td>
+<td>~360</td>
+<td><code>buildSnapshotCfg</code>, <code>flushToCfg</code>, <code>markDirty</code></td>
+</tr>
+<tr>
+<td><code>dashboard_msgs.go</code></td>
+<td>~80</td>
+<td>All <code>tea.Msg</code> type definitions + <code>waitForCostRowCmd</code></td>
+</tr>
+<tr>
+<td><code>dashboard_chrome.go</code></td>
+<td>~250</td>
+<td><code>renderTabBar</code>, <code>renderSysWidget</code>, <code>fmtBytes</code>, <code>fmtRate</code>, <code>tabAtX</code>, <code>renderBottomStrip</code>, <code>renderFooter</code></td>
+</tr>
+<tr>
+<td><code>dashboard_term.go</code></td>
+<td>~210</td>
+<td><code>termPaneHDefault</code>, <code>termPaneHMin</code>, <code>watchPTYCmd</code>, <code>processTermBytes</code>, <code>keyMsgToBytes</code>, <code>stripNonSGR</code>, <code>termRawToLines</code>, <code>renderTermPane</code></td>
+</tr>
+<tr>
+<td><code>dashboard_overlays.go</code></td>
+<td>~30</td>
+<td><code>renderTokenPromptOverlay</code>, token-prompt key-handling block</td>
+</tr>
+<tr>
+<td><code>dashboard_cost_helpers.go</code></td>
+<td>~120</td>
+<td><code>costWindowPreset</code>, <code>costWindows</code>, <code>costDefaultPeriodIdx</code>, <code>costMonthSecs</code>, <code>activeCostWindow</code>, <code>costForPeriod</code>, <code>formatCost</code>, <code>sortedCostRows</code>, <code>kickRefreshCmd</code></td>
+</tr>
+<tr>
+<td><code>tab_config.go</code></td>
+<td>~140</td>
+<td><code>updateConfigTab</code>, <code>updateCfgListScreen</code>, <code>updateCfgNewNameScreen</code>, <code>renderConfigTab</code>, <code>renderCfgListScreen</code>, <code>renderCfgNewNameScreen</code></td>
+</tr>
+<tr>
+<td><code>tab_provision.go</code></td>
+<td>~80</td>
+<td><code>updateCfgEditScreen</code>, <code>renderCfgEditScreen</code></td>
+</tr>
+<tr>
+<td><code>tab_editor.go</code></td>
+<td>~280</td>
+<td><code>cfgReady</code>, <code>loadCfgListCmd</code>, <code>loadCfgEntryCmd</code>, <code>switchToEditorTab</code>, <code>loadEditorResourcesCmd</code>, <code>updateEditorTab</code>, <code>openKindResourceEditorCmd</code>, <code>secretToEditableYAML</code>, <code>configMapToEditableYAML</code>, <code>applyEditedResourceToKind</code>, <code>parseEditableYAML</code>, <code>renderEditorTab</code>, <code>openEditorCmd</code>, <code>resolveEditor</code>, <code>renderEditorPlaceholder</code></td>
+</tr>
+<tr>
+<td><code>tab_costs.go</code></td>
+<td>~280</td>
+<td><code>updateCostsTab</code>, <code>updateCostsCredsForm</code>, <code>saveCostCredsCmd</code>, <code>renderCostsTab</code>, <code>renderCostsCredsForm</code>, <code>renderCostRow</code>, <code>renderVendorRow</code></td>
+</tr>
+<tr>
+<td><code>tab_logs.go</code></td>
+<td>~120</td>
+<td><code>updateLogsTab</code>, <code>renderLogsTab</code></td>
+</tr>
+<tr>
+<td><code>tab_deploy.go</code></td>
+<td>~50</td>
+<td><code>updateDeployTab</code>, <code>renderDeployTab</code></td>
+</tr>
+<tr>
+<td><code>tab_deps.go</code></td>
+<td>~120</td>
+<td><code>updateDepsTab</code>, <code>renderDepsTab</code></td>
+</tr>
+<tr>
+<td><code>tab_help.go</code></td>
+<td>~55</td>
+<td><code>renderHelpTab</code></td>
+</tr>
+<tr>
+<td><code>tab_about.go</code></td>
+<td>~35</td>
+<td><code>renderAboutTab</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="what-does-not-move">What does NOT move<a class="headerlink" href="#what-does-not-move" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Update in one commit.</li>
-<li>Delete the old path in the same commit.</li>
-<li>Done.</li>
+<li><code>state.go</code>, <code>shared.go</code>, <code>validate.go</code>, <code>logring.go</code>, <code>feasibility_shim.go</code>,
+  <code>georegions.go</code>, <code>editor_unix.go</code>, <code>xapiri.go</code>, <code>xapiri_test.go</code> — untouched.</li>
+<li>The Lipgloss palette (<code>colAccent</code>, <code>colOK</code>, <code>colWarn</code>, <code>colBad</code>, <code>colMuted</code>,
+  <code>colHdr</code>, style vars) moves to <code>dashboard_fields.go</code> because <code>renderField</code> is the
+  primary consumer; it is a package-level <code>var</code> block visible to all files.</li>
 </ul>
-<p>The Architect will reject PRs that add <code>// legacy</code>, <code>// deprecated</code>,
-<code>// backcompat</code>, <code>// fallback to old</code>, or dual-read logic without a
-filed user-impact justification.</p>
-<hr />
-<h2 id="handoff-checklist">Handoff checklist<a class="headerlink" href="#handoff-checklist" title="Permanent link">&para;</a></h2>
-<p>Backend programmer completes items 1–7 above, opens one small PR per
-item. Platform Engineer reviews any change that touches Secret schemas
-(items 1, 2, 6) to verify no k8s resource shape changes introduce
-silent data loss.</p>
+<h3 id="what-is-explicitly-forbidden-during-the-refactor">What is explicitly forbidden during the refactor<a class="headerlink" href="#what-is-explicitly-forbidden-during-the-refactor" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Do not add, remove, or rename any exported or package-private symbol.</li>
+<li>Do not reorder or restructure the <code>Update</code> outer dispatch; the token-overlay →
+   ctrl+s → esc/q → ctrl+left/right → ctrl+t → ctrl+alt+up/down → termFocused PTY
+   passthrough → number keys → arrow tab cycle → per-tab dispatch order is
+   load-bearing (ADR 0003).</li>
+<li>Do not extract <code>renderField</code> into a per-tab file. It must remain co-located with
+   <code>dashFields</code> in <code>dashboard_fields.go</code>.</li>
+<li>Do not split <code>isHidden</code> per-tab. It references toggles and selects across all tabs
+   and must stay whole in <code>dashboard_focus.go</code>.</li>
+</ol>
+<h2 id="regression-risk-traps">Regression-risk traps<a class="headerlink" href="#regression-risk-traps" title="Permanent link">&para;</a></h2>
+<p>These are the three highest-risk invariants the frontend must protect during and after
+the refactor.</p>
+<h3 id="trap-1-renderfield-secret-display-policy-adr-0013-canary">Trap 1 — <code>renderField</code> + secret display policy (ADR 0013 canary)<a class="headerlink" href="#trap-1-renderfield-secret-display-policy-adr-0013-canary" title="Permanent link">&para;</a></h3>
+<p><code>renderField</code> is the single renderer for all field types. The unfocused path <strong>must</strong>
+branch on <code>meta.secret</code> before emitting any value. Splitting this function into
+per-tab helpers breaks the guarantee because each helper would need its own copy of
+the guard. The canonical regression test is
+<code>TestRenderField_SecretFieldsNeverLeakValue</code> in <code>xapiri_test.go</code>; it <strong>must pass</strong>
+throughout the refactor, not only at the end.</p>
+<p><strong>Rule:</strong> <code>renderField</code> and <code>dashFields</code> live in the same file (<code>dashboard_fields.go</code>)
+and that file is reviewed as a unit on every PR that touches either.</p>
+<h3 id="trap-2-global-focus-id-namespace-must-not-be-split">Trap 2 — Global focus ID namespace must not be split<a class="headerlink" href="#trap-2-global-focus-id-namespace-must-not-be-split" title="Permanent link">&para;</a></h3>
+<p><code>focCount</code> (79 IDs) spans all tabs. <code>isHidden</code> cross-references <code>toiFork</code>,
+<code>toiRegistryEnabled</code>, <code>siMode</code>, and <code>siProvider</code> when evaluating visibility of fields
+in tabs it does not own. Splitting <code>isHidden</code> per-tab produces N copies that will
+drift. Splitting the <code>focCount</code> enum across files risks re-using the same iota value
+in two files (Go does not prevent this across files in the same package if iota is
+reset).</p>
+<p><strong>Rule:</strong> <code>focCount</code>, <code>tiCount</code>, <code>siCount</code>, <code>toiCount</code>, and <code>isHidden</code> all live in
+<code>dashboard_fields.go</code> or <code>dashboard_focus.go</code> — never in a <code>tab_*.go</code> file.</p>
+<h3 id="trap-3-update-outer-dispatch-order-is-load-bearing">Trap 3 — <code>Update</code> outer dispatch order is load-bearing<a class="headerlink" href="#trap-3-update-outer-dispatch-order-is-load-bearing" title="Permanent link">&para;</a></h3>
+<p>The outer <code>Update</code> in <code>dashboard.go</code> must handle the token-prompt overlay before
+routing to per-tab dispatch. If any <code>tab_*.go</code> update method starts handling
+<code>tea.KeyMsg</code> before the overlay has been checked, the token-overlay and navigation
+regressions from PR #173 and the in-flight arrow-key fix will resurface.</p>
+<p><strong>Rule:</strong> <code>Update</code> stays entirely in <code>dashboard.go</code>. Per-tab <code>updateXxxTab</code> methods
+handle only the cases that <code>Update</code> explicitly delegates to them; they must not read
+<code>tea.KeyMsg</code> directly for global keys (tab switch, quit, save, overlay).</p>
+<h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
+<p><strong>Positive:</strong>
+- Each tab's update + render code becomes independently reviewable (~50–280 lines per file).
+- <code>renderField</code>, the secret-policy guard, and the focus namespace are each in one
+  small file where reviewers can see the whole invariant at a glance.
+- <code>buildSnapshotCfg</code>/<code>flushToCfg</code> are isolated in <code>dashboard_snapshot.go</code>; a diff
+  that touches state persistence is obviously scoped.
+- <code>go test ./internal/ui/xapiri/...</code> continues to be the single gate; no new test
+  infrastructure needed.</p>
+<p><strong>Negative / risks:</strong>
+- The mechanical move is a large diff (~4 500 lines moved) with high merge-conflict
+  risk against any in-flight branch that touches <code>dashboard.go</code>. Coordinate with all
+  open <code>dashboard.go</code> PRs (currently: arrow-nav fix, deploy-button fix) before
+  starting.
+- iota-reset risk: if a developer creates a new <code>tiCount</code>/<code>focCount</code>/<code>toiCount</code>
+  constant in a <code>tab_*.go</code> file and forgets that iota resets per <code>const()</code> block, the
+  global index will silently collide. The rule above (keep all enums in
+  <code>dashboard_fields.go</code>) prevents this.</p>
+<h2 id="acceptance-criteria-for-the-mechanical-refactor-pr">Acceptance criteria for the mechanical refactor PR<a class="headerlink" href="#acceptance-criteria-for-the-mechanical-refactor-pr" title="Permanent link">&para;</a></h2>
+<p>A PR implementing this split is <strong>Done (Level 2)</strong> when all of the following hold:</p>
+<ul>
+<li>[ ] <code>go build ./...</code> passes with no new warnings.</li>
+<li>[ ] <code>go test ./internal/ui/xapiri/... -v</code> passes, including
+      <code>TestRenderField_SecretFieldsNeverLeakValue</code>, <code>TestArrowNav_ProvisionTabAdvancesFocus</code>,
+      and <code>TestArrowNav_TokenOverlayDoesNotSwallowArrows</code>.</li>
+<li>[ ] <code>go vet ./internal/ui/xapiri/...</code> clean.</li>
+<li>[ ] No exported or package-private symbol is renamed or removed (verified by
+      <code>grep</code> diff on the symbol list).</li>
+<li>[ ] <code>dashboard.go</code> is ≤ 300 lines after the split.</li>
+<li>[ ] No <code>tab_*.go</code> file contains a <code>const (</code> block that introduces new iota values
+      for the <code>tiCount</code>/<code>siCount</code>/<code>toiCount</code>/<code>focCount</code> namespaces.</li>
+<li>[ ] PR description cites this ADR and links the three regression tests.</li>
+</ul>
 
 
 
