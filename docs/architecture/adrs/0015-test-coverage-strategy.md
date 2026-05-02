@@ -3,7 +3,7 @@
 **Status:** Proposed
 **Date:** 2026-05-01
 **Author:** Architect agent
-**Relates to:** ADR 0013 (TUI Secret-Display Policy), ADR 0014 (xapiri Dashboard Split), yage issue #181 (go test missing from CI)
+**Relates to:** ADR 0013 (TUI Secret-Display Policy), ADR 0014 (xapiri Dashboard Split), yage issue #181 (go test missing from CI — closed), yage issue #191 (teatest integration suite), yage issue #175 (pre-existing xapiri failures)
 
 ---
 
@@ -16,9 +16,11 @@ The root causes were structural:
    `RuneGate/Quality/Go` job.  Every unit test added before that PR ran only on
    developer workstations — CI passed on build + vet alone.
 
-2. xapiri had no integration-level tests.  The `TestRenderCostsCredsForm_SecretFieldsNeverLeakValue`
-   test (added to enforce ADR 0013) is currently failing, demonstrating that the
-   test suite is already load-bearing for correctness invariants.
+2. xapiri had no integration-level tests.  Two tests added to enforce ADR 0013 are
+   currently failing (`TestRenderCostsCredsForm_SecretFieldsNeverLeakValue` and
+   `TestRenderTokenPromptOverlay_NeverLeaksWhenUnfocused`), demonstrating that the
+   test suite is already load-bearing for correctness invariants.  Both failures are
+   tracked in yage issue #175.
 
 3. Coverage is wildly uneven across the codebase (3.6% in `internal/pricing/` to
    100% in `internal/csi/` and `internal/platform/manifests/`) with no enforcement
@@ -67,7 +69,8 @@ separately.
 | `internal/platform/secmem` | 34.5% | A |
 | `internal/provider/openstack` | 27.7% | B |
 | `internal/platform/keyring` | 25.0% | A |
-| `internal/ui/xapiri` | 24.9% | C |
+| `internal/ui/xapiri` | 24.6% | C |
+| `internal/provider/vsphere` | 24.7% | B |
 | `internal/platform/opentofux` | 23.5% | B |
 | `internal/cluster/kindsync` | 19.8% | B |
 | `internal/platform/shell` | 19.4% | A |
@@ -111,6 +114,7 @@ All of these have at least one source file and zero `*_test.go` files.
 | `internal/ui/logx` | 1 | A |
 | `internal/util/idgen` | 1 | A |
 | `internal/util/versionx` | 1 | A |
+| `api/v1alpha1` | 1 | D |
 | `cmd/yage` | 1 | D |
 | `cmd/yage-operator` | 1 | D |
 
@@ -216,9 +220,9 @@ Any `*_generated.go` file.
 
 ---
 
-## #23 — teatest UI integration suite (scope definition)
+## #191 — teatest UI integration suite (scope definition)
 
-Issue #23 in the yage repository is queued but unscoped.  This ADR defines its scope.
+Issue #191 in the yage repository is queued but unscoped.  This ADR defines its scope.
 
 The teatest suite must provide synthetic-input coverage for every interactive surface
 in xapiri.  Using `github.com/charmbracelet/x/exp/teatest`, the suite must exercise:
@@ -256,8 +260,8 @@ target invokes it.
 
 The `TestRenderCostsCredsForm_SecretFieldsNeverLeakValue` test failure present as of
 2026-05-01 demonstrates that the test suite is already catching real regressions.
-That failure must be resolved before the #23 PR opens (it is a pre-existing condition,
-not a coverage-ADR concern).
+That failure must be resolved before the #191 PR opens (it is a pre-existing condition,
+not a coverage-ADR concern).  Both failures are tracked in yage issue #175.
 
 ---
 
@@ -321,7 +325,7 @@ refactors.
 | **M1 — Gate in place** | ADR merge + 7 days | `coverage` job added to `quality-gates.yml`; `check-coverage.go` script implemented; `coverage-tiers.json` committed with current coverage values as baselines (no package can regress); `coverage-baseline.json` committed |
 | **M2 — Tier A ≥90%** | ADR merge + 30 days | Every Tier A package passes the ≥90% threshold; the 7 currently-zero Tier A packages have initial test suites |
 | **M3 — Tier A 100%, Tier B ≥80%** | ADR merge + 90 days | All Tier A packages at 100%; every Tier B package passes ≥80%; `make test-integration` passes for the first teatest classes |
-| **M4 — Tier C ≥50%, teatest suite complete** | ADR merge + 180 days | xapiri at ≥50%; all per-tab and cross-cutting teatest classes from the #23 scope table above are committed; golden frames committed |
+| **M4 — Tier C ≥50%, teatest suite complete** | ADR merge + 180 days | xapiri at ≥50%; all per-tab and cross-cutting teatest classes from the #191 scope table above are committed; golden frames committed |
 
 ---
 
@@ -334,7 +338,7 @@ refactors.
 | Tier A tests: `ui/cli`, `ui/logx`, `ui/promptx`, `util/idgen`, `util/versionx` | yage-backend |
 | Tier B tests: `pricing`, `capi/pivot`, `cluster/kind`, `orchestrator` CAPD integration (#119) | yage-backend |
 | Tier B tests: `platform/kubectl`, `platform/k8sclient`, `platform/opentofux` | yage-backend |
-| Tier C / #23: teatest suite for all xapiri tabs + cross-cutting surfaces | yage-frontend |
+| Tier C / #191: teatest suite for all xapiri tabs + cross-cutting surfaces | yage-frontend |
 | Tier B: provider stub packages (aws, azure, capd, gcp, do, hetzner, ibmcloud, oci) | yage-backend |
 | Tier B: CSI driver packages below 50% (awsebs, gcppd, hcloud, ibmvpcblock) | yage-backend |
 
@@ -347,8 +351,8 @@ refactors.
 - Per-package thresholds prevent any single package from regressing without the
   author noticing before opening a PR.
 - The delta gate surfaces the "add code without tests" anti-pattern on every PR.
-- The teatest scope definition in §"#23" unblocks that issue from "queued but unscoped"
-  to "ready to execute"; the frontend agent can link this ADR in the #23 issue body
+- The teatest scope definition in §"#191" unblocks that issue from "queued but unscoped"
+  to "ready to execute"; the frontend agent can link this ADR in the #191 issue body
   rather than re-deriving the scope.
 - xapiri's per-tab file structure (ADR 0014) is the natural test boundary: one test
   class per `tab_*.go` file, one test class per shared-concern file.
@@ -364,9 +368,10 @@ refactors.
   unit-testable without a real cluster.  The recommended path is the CAPD-backed
   integration test (#119), not attempting to mock every phase.  If #119 slips beyond M3,
   `orchestrator` remains the single largest gap in the Tier B gate.
-- The `TestRenderCostsCredsForm_SecretFieldsNeverLeakValue` failure (present as of
-  2026-05-01) means `xapiri` currently fails CI.  M1 cannot close until this pre-existing
-  failure is resolved (tracked as yage issue #175).
+- Two `xapiri` failures (`TestRenderCostsCredsForm_SecretFieldsNeverLeakValue` and
+  `TestRenderTokenPromptOverlay_NeverLeaksWhenUnfocused`, both present as of 2026-05-01)
+  mean `xapiri` currently fails CI.  M1 cannot close until these pre-existing failures
+  are resolved (tracked as yage issue #175).
 
 ---
 
@@ -383,4 +388,4 @@ A PR implementing the enforcement mechanism (M1) is **Done (Level 2)** when:
       gate does not fire on the M1 PR itself.
 - [ ] **`quality-gates.yml`** has a `coverage` job; `merge-gate` depends on it.
 - [ ] **No Tier A package regresses** below its pre-M1 coverage after M1 merges.
-- [ ] **PR body cites this ADR** and links issue #181 and #175.
+- [ ] **PR body cites this ADR** and links issue #175 and #191.
