@@ -1,0 +1,2655 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for yage — CAPI bootstrapper for Proxmox and 11 other providers">
+      
+      
+      
+      
+        <link rel="prev" href="../0014-xapiri-dashboard-split/">
+      
+      
+        <link rel="next" href="../../../operations/capacity-preflight/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>0015 Test Coverage Strategy - yage Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../overrides/main.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/tokens.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/print.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#adr-0015-test-coverage-strategy-and-targets" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="yage Documentation" class="md-header__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            yage Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              0015 Test Coverage Strategy
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="yage Documentation" class="md-nav__button md-logo" aria-label="yage Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    yage Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Context
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Context
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/AGENT_SYSTEM_PROMPT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent System Prompt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/CURRENT_STATE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Current State
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/CODING_STANDARDS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Coding Standards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agents
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Agents
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/PO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Product Owner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/ARCHITECT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architect
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/PLATFORM_ENGINEER/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform Engineer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/BACKEND/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go Backend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/agents/FRONTEND/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go Frontend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ARCHITECTURE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architectures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architectures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADRs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ADRs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../abstraction-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abstraction Plan (Phase C/E/B/A/D)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0013-tui-secret-display-policy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0013 TUI Secret-Display Policy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0014-xapiri-dashboard-split/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0014 xapiri dashboard.go Split
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0015 Test Coverage Strategy
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0015 Test Coverage Strategy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#coverage-audit-2026-05-01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage Audit (2026-05-01)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Coverage Audit (2026-05-01)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#packages-with-existing-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Packages with existing tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packages-with-zero-tests-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Packages with zero tests (0%)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decision
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Decision">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tier-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tier definitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tier-a-packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tier A packages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tier-b-packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tier B packages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tier-c-packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tier C packages
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#top-5-coverage-gaps-per-tier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Top-5 coverage gaps per tier
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Top-5 coverage gaps per tier">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tier-a-top-priorities-backend-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tier A — top priorities (backend agent)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tier-b-top-priorities-backend-agent-platform-engineer-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tier B — top priorities (backend agent + platform-engineer agent)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tier-c-top-priorities-frontend-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tier C — top priorities (frontend agent)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tier-d-no-tests-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tier D — no tests required
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#191-teatest-ui-integration-suite-scope-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        #191 — teatest UI integration suite (scope definition)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enforcement-mechanism" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enforcement mechanism
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Enforcement mechanism">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#per-package-coverage-gate-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-package coverage gate script
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-coverage-job-in-quality-gatesyml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New coverage job in quality-gates.yml
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pr-level-delta-gate-coverage-cannot-decrease" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PR-level delta gate ("coverage cannot decrease")
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#milestone-timeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Milestone timeline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-assignments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent assignments
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consequences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consequences
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#acceptance-criteria-for-this-adr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria for this ADR
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/capacity-preflight/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capacity Preflight
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/cost-and-pricing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost and Pricing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Runbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/runbooks/phase-h-bootstrap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase H Bootstrap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/providers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Providers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#coverage-audit-2026-05-01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage Audit (2026-05-01)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Coverage Audit (2026-05-01)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#packages-with-existing-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Packages with existing tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packages-with-zero-tests-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Packages with zero tests (0%)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decision
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Decision">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tier-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tier definitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tier-a-packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tier A packages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tier-b-packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tier B packages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tier-c-packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tier C packages
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#top-5-coverage-gaps-per-tier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Top-5 coverage gaps per tier
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Top-5 coverage gaps per tier">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tier-a-top-priorities-backend-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tier A — top priorities (backend agent)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tier-b-top-priorities-backend-agent-platform-engineer-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tier B — top priorities (backend agent + platform-engineer agent)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tier-c-top-priorities-frontend-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tier C — top priorities (frontend agent)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tier-d-no-tests-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tier D — no tests required
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#191-teatest-ui-integration-suite-scope-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        #191 — teatest UI integration suite (scope definition)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enforcement-mechanism" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enforcement mechanism
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Enforcement mechanism">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#per-package-coverage-gate-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-package coverage gate script
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-coverage-job-in-quality-gatesyml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New coverage job in quality-gates.yml
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pr-level-delta-gate-coverage-cannot-decrease" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PR-level delta gate ("coverage cannot decrease")
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#milestone-timeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Milestone timeline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-assignments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent assignments
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consequences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consequences
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#acceptance-criteria-for-this-adr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria for this ADR
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="adr-0015-test-coverage-strategy-and-targets">ADR 0015 — Test Coverage Strategy and Targets<a class="headerlink" href="#adr-0015-test-coverage-strategy-and-targets" title="Permanent link">&para;</a></h1>
+<p><strong>Status:</strong> Proposed
+<strong>Date:</strong> 2026-05-01
+<strong>Author:</strong> Architect agent
+<strong>Relates to:</strong> ADR 0013 (TUI Secret-Display Policy), ADR 0014 (xapiri Dashboard Split), yage issue #181 (go test missing from CI — closed), yage issue #191 (teatest integration suite), yage issue #175 (pre-existing xapiri failures)</p>
+<hr />
+<h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
+<p>Three UI regressions and a JobRunner bug shipped this session despite "CI green."
+The root causes were structural:</p>
+<ol>
+<li>
+<p><code>quality-gates.yml</code> did not run <code>go test</code> until PR #182 added it to the
+   <code>RuneGate/Quality/Go</code> job.  Every unit test added before that PR ran only on
+   developer workstations — CI passed on build + vet alone.</p>
+</li>
+<li>
+<p>xapiri had no integration-level tests.  Two tests added to enforce ADR 0013 are
+   currently failing (<code>TestRenderCostsCredsForm_SecretFieldsNeverLeakValue</code> and
+   <code>TestRenderTokenPromptOverlay_NeverLeaksWhenUnfocused</code>), demonstrating that the
+   test suite is already load-bearing for correctness invariants.  Both failures are
+   tracked in yage issue #175.</p>
+</li>
+<li>
+<p>Coverage is wildly uneven across the codebase (3.6% in <code>internal/pricing/</code> to
+   100% in <code>internal/csi/</code> and <code>internal/platform/manifests/</code>) with no enforcement
+   mechanism preventing regression in the already-covered packages.</p>
+</li>
+</ol>
+<p>Test coverage is now load-bearing.  This ADR establishes a tier-based coverage
+strategy with realistic CI ramp targets and 100% as the aspirational ceiling.</p>
+<hr />
+<h2 id="coverage-audit-2026-05-01">Coverage Audit (2026-05-01)<a class="headerlink" href="#coverage-audit-2026-05-01" title="Permanent link">&para;</a></h2>
+<p>The following table was produced by running <code>go test -coverprofile</code> against every
+package that has at least one test file.  Packages with <code>src=N, tests=0</code> are listed
+separately.</p>
+<h3 id="packages-with-existing-tests">Packages with existing tests<a class="headerlink" href="#packages-with-existing-tests" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Coverage</th>
+<th>Tier</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>internal/csi</code> (registry)</td>
+<td>100.0%</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/platform/manifests</code></td>
+<td>100.0%</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/util/yamlx</code></td>
+<td>100.0%</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/platform/airgap</code></td>
+<td>97.5%</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/cluster/capacity</code></td>
+<td>87.0%</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/config</code></td>
+<td>85.4%</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/ui/plan</code></td>
+<td>73.7%</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/csi/openebs</code></td>
+<td>73.1%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/csi/rookceph</code></td>
+<td>70.4%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/csi/longhorn</code></td>
+<td>66.7%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/feasibility</code></td>
+<td>62.8%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/capi/helmvalues</code></td>
+<td>58.3%</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/csi/cindercsi</code></td>
+<td>58.0%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/obs</code></td>
+<td>57.1%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/operator/cost</code></td>
+<td>55.6%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/csi/azuredisk</code></td>
+<td>54.8%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/csi/ociblock</code></td>
+<td>54.5%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/csi/doblock</code></td>
+<td>51.0%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/csi/linodebs</code></td>
+<td>50.0%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/provider</code> (interface + registry)</td>
+<td>49.3%</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/csi/gcppd</code></td>
+<td>48.7%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/csi/hcloud</code></td>
+<td>47.7%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/capi/cilium</code></td>
+<td>43.4%</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/csi/vspherecsi</code></td>
+<td>59.7%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/ui/promptx</code></td>
+<td>35.0%</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/platform/secmem</code></td>
+<td>34.5%</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/provider/openstack</code></td>
+<td>27.7%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/platform/keyring</code></td>
+<td>25.0%</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/ui/xapiri</code></td>
+<td>24.6%</td>
+<td>C</td>
+</tr>
+<tr>
+<td><code>internal/provider/vsphere</code></td>
+<td>24.7%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/platform/opentofux</code></td>
+<td>23.5%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/cluster/kindsync</code></td>
+<td>19.8%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/platform/shell</code></td>
+<td>19.4%</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/provider/linode</code></td>
+<td>19.4%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/csi/awsebs</code></td>
+<td>17.1%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/capi/caaph</code></td>
+<td>17.6%</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/platform/k8sclient</code></td>
+<td>12.2%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/provider/proxmox</code></td>
+<td>11.7%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/cost</code></td>
+<td>13.5%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/orchestrator</code></td>
+<td>8.2%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/capi/pivot</code></td>
+<td>5.4%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/cluster/kind</code></td>
+<td>3.9%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/pricing</code></td>
+<td>3.6%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/csi/ibmvpcblock</code></td>
+<td>38.3%</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/capi/templates</code></td>
+<td>[no statements]</td>
+<td>D</td>
+</tr>
+</tbody>
+</table>
+<h3 id="packages-with-zero-tests-0">Packages with zero tests (0%)<a class="headerlink" href="#packages-with-zero-tests-0" title="Permanent link">&para;</a></h3>
+<p>All of these have at least one source file and zero <code>*_test.go</code> files.</p>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Source files</th>
+<th>Tier</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>internal/capi/argocd</code></td>
+<td>1</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/capi/manifest</code></td>
+<td>3</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/capi/postsync</code></td>
+<td>1</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/capi/wlargocd</code></td>
+<td>1</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/csi/proxmoxcsi</code></td>
+<td>1</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/platform/installer</code></td>
+<td>2</td>
+<td>D</td>
+</tr>
+<tr>
+<td><code>internal/platform/kubectl</code></td>
+<td>1</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/platform/sysinfo</code></td>
+<td>3</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/provider/aws</code></td>
+<td>5</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/provider/azure</code></td>
+<td>3</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/provider/capd</code></td>
+<td>1</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/provider/digitalocean</code></td>
+<td>3</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/provider/gcp</code></td>
+<td>3</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/provider/hetzner</code></td>
+<td>4</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/provider/ibmcloud</code></td>
+<td>3</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/provider/oci</code></td>
+<td>3</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/provider/proxmox/api</code></td>
+<td>2</td>
+<td>B</td>
+</tr>
+<tr>
+<td><code>internal/ui/cli</code></td>
+<td>4</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/ui/logx</code></td>
+<td>1</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/util/idgen</code></td>
+<td>1</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>internal/util/versionx</code></td>
+<td>1</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>api/v1alpha1</code></td>
+<td>1</td>
+<td>D</td>
+</tr>
+<tr>
+<td><code>cmd/yage</code></td>
+<td>1</td>
+<td>D</td>
+</tr>
+<tr>
+<td><code>cmd/yage-operator</code></td>
+<td>1</td>
+<td>D</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">&para;</a></h2>
+<h3 id="tier-definitions">Tier definitions<a class="headerlink" href="#tier-definitions" title="Permanent link">&para;</a></h3>
+<p>Coverage targets are per-package, not per-repo.  A repo-wide aggregate masks
+Tier A regressions behind Tier C improvements.</p>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Target</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A — Pure logic</strong></td>
+<td>100% (aspirational), CI gate ≥90%</td>
+<td>Pure renderers, YAML generators, config parsers, utility packages, provider stubs.  These have no I/O, no OS calls, and no network calls; they are fully testable with table-driven and golden tests.</td>
+</tr>
+<tr>
+<td><strong>B — Integration boundaries</strong></td>
+<td>≥80%</td>
+<td>Packages that cross a system boundary (kubectl shell-out, k8s API, OpenTofu runner, pricing HTTP, kind cluster lifecycle).  Boundary crossings are mocked at the interface; non-mocked paths are acknowledged gaps.</td>
+</tr>
+<tr>
+<td><strong>C — TUI surface</strong></td>
+<td>≥50%</td>
+<td><code>internal/ui/xapiri</code>.  Drive with <code>teatest</code> synthetic key sequences + golden frame snapshots.  Some Lipgloss render branches (terminal resize, palette variants) are legitimately hard to hit.</td>
+</tr>
+<tr>
+<td><strong>D — Exempt</strong></td>
+<td>N/A</td>
+<td>Code that cannot be meaningfully unit-tested: <code>cmd/yage/main.go</code>, <code>cmd/yage-operator</code>, generated code (<code>*_generated.go</code>), <code>internal/capi/templates</code> (text/template data-only structs, validated by render tests in the caller package), <code>internal/platform/installer</code> (external binary downloads).</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tier-a-packages">Tier A packages<a class="headerlink" href="#tier-a-packages" title="Permanent link">&para;</a></h3>
+<p><code>internal/capi/caaph</code>, <code>internal/capi/argocd</code>, <code>internal/capi/manifest</code>,
+<code>internal/capi/postsync</code>, <code>internal/capi/wlargocd</code>, <code>internal/capi/helmvalues</code>,
+<code>internal/capi/cilium</code>, <code>internal/config</code>, <code>internal/platform/manifests</code>,
+<code>internal/platform/sysinfo</code>, <code>internal/platform/secmem</code>, <code>internal/platform/airgap</code>,
+<code>internal/platform/shell</code>, <code>internal/platform/keyring</code>, <code>internal/provider</code> (interface),
+<code>internal/cluster/capacity</code>, <code>internal/ui/cli</code>, <code>internal/ui/logx</code>, <code>internal/ui/plan</code>,
+<code>internal/ui/promptx</code>, <code>internal/util/idgen</code>, <code>internal/util/versionx</code>,
+<code>internal/util/yamlx</code>, <code>internal/csi</code> (registry).</p>
+<h3 id="tier-b-packages">Tier B packages<a class="headerlink" href="#tier-b-packages" title="Permanent link">&para;</a></h3>
+<p><code>internal/orchestrator</code>, <code>internal/cluster/kind</code>, <code>internal/cluster/kindsync</code>,
+<code>internal/platform/opentofux</code>, <code>internal/platform/kubectl</code>, <code>internal/platform/k8sclient</code>,
+<code>internal/capi/pivot</code>, <code>internal/cost</code>, <code>internal/pricing</code>, <code>internal/feasibility</code>,
+<code>internal/obs</code>, <code>internal/operator/cost</code>, all CSI driver packages (<code>awsebs</code>, <code>azuredisk</code>,
+<code>cindercsi</code>, <code>doblock</code>, <code>gcppd</code>, <code>hcloud</code>, <code>ibmvpcblock</code>, <code>linodebs</code>, <code>longhorn</code>,
+<code>ociblock</code>, <code>openebs</code>, <code>proxmoxcsi</code>, <code>rookceph</code>, <code>vspherecsi</code>), all provider packages
+(<code>aws</code>, <code>azure</code>, <code>capd</code>, <code>digitalocean</code>, <code>gcp</code>, <code>hetzner</code>, <code>ibmcloud</code>, <code>linode</code>, <code>oci</code>,
+<code>openstack</code>, <code>proxmox</code>, <code>proxmox/api</code>, <code>vsphere</code>).</p>
+<h3 id="tier-c-packages">Tier C packages<a class="headerlink" href="#tier-c-packages" title="Permanent link">&para;</a></h3>
+<p><code>internal/ui/xapiri</code>.</p>
+<hr />
+<h2 id="top-5-coverage-gaps-per-tier">Top-5 coverage gaps per tier<a class="headerlink" href="#top-5-coverage-gaps-per-tier" title="Permanent link">&para;</a></h2>
+<h3 id="tier-a-top-priorities-backend-agent">Tier A — top priorities (backend agent)<a class="headerlink" href="#tier-a-top-priorities-backend-agent" title="Permanent link">&para;</a></h3>
+<ol>
+<li><code>internal/capi/postsync</code> — 0%, 1 source file.  PostSync-hook YAML renderers are
+   pure string generation.  Table-driven tests with golden fixtures close this completely.</li>
+<li><code>internal/capi/wlargocd</code> — 0%, 1 source file.  Workload Argo Application renderers;
+   same pattern as <code>postsync</code>.</li>
+<li><code>internal/capi/argocd</code> — 0%, 1 source file.  ArgoCD helpers (admin password,
+   kubeconfig discovery).  The k8s-API calls can be mocked with <code>httptest</code>.</li>
+<li><code>internal/capi/manifest</code> — 0%, 3 source files.  YAML-patch workload manifests.
+   These are the highest-risk pure-logic paths given the CAPI v1beta2 strict-decoding
+   gotcha; table-driven tests with multi-doc YAML fixtures are required.</li>
+<li><code>internal/capi/caaph</code> — 17.6%.  CAAPH HelmChartProxy rendering; already has a test
+   file; significant render branches remain uncovered.</li>
+</ol>
+<h3 id="tier-b-top-priorities-backend-agent-platform-engineer-agent">Tier B — top priorities (backend agent + platform-engineer agent)<a class="headerlink" href="#tier-b-top-priorities-backend-agent-platform-engineer-agent" title="Permanent link">&para;</a></h3>
+<ol>
+<li><code>internal/pricing</code> — 3.6%, 5+ source files.  Live fetchers can be mocked behind
+   <code>httptest</code>; the existing <code>defaulttransport_airgap_test.go</code> is the correct pattern.</li>
+<li><code>internal/capi/pivot</code> — 5.4%.  clusterctl move path; mock <code>shell.Capture</code> at the
+   <code>shell</code> boundary.  High correctness risk.</li>
+<li><code>internal/cluster/kind</code> — 3.9%.  Kind lifecycle; mocking the kind CLI at the
+   <code>shell</code> boundary enables most paths.</li>
+<li><code>internal/orchestrator</code> — 8.2%.  Top-level bootstrap driver.  <code>plan_golden_test.go</code>
+   and <code>plan_snapshot_test.go</code> exist but cover only the plan path, not the execute path.
+   Introducing a <code>--dry-run</code> coverage harness with a CAPD-backed integration test
+   (yage issue #119) is the recommended approach rather than trying to unit-test
+   <code>bootstrap.Run</code> directly.</li>
+<li><code>internal/platform/k8sclient</code> — 12.2%.  Client wrapper; <code>httptest</code>-based API server
+   mocking closes most paths.</li>
+</ol>
+<h3 id="tier-c-top-priorities-frontend-agent">Tier C — top priorities (frontend agent)<a class="headerlink" href="#tier-c-top-priorities-frontend-agent" title="Permanent link">&para;</a></h3>
+<p>The current xapiri coverage is 24.9% (or an effective lower figure once the
+<code>TestRenderCostsCredsForm_SecretFieldsNeverLeakValue</code> failure is considered).
+Per ADR 0014, <code>dashboard.go</code> is being split into 18 files.  The following per-file
+test classes are required:</p>
+<ol>
+<li><code>dashboard_fields.go</code> — <code>TestRenderField_*</code> suite: secret fields never leak value
+   (ADR 0013 canary), all field kinds render correctly for all states.</li>
+<li><code>dashboard_focus.go</code> — <code>TestMoveFocus_*</code>, <code>TestIsHidden_*</code>: provider-mode switching
+   shows/hides the correct fields; visibility invariants do not break across tabs.</li>
+<li><code>dashboard_snapshot.go</code> — <code>TestBuildSnapshotCfg_*</code>, <code>TestFlushToCfg_*</code>:
+   round-trip fidelity for all config fields.</li>
+<li><code>tab_config.go</code>, <code>tab_provision.go</code> — <code>TestArrowNav_*</code> suite: advance/retreat focus
+   with arrow keys does not cross tab boundaries.</li>
+<li><code>dashboard_overlays.go</code> — <code>TestTokenOverlay_*</code>: overlay captures arrow keys before
+   the per-tab handler; dismissal restores normal routing (regression for the in-flight
+   arrow-key fix).</li>
+</ol>
+<h3 id="tier-d-no-tests-required">Tier D — no tests required<a class="headerlink" href="#tier-d-no-tests-required" title="Permanent link">&para;</a></h3>
+<p><code>cmd/yage</code>, <code>cmd/yage-operator</code>, <code>internal/capi/templates</code>, <code>internal/platform/installer</code>.
+Any <code>*_generated.go</code> file.</p>
+<hr />
+<h2 id="191-teatest-ui-integration-suite-scope-definition">#191 — teatest UI integration suite (scope definition)<a class="headerlink" href="#191-teatest-ui-integration-suite-scope-definition" title="Permanent link">&para;</a></h2>
+<p>Issue #191 in the yage repository is queued but unscoped.  This ADR defines its scope.</p>
+<p>The teatest suite must provide synthetic-input coverage for every interactive surface
+in xapiri.  Using <code>github.com/charmbracelet/x/exp/teatest</code>, the suite must exercise:</p>
+<p><strong>Per-tab actions (one <code>TestXxx_Teatest</code> class per ADR 0014 file):</strong></p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Required coverage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tab_config.go</code></td>
+<td>Load config list; create new profile; navigate entries</td>
+</tr>
+<tr>
+<td><code>tab_provision.go</code></td>
+<td>Enter all config fields; save; cancel; field validation errors</td>
+</tr>
+<tr>
+<td><code>tab_editor.go</code></td>
+<td>Open kind Secret in editor; apply change; cancel; error path</td>
+</tr>
+<tr>
+<td><code>tab_costs.go</code></td>
+<td>Enter cost credentials; save; cycle timeframe presets; <code>[</code>/<code>]</code> keys</td>
+</tr>
+<tr>
+<td><code>tab_logs.go</code></td>
+<td>Log ring renders; scroll; clear</td>
+</tr>
+<tr>
+<td><code>tab_deploy.go</code></td>
+<td>Deploy button triggers deploy command; exit does not leak on on-prem mode</td>
+</tr>
+<tr>
+<td><code>tab_deps.go</code></td>
+<td>Deps list renders; install action; all-green state</td>
+</tr>
+<tr>
+<td><code>tab_help.go</code></td>
+<td>Help text renders without panic</td>
+</tr>
+<tr>
+<td><code>tab_about.go</code></td>
+<td>About text renders without panic</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cross-cutting surfaces:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Surface</th>
+<th>Required coverage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dashboard_overlays.go</code></td>
+<td>Token-prompt overlay: show → type → dismiss; arrow keys not consumed by overlay when overlay is inactive</td>
+</tr>
+<tr>
+<td><code>dashboard_focus.go</code></td>
+<td>Tab-switch (Ctrl+Left/Right); provider-mode change triggers field hide/show</td>
+</tr>
+<tr>
+<td><code>dashboard_chrome.go</code></td>
+<td>Tab bar renders active tab highlight; footer renders key hints</td>
+</tr>
+<tr>
+<td><code>dashboard_term.go</code></td>
+<td>PTY pane renders; terminal input is passed through when terminal pane is focused</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Golden frame snapshots</strong> must be committed for the initial render of each tab so
+regressions in Lipgloss output are caught by CI without manual review.</p>
+<p>The teatest suite lives in <code>internal/ui/xapiri/</code> alongside <code>xapiri_test.go</code>.  It must
+use the <code>//go:build integration</code> build tag so it does not run on every <code>go test ./...</code>
+invocation (PTY and terminal init add ~2s per test); a dedicated <code>make test-integration</code>
+target invokes it.</p>
+<p>The <code>TestRenderCostsCredsForm_SecretFieldsNeverLeakValue</code> test failure present as of
+2026-05-01 demonstrates that the test suite is already catching real regressions.
+That failure must be resolved before the #191 PR opens (it is a pre-existing condition,
+not a coverage-ADR concern).  Both failures are tracked in yage issue #175.</p>
+<hr />
+<h2 id="enforcement-mechanism">Enforcement mechanism<a class="headerlink" href="#enforcement-mechanism" title="Permanent link">&para;</a></h2>
+<h3 id="per-package-coverage-gate-script">Per-package coverage gate script<a class="headerlink" href="#per-package-coverage-gate-script" title="Permanent link">&para;</a></h3>
+<p>A new <code>scripts/check-coverage.go</code> (invoked as <code>go run scripts/check-coverage.go</code>)
+reads a <code>coverprofile</code> output file and a <code>scripts/coverage-tiers.json</code> configuration
+that maps each package path to its tier and minimum threshold.  The script:</p>
+<ol>
+<li>Parses <code>go tool cover -func</code> output per package.</li>
+<li>Compares each package's coverage against its tier threshold.</li>
+<li>Prints a table of PASS/FAIL per package.</li>
+<li>Exits non-zero if any package fails its threshold.</li>
+</ol>
+<p>The <code>coverage-tiers.json</code> is committed and updated when packages move tiers or
+when new packages are added.  Adding a new package without an entry in
+<code>coverage-tiers.json</code> is a CI error (fail-open: new packages default to their
+tier's minimum threshold with a TODO comment).</p>
+<h3 id="new-coverage-job-in-quality-gatesyml">New <code>coverage</code> job in <code>quality-gates.yml</code><a class="headerlink" href="#new-coverage-job-in-quality-gatesyml" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>coverage:
+  name: RuneGate/Quality/Coverage
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout
+    - uses: actions/setup-go (go-version-file: go.mod)
+    - name: generate coverage profile
+      run: go test -coverprofile=cover.out -covermode=atomic ./...
+    - name: check per-package thresholds
+      run: go run scripts/check-coverage.go cover.out
+</code></pre></div>
+<p>The <code>merge-gate</code> job's <code>needs</code> array is extended to include <code>coverage</code>.  This makes
+coverage failures block merge without requiring a repository ruleset change.</p>
+<h3 id="pr-level-delta-gate-coverage-cannot-decrease">PR-level delta gate ("coverage cannot decrease")<a class="headerlink" href="#pr-level-delta-gate-coverage-cannot-decrease" title="Permanent link">&para;</a></h3>
+<p>Within the same <code>coverage</code> job, after the threshold check, the script compares the
+new coverage figures against a baseline stored in <code>scripts/coverage-baseline.json</code>.
+The baseline is committed to <code>main</code> and updated automatically by a post-merge workflow
+step.  The delta check fails if any package's coverage decreases by more than 1
+percentage point compared to the baseline.</p>
+<p>This prevents the common "add code without tests" pattern from hiding behind a
+package that was already above its tier threshold.</p>
+<p>The 1 pp tolerance accommodates floating-point rounding in <code>go tool cover</code> output.
+A zero-tolerance threshold would produce spurious failures on inconsequential
+refactors.</p>
+<hr />
+<h2 id="milestone-timeline">Milestone timeline<a class="headerlink" href="#milestone-timeline" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Milestone</th>
+<th>Target date</th>
+<th>Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>M1 — Gate in place</strong></td>
+<td>ADR merge + 7 days</td>
+<td><code>coverage</code> job added to <code>quality-gates.yml</code>; <code>check-coverage.go</code> script implemented; <code>coverage-tiers.json</code> committed with current coverage values as baselines (no package can regress); <code>coverage-baseline.json</code> committed</td>
+</tr>
+<tr>
+<td><strong>M2 — Tier A ≥90%</strong></td>
+<td>ADR merge + 30 days</td>
+<td>Every Tier A package passes the ≥90% threshold; the 7 currently-zero Tier A packages have initial test suites</td>
+</tr>
+<tr>
+<td><strong>M3 — Tier A 100%, Tier B ≥80%</strong></td>
+<td>ADR merge + 90 days</td>
+<td>All Tier A packages at 100%; every Tier B package passes ≥80%; <code>make test-integration</code> passes for the first teatest classes</td>
+</tr>
+<tr>
+<td><strong>M4 — Tier C ≥50%, teatest suite complete</strong></td>
+<td>ADR merge + 180 days</td>
+<td>xapiri at ≥50%; all per-tab and cross-cutting teatest classes from the #191 scope table above are committed; golden frames committed</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="agent-assignments">Agent assignments<a class="headerlink" href="#agent-assignments" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Work item</th>
+<th>Assigned agent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scripts/check-coverage.go</code> + <code>coverage-tiers.json</code> + <code>coverage-baseline.json</code> + <code>quality-gates.yml</code> update</td>
+<td>yage-backend</td>
+</tr>
+<tr>
+<td>Tier A tests: <code>capi/postsync</code>, <code>capi/wlargocd</code>, <code>capi/manifest</code>, <code>capi/argocd</code>, <code>capi/caaph</code></td>
+<td>yage-backend</td>
+</tr>
+<tr>
+<td>Tier A tests: <code>ui/cli</code>, <code>ui/logx</code>, <code>ui/promptx</code>, <code>util/idgen</code>, <code>util/versionx</code></td>
+<td>yage-backend</td>
+</tr>
+<tr>
+<td>Tier B tests: <code>pricing</code>, <code>capi/pivot</code>, <code>cluster/kind</code>, <code>orchestrator</code> CAPD integration (#119)</td>
+<td>yage-backend</td>
+</tr>
+<tr>
+<td>Tier B tests: <code>platform/kubectl</code>, <code>platform/k8sclient</code>, <code>platform/opentofux</code></td>
+<td>yage-backend</td>
+</tr>
+<tr>
+<td>Tier C / #191: teatest suite for all xapiri tabs + cross-cutting surfaces</td>
+<td>yage-frontend</td>
+</tr>
+<tr>
+<td>Tier B: provider stub packages (aws, azure, capd, gcp, do, hetzner, ibmcloud, oci)</td>
+<td>yage-backend</td>
+</tr>
+<tr>
+<td>Tier B: CSI driver packages below 50% (awsebs, gcppd, hcloud, ibmvpcblock)</td>
+<td>yage-backend</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
+<p><strong>Positive:</strong>
+- Coverage failures block merge through the existing <code>merge-gate</code> aggregator.
+- Per-package thresholds prevent any single package from regressing without the
+  author noticing before opening a PR.
+- The delta gate surfaces the "add code without tests" anti-pattern on every PR.
+- The teatest scope definition in §"#191" unblocks that issue from "queued but unscoped"
+  to "ready to execute"; the frontend agent can link this ADR in the #191 issue body
+  rather than re-deriving the scope.
+- xapiri's per-tab file structure (ADR 0014) is the natural test boundary: one test
+  class per <code>tab_*.go</code> file, one test class per shared-concern file.</p>
+<p><strong>Negative / risks:</strong>
+- <code>scripts/check-coverage.go</code> is new infrastructure that must itself be reviewed and
+  maintained.  If the script has a bug, it could produce false positives (failing PRs
+  that should pass) or false negatives (passing PRs that should fail).
+- The 30-day M2 milestone requires the backend agent to write tests for 7 currently-zero
+  Tier A packages in addition to ongoing feature work.  This is a non-trivial load.
+- <code>internal/orchestrator</code> at 8.2% is classified Tier B rather than Tier A because the
+  <code>bootstrap.Run</code> driver orchestrates side-effecting phases that are not meaningfully
+  unit-testable without a real cluster.  The recommended path is the CAPD-backed
+  integration test (#119), not attempting to mock every phase.  If #119 slips beyond M3,
+  <code>orchestrator</code> remains the single largest gap in the Tier B gate.
+- Two <code>xapiri</code> failures (<code>TestRenderCostsCredsForm_SecretFieldsNeverLeakValue</code> and
+  <code>TestRenderTokenPromptOverlay_NeverLeaksWhenUnfocused</code>, both present as of 2026-05-01)
+  mean <code>xapiri</code> currently fails CI.  M1 cannot close until these pre-existing failures
+  are resolved (tracked as yage issue #175).</p>
+<hr />
+<h2 id="acceptance-criteria-for-this-adr">Acceptance criteria for this ADR<a class="headerlink" href="#acceptance-criteria-for-this-adr" title="Permanent link">&para;</a></h2>
+<p>A PR implementing the enforcement mechanism (M1) is <strong>Done (Level 2)</strong> when:</p>
+<ul>
+<li>[ ] <strong><code>make test</code> passes</strong> with no new failures (pre-existing <code>xapiri</code> failure
+      resolved per #175 before M1 closes).</li>
+<li>[ ] <strong><code>scripts/check-coverage.go</code></strong> is committed and passes <code>go vet</code>.</li>
+<li>[ ] <strong><code>coverage-tiers.json</code></strong> contains an entry for every package currently
+      returned by <code>go test ./...</code> (no package silently missing).</li>
+<li>[ ] <strong><code>coverage-baseline.json</code></strong> reflects the 2026-05-01 audit values; the delta
+      gate does not fire on the M1 PR itself.</li>
+<li>[ ] <strong><code>quality-gates.yml</code></strong> has a <code>coverage</code> job; <code>merge-gate</code> depends on it.</li>
+<li>[ ] <strong>No Tier A package regresses</strong> below its pre-M1 coverage after M1 merges.</li>
+<li>[ ] <strong>PR body cites this ADR</strong> and links issue #175 and #191.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.expand", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
