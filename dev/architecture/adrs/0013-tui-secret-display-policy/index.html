@@ -11,6 +11,10 @@
       
       
       
+        <link rel="prev" href="../abstraction-plan/">
+      
+      
+        <link rel="next" href="../../../operations/capacity-preflight/">
       
       
         
@@ -21,7 +25,7 @@
     
     
       
-        <title>ADR 0001 — CSI Driver Registry - yage Documentation</title>
+        <title>0013 TUI Secret-Display Policy - yage Documentation</title>
       
     
     
@@ -78,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#adr-0001-csi-driver-registry" class="md-skip">
+        <a href="#adr-0013-tui-secret-display-policy" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ADR 0001 — CSI Driver Registry
+              0013 TUI Secret-Display Policy
             
           </span>
         </div>
@@ -608,8 +612,10 @@
       
   
   
+    
   
   
+  
     
     
     
@@ -620,13 +626,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
@@ -647,7 +651,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -718,6 +722,8 @@
                 
   
   
+    
+  
   
   
     
@@ -727,13 +733,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" checked>
         
           
           <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
@@ -754,7 +758,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -797,10 +801,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../0013-tui-secret-display-policy/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0013 TUI Secret-Display Policy
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -816,6 +847,181 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decision
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Decision">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-hard-rule-secret-values-never-displayed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Hard rule — secret values never displayed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-display-contract-insertion-status-indicator-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Display contract — insertion-status indicator only
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-editing-contract-mandatory-echopassword" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Editing contract — mandatory EchoPassword
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-logging-contract-explicit-ban" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Logging contract — explicit ban
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-secret-field-registry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Secret field registry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Scope
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consequences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consequences
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Consequences">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#positive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Positive
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#negative" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Negative
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#risks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Risks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1179,10 +1385,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#interface" class="md-nav__link">
+  <a href="#1-hard-rule-secret-values-never-displayed" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Interface
+        1. Hard rule — secret values never displayed
       
     </span>
   </a>
@@ -1190,10 +1396,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#registration" class="md-nav__link">
+  <a href="#2-display-contract-insertion-status-indicator-only" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Registration
+        2. Display contract — insertion-status indicator only
       
     </span>
   </a>
@@ -1201,10 +1407,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#relation-to-provider-interface" class="md-nav__link">
+  <a href="#3-editing-contract-mandatory-echopassword" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Relation to Provider interface
+        3. Editing contract — mandatory EchoPassword
       
     </span>
   </a>
@@ -1212,10 +1418,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#default-driver-selection" class="md-nav__link">
+  <a href="#4-logging-contract-explicit-ban" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Default driver selection
+        4. Logging contract — explicit ban
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-secret-field-registry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Secret field registry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Scope
       
     </span>
   </a>
@@ -1228,17 +1456,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#drivers-as-of-2026-04-30" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Drivers (as of 2026-04-30)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#consequences" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1247,13 +1464,52 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Consequences">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#positive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Positive
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#negative" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Negative
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#risks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Risks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#no-backward-compatibility" class="md-nav__link">
+  <a href="#references" class="md-nav__link">
     <span class="md-ellipsis">
       
-        No backward compatibility
+        References
       
     </span>
   </a>
@@ -1277,193 +1533,235 @@
 
 
 
-<h1 id="adr-0001-csi-driver-registry">ADR 0001 — CSI Driver Registry<a class="headerlink" href="#adr-0001-csi-driver-registry" title="Permanent link">&para;</a></h1>
+<h1 id="adr-0013-tui-secret-display-policy">ADR 0013 — TUI Secret-Display Policy<a class="headerlink" href="#adr-0013-tui-secret-display-policy" title="Permanent link">&para;</a></h1>
 <p><strong>Status:</strong> Accepted
-<strong>Date:</strong> 2026-04-30 (retroactive — implementation landed in Wave 3, §20 of abstraction-plan.md)</p>
+<strong>Date:</strong> 2026-05-01
+<strong>Owners:</strong> Architect (contract definition), Frontend (implementation, yage issue #172)</p>
 <hr />
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
-<p>The original provider abstraction (abstraction-plan.md §1–§13) handled
-CSI storage via <code>Provider.EnsureCSISecret</code>, a single hook that assumed
-one CSI driver per provider. This broke down as the provider matrix grew:</p>
-<ul>
-<li>Proxmox uses the Proxmox CSI plugin.</li>
-<li>AWS uses aws-ebs-csi-driver (+ optional others).</li>
-<li>GCP uses gcp-pd-csi-driver.</li>
-<li>Cross-provider installations may want Longhorn, Rook-Ceph, or
-  OpenEBS independent of the underlying cloud.</li>
-</ul>
-<p>The one-hook-per-provider model could not express multi-driver
-installations or provider-agnostic drivers. <code>EnsureCSISecret</code> was
-removed from the <code>Provider</code> interface.</p>
+<p>yage PR #161 (<code>d6e7d0a</code>) added Proxmox admin-token input to the xapiri TUI
+with <code>EchoMode = textinput.EchoPassword</code> on the focused (typing) path.
+However, the unfocused render path in <code>renderField</code> (dashboard.go line 3725)
+calls <code>ti.Value()</code> directly, bypassing <code>EchoMode</code> entirely — the raw token
+value is painted to the terminal whenever the field is not active. The same
+defect affects the issuing-CA PEM fields (<code>tiIssuingCACert</code>,
+<code>tiIssuingCAKey</code>), which have no <code>EchoPassword</code> at all.</p>
+<p>Three concrete offending sites exist today:</p>
+<ol>
+<li><strong><code>dashboard.go:3725</code></strong> — <code>renderField</code> unfocused branch calls <code>ti.Value()</code>
+   and interpolates the raw string. Affects every secret <code>textinput.Model</code>
+   in the <code>textInputs</code> array when not focused.</li>
+<li><strong><code>dashboard.go:828–829</code></strong> — <code>tiIssuingCACert</code> / <code>tiIssuingCAKey</code> are seeded
+   from <code>cfg.IssuingCARootCert</code> / <code>cfg.IssuingCARootKey</code> with no <code>EchoPassword</code>
+   set. The raw PEM block (including the private key) is rendered in clear text.</li>
+<li><strong><code>dashboard.go:760</code></strong> — <code>tiProxmoxAdminToken</code> correctly sets <code>EchoPassword</code>
+   for the focused path, but the unfocused <code>renderField</code> path at line 3725
+   still calls <code>ti.Value()</code>, defeating the protection.</li>
+</ol>
+<p>This ADR establishes the cross-cutting policy that closes these gaps and
+prevents future regressions.</p>
+<hr />
 <h2 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">&para;</a></h2>
-<p>A separate <code>Driver</code> interface lives in <code>internal/csi/</code> and is
-<strong>orthogonal to <code>Provider</code></strong> — a provider can have zero or many
-associated drivers. Drivers self-register via <code>init()</code> exactly like
-providers.</p>
-<h3 id="interface">Interface<a class="headerlink" href="#interface" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">csi</span>
-
-<span class="c1">// Driver is the interface every CSI add-on must satisfy.</span>
-<span class="c1">// All methods are stateless; configuration comes from *config.Config.</span>
-<span class="kd">type</span><span class="w"> </span><span class="nx">Driver</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1">// Name returns the driver&#39;s registry key, e.g. &quot;aws-ebs&quot;.</span>
-<span class="w">    </span><span class="nx">Name</span><span class="p">()</span><span class="w"> </span><span class="kt">string</span>
-
-<span class="w">    </span><span class="c1">// K8sCSIDriverName is the value in spec.provisioner of the</span>
-<span class="w">    </span><span class="c1">// CSIDriver object, e.g. &quot;ebs.csi.aws.com&quot;.</span>
-<span class="w">    </span><span class="nx">K8sCSIDriverName</span><span class="p">()</span><span class="w"> </span><span class="kt">string</span>
-
-<span class="w">    </span><span class="c1">// HelmChart returns the repo URL + chart name + pinned version.</span>
-<span class="w">    </span><span class="nx">HelmChart</span><span class="p">()</span><span class="w"> </span><span class="nx">HelmChartRef</span>
-
-<span class="w">    </span><span class="c1">// RenderValues returns the Helm values for this installation,</span>
-<span class="w">    </span><span class="c1">// derived from cfg. May return nil (use chart defaults).</span>
-<span class="w">    </span><span class="nx">RenderValues</span><span class="p">(</span><span class="nx">cfg</span><span class="w"> </span><span class="o">*</span><span class="nx">config</span><span class="p">.</span><span class="nx">Config</span><span class="p">)</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span>
-
-<span class="w">    </span><span class="c1">// EnsureSecret creates or updates the cloud-credential Secret</span>
-<span class="w">    </span><span class="c1">// the driver needs. Returns ErrNotApplicable when the driver</span>
-<span class="w">    </span><span class="c1">// uses cloud-native identity (IRSA, Workload Identity, etc.)</span>
-<span class="w">    </span><span class="c1">// rather than a credential Secret.</span>
-<span class="w">    </span><span class="nx">EnsureSecret</span><span class="p">(</span><span class="nx">cfg</span><span class="w"> </span><span class="o">*</span><span class="nx">config</span><span class="p">.</span><span class="nx">Config</span><span class="p">,</span><span class="w"> </span><span class="nx">kubeconfigPath</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="kt">error</span>
-
-<span class="w">    </span><span class="c1">// DefaultStorageClass returns the StorageClass name yage will</span>
-<span class="w">    </span><span class="c1">// mark default. If multiple drivers are active, precedence is</span>
-<span class="w">    </span><span class="c1">// cfg.CSI.DefaultDriver; if unset, first driver in the list wins.</span>
-<span class="w">    </span><span class="nx">DefaultStorageClass</span><span class="p">()</span><span class="w"> </span><span class="kt">string</span>
-
-<span class="w">    </span><span class="c1">// DescribeInstall emits dry-run plan bullets (Section + Bullet</span>
-<span class="w">    </span><span class="c1">// calls on the plan.Writer). Called by the orchestrator&#39;s plan</span>
-<span class="w">    </span><span class="c1">// path for each active driver.</span>
-<span class="w">    </span><span class="nx">DescribeInstall</span><span class="p">(</span><span class="nx">w</span><span class="w"> </span><span class="nx">plan</span><span class="p">.</span><span class="nx">Writer</span><span class="p">,</span><span class="w"> </span><span class="nx">cfg</span><span class="w"> </span><span class="o">*</span><span class="nx">config</span><span class="p">.</span><span class="nx">Config</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></div>
-<h3 id="registration">Registration<a class="headerlink" href="#registration" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="c1">// In internal/csi/awsebs/awsebs.go</span>
-<span class="kd">func</span><span class="w"> </span><span class="nx">init</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">csi</span><span class="p">.</span><span class="nx">Register</span><span class="p">(</span><span class="nx">driver</span><span class="p">{})</span><span class="w"> </span><span class="p">}</span>
-</code></pre></div>
-<h3 id="relation-to-provider-interface">Relation to Provider interface<a class="headerlink" href="#relation-to-provider-interface" title="Permanent link">&para;</a></h3>
-<p><code>Provider</code> no longer has an <code>EnsureCSISecret</code> method. CSI wiring is
-driven entirely by <code>cfg.CSI.Drivers</code> (an ordered list of driver names)
-plus <code>cfg.CSI.DefaultDriver</code>. The orchestrator iterates the list and
-calls <code>driver.EnsureSecret</code> + <code>driver.HelmChart</code> + <code>driver.RenderValues</code>
-for each.</p>
-<p>Providers that previously called <code>capi/csi.ApplyConfigSecretToWorkload</code>
-directly are now replaced by <code>orchestrator → csi.Get(name) → EnsureSecret</code>.</p>
-<h3 id="default-driver-selection">Default driver selection<a class="headerlink" href="#default-driver-selection" title="Permanent link">&para;</a></h3>
-<p>Each provider declares a preferred default in <code>internal/csi/defaults.go</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="kd">var</span><span class="w"> </span><span class="nx">ProviderDefaults</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">][]</span><span class="kt">string</span><span class="p">{</span>
-<span class="w">    </span><span class="s">&quot;proxmox&quot;</span><span class="p">:</span><span class="w">      </span><span class="p">{</span><span class="s">&quot;proxmox-csi&quot;</span><span class="p">},</span>
-<span class="w">    </span><span class="s">&quot;aws&quot;</span><span class="p">:</span><span class="w">          </span><span class="p">{</span><span class="s">&quot;aws-ebs&quot;</span><span class="p">},</span>
-<span class="w">    </span><span class="s">&quot;azure&quot;</span><span class="p">:</span><span class="w">        </span><span class="p">{</span><span class="s">&quot;azure-disk&quot;</span><span class="p">},</span>
-<span class="w">    </span><span class="s">&quot;gcp&quot;</span><span class="p">:</span><span class="w">          </span><span class="p">{</span><span class="s">&quot;gcp-pd&quot;</span><span class="p">},</span>
-<span class="w">    </span><span class="s">&quot;hetzner&quot;</span><span class="p">:</span><span class="w">      </span><span class="p">{</span><span class="s">&quot;hcloud-volumes&quot;</span><span class="p">},</span>
-<span class="w">    </span><span class="s">&quot;digitalocean&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;do-block-storage&quot;</span><span class="p">},</span>
-<span class="w">    </span><span class="c1">// …</span>
-<span class="p">}</span>
-</code></pre></div>
-<p>If <code>cfg.CSI.Drivers</code> is empty the orchestrator falls back to
-<code>ProviderDefaults[cfg.InfraProvider]</code>.</p>
-<h2 id="drivers-as-of-2026-04-30">Drivers (as of 2026-04-30)<a class="headerlink" href="#drivers-as-of-2026-04-30" title="Permanent link">&para;</a></h2>
+<h3 id="1-hard-rule-secret-values-never-displayed">1. Hard rule — secret values never displayed<a class="headerlink" href="#1-hard-rule-secret-values-never-displayed" title="Permanent link">&para;</a></h3>
+<p>Secret values <strong>must never</strong> be rendered in the TUI, written to logs, or
+echoed in error messages. Violations are security bugs with p1 priority,
+regardless of the code path that causes them.</p>
+<h3 id="2-display-contract-insertion-status-indicator-only">2. Display contract — insertion-status indicator only<a class="headerlink" href="#2-display-contract-insertion-status-indicator-only" title="Permanent link">&para;</a></h3>
+<p>When a secret field is <strong>not focused</strong>, the TUI must render only an
+insertion-status indicator. No value, no length, no first/last characters,
+no preview of any kind.</p>
+<p>The canonical form is:</p>
 <table>
 <thead>
 <tr>
-<th>Driver key</th>
-<th>K8s provisioner</th>
-<th>Status</th>
+<th>State</th>
+<th>Rendered string</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>proxmox-csi</code></td>
-<td><code>csi.proxmox.sinextra.dev</code></td>
-<td>Landed</td>
+<td>Value is set (non-empty)</td>
+<td><code>[✓] set</code></td>
 </tr>
 <tr>
-<td><code>aws-ebs</code></td>
-<td><code>ebs.csi.aws.com</code></td>
-<td>Landed</td>
-</tr>
-<tr>
-<td><code>azure-disk</code></td>
-<td><code>disk.csi.azure.com</code></td>
-<td>Landed</td>
-</tr>
-<tr>
-<td><code>gcp-pd</code></td>
-<td><code>pd.csi.storage.gke.io</code></td>
-<td>Landed</td>
-</tr>
-<tr>
-<td><code>hcloud-volumes</code></td>
-<td><code>csi.hetzner.cloud</code></td>
-<td>In flight (Agent B)</td>
-</tr>
-<tr>
-<td><code>do-block-storage</code></td>
-<td><code>dobs.csi.digitalocean.com</code></td>
-<td>In flight (Agent B)</td>
-</tr>
-<tr>
-<td><code>linode-block-storage</code></td>
-<td><code>linodebs.csi.linode.com</code></td>
-<td>In flight (Agent B)</td>
-</tr>
-<tr>
-<td><code>oci-block-storage</code></td>
-<td><code>blockvolume.csi.oraclecloud.com</code></td>
-<td>In flight (Agent B)</td>
-</tr>
-<tr>
-<td><code>ibm-vpc-block</code></td>
-<td><code>vpc.block.csi.ibm.io</code></td>
-<td>In flight (Agent B)</td>
-</tr>
-<tr>
-<td><code>openstack-cinder</code></td>
-<td><code>cinder.csi.openstack.org</code></td>
-<td>In flight (Agent B)</td>
-</tr>
-<tr>
-<td><code>vsphere-csi</code></td>
-<td><code>csi.vsphere.volume</code></td>
-<td>In flight (Agent B)</td>
-</tr>
-<tr>
-<td><code>longhorn</code></td>
-<td><code>driver.longhorn.io</code></td>
-<td>In flight (Agent B)</td>
-</tr>
-<tr>
-<td><code>rook-ceph</code></td>
-<td><code>rook-ceph.rbd.csi.ceph.com</code></td>
-<td>In flight (Agent B)</td>
-</tr>
-<tr>
-<td><code>openebs</code></td>
-<td><code>openebs.io/local</code></td>
-<td>In flight (Agent B)</td>
+<td>Value is not set (empty)</td>
+<td><code>[ ] not set</code></td>
 </tr>
 </tbody>
 </table>
+<p>These strings are literal. Implementations must not substitute synonyms,
+abbreviations, or alternative glyphs.</p>
+<p>When a secret field <strong>is focused</strong> (the user is actively typing), the input
+must use <code>textinput.EchoPassword</code> so characters are masked during entry.</p>
+<h3 id="3-editing-contract-mandatory-echopassword">3. Editing contract — mandatory <code>EchoPassword</code><a class="headerlink" href="#3-editing-contract-mandatory-echopassword" title="Permanent link">&para;</a></h3>
+<p>Every text-input widget bound to a secret field must have:</p>
+<div class="highlight"><pre><span></span><code><span class="nx">ti</span><span class="p">.</span><span class="nx">EchoMode</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">textinput</span><span class="p">.</span><span class="nx">EchoPassword</span>
+<span class="nx">ti</span><span class="p">.</span><span class="nx">EchoCharacter</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="sc">&#39;·&#39;</span>
+</code></pre></div>
+<p>set before the first call to <code>ti.View()</code>. Setting <code>EchoMode</code> after <code>SetValue</code>
+is correct — the focused render path will mask the value. The unfocused
+render path must <strong>not</strong> call <code>ti.Value()</code> for secret fields; it must emit
+the insertion-status indicator instead.</p>
+<h3 id="4-logging-contract-explicit-ban">4. Logging contract — explicit ban<a class="headerlink" href="#4-logging-contract-explicit-ban" title="Permanent link">&para;</a></h3>
+<p>The following must never appear in code that handles a secret field:</p>
+<ul>
+<li><code>fmt.Printf</code> / <code>fmt.Fprintf</code> / <code>fmt.Sprintf</code> of a secret value</li>
+<li><code>tea.Println</code> of a secret value</li>
+<li><code>log.*</code> / <code>slog.*</code> of a secret value</li>
+<li><code>logx.Log</code> / <code>logx.Warn</code> / <code>logx.Die</code> of a secret value</li>
+</ul>
+<p>Error messages that reference a secret field must identify the field
+<strong>by name</strong> (e.g. <code>"AdminToken is required"</code>), never by value.</p>
+<h3 id="5-secret-field-registry">5. Secret field registry<a class="headerlink" href="#5-secret-field-registry" title="Permanent link">&para;</a></h3>
+<p>The following <code>config.Config</code> struct fields are classified as secrets and
+are subject to all four rules above:</p>
+<table>
+<thead>
+<tr>
+<th>Field path</th>
+<th>Config struct field</th>
+<th>Env var</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Providers.Proxmox.AdminToken</code></td>
+<td><code>ProxmoxConfig.AdminToken</code></td>
+<td><code>PROXMOX_ADMIN_TOKEN</code></td>
+</tr>
+<tr>
+<td><code>Providers.Proxmox.CAPIToken</code></td>
+<td><code>ProxmoxConfig.CAPIToken</code></td>
+<td><code>PROXMOX_TOKEN</code></td>
+</tr>
+<tr>
+<td><code>Providers.Proxmox.CAPISecret</code></td>
+<td><code>ProxmoxConfig.CAPISecret</code></td>
+<td><code>PROXMOX_SECRET</code></td>
+</tr>
+<tr>
+<td><code>Providers.Proxmox.CSITokenID</code></td>
+<td><code>ProxmoxConfig.CSITokenID</code></td>
+<td><code>PROXMOX_CSI_TOKEN_ID</code></td>
+</tr>
+<tr>
+<td><code>Providers.Proxmox.CSITokenSecret</code></td>
+<td><code>ProxmoxConfig.CSITokenSecret</code></td>
+<td><code>PROXMOX_CSI_TOKEN_SECRET</code></td>
+</tr>
+<tr>
+<td><code>Providers.Vsphere.Password</code></td>
+<td><code>VsphereConfig.Password</code></td>
+<td><code>VSPHERE_PASSWORD</code></td>
+</tr>
+<tr>
+<td><code>Providers.Hetzner.Token</code></td>
+<td><code>HetznerConfig.Token</code></td>
+<td><code>HCLOUD_TOKEN</code></td>
+</tr>
+<tr>
+<td><code>Cost.Credentials.AWSSecretAccessKey</code></td>
+<td><code>CostCredentials.AWSSecretAccessKey</code></td>
+<td>(no ambient fallback)</td>
+</tr>
+<tr>
+<td><code>Cost.Credentials.GCPAPIKey</code></td>
+<td><code>CostCredentials.GCPAPIKey</code></td>
+<td><code>YAGE_GCP_API_KEY</code></td>
+</tr>
+<tr>
+<td><code>Cost.Credentials.HetznerToken</code></td>
+<td><code>CostCredentials.HetznerToken</code></td>
+<td><code>YAGE_HCLOUD_TOKEN</code></td>
+</tr>
+<tr>
+<td><code>Cost.Credentials.DigitalOceanToken</code></td>
+<td><code>CostCredentials.DigitalOceanToken</code></td>
+<td><code>YAGE_DO_TOKEN</code></td>
+</tr>
+<tr>
+<td><code>Cost.Credentials.LinodeToken</code></td>
+<td><code>CostCredentials.LinodeToken</code></td>
+<td><code>YAGE_LINODE_TOKEN</code></td>
+</tr>
+<tr>
+<td><code>Cost.Credentials.IBMCloudAPIKey</code></td>
+<td><code>CostCredentials.IBMCloudAPIKey</code></td>
+<td><code>YAGE_IBMCLOUD_API_KEY</code></td>
+</tr>
+<tr>
+<td><code>IssuingCARootCert</code></td>
+<td><code>Config.IssuingCARootCert</code></td>
+<td><code>YAGE_ISSUING_CA_ROOT_CERT</code></td>
+</tr>
+<tr>
+<td><code>IssuingCARootKey</code></td>
+<td><code>Config.IssuingCARootKey</code></td>
+<td><code>YAGE_ISSUING_CA_ROOT_KEY</code></td>
+</tr>
+<tr>
+<td><code>BootstrapKindBackupPassphrase</code></td>
+<td><code>Config.BootstrapKindBackupPassphrase</code></td>
+<td><code>BOOTSTRAP_KIND_BACKUP_PASSPHRASE</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>AWSAccessKeyID</code> (a non-secret identifier) and <code>Vsphere.Username</code> (a
+non-secret login name) are <strong>not</strong> classified as secrets and do not require
+masking.</p>
+<p><code>IssuingCARootCert</code> is classified as a secret because it contains PEM
+private-key material when the operator supplies the root CA certificate
+together with its key. The cert itself is public, but given the field
+co-locates with <code>IssuingCARootKey</code> in the TUI and both arrive as multi-line
+PEM blobs, treating the cert field as secret too avoids accidental display
+of the adjacent key.</p>
+<h3 id="6-scope">6. Scope<a class="headerlink" href="#6-scope" title="Permanent link">&para;</a></h3>
+<p>This policy applies to:</p>
+<ul>
+<li>All tabs and panels in <code>internal/ui/xapiri/</code> (provision tab, costs tab,
+  token re-prompt overlay, any future panel).</li>
+<li>All future xapiri features.</li>
+<li>Any future yage TUI surfaces outside xapiri.</li>
+</ul>
+<p>It does <strong>not</strong> apply to non-interactive outputs (dry-run plan, <code>--help</code>,
+log lines, Kubernetes Secret objects) — those are governed separately by
+<code>CODING_STANDARDS.md §Security</code> and kindsync's snapshot exclusion rules.</p>
+<hr />
 <h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
-<p><strong>Good:</strong>
-- Multi-driver installations are first-class.
-- Provider-agnostic drivers (Longhorn, Rook-Ceph, OpenEBS) work on
-  any provider.
-- Each driver ships its own Helm values; no central Helm-values file
-  grows unboundedly.
-- <code>DescribeInstall</code> integrates cleanly with the plan-output system
-  from Phase B (same <code>plan.Writer</code>).</p>
-<p><strong>Trade-offs:</strong>
-- <code>cfg.CSI.Drivers</code> is a new config surface users must understand when
-  overriding defaults.
-- Orchestrator must wire <code>csi.Get(name)</code> instead of calling
-  <code>provider.EnsureCSISecret</code>. The wiring is in Agent D1's scope
-  (§24.2); until it lands, the legacy path still runs.</p>
-<h2 id="no-backward-compatibility">No backward compatibility<a class="headerlink" href="#no-backward-compatibility" title="Permanent link">&para;</a></h2>
-<p>No legacy CSI paths (<code>capi/csi.ApplyConfigSecretToWorkload</code>,
-<code>Provider.EnsureCSISecret</code>) will be preserved once Agent D1 integrates.
-Delete them on merge.</p>
+<h3 id="positive">Positive<a class="headerlink" href="#positive" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Secret values can never leak through the terminal even if the operator
+  shares a screen recording or screenshot.</li>
+<li>The insertion-status indicator is sufficient for the operator to confirm
+  that a credential has been entered without revealing the value.</li>
+<li>A consistent visual language (<code>[✓] set</code> / <code>[ ] not set</code>) applies uniformly
+  across all secret fields.</li>
+</ul>
+<h3 id="negative">Negative<a class="headerlink" href="#negative" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The unfocused <code>renderField</code> path must branch on whether a field is a
+  secret. This couples the renderer to the field classification table.
+  Mitigation: add a <code>secret bool</code> attribute to the <code>dashFieldMeta</code> struct
+  so the renderer stays data-driven.</li>
+</ul>
+<h3 id="risks">Risks<a class="headerlink" href="#risks" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Future field additions.</strong> A new config field that carries a secret value
+  but is not added to the registry here will not benefit from the protection
+  until a PR explicitly updates both the field and this ADR. Mitigation:
+  architecture review of any new <code>cfg.*</code> field that holds a token, key, or
+  password must verify whether it belongs in §5 and, if so, update this
+  document before landing the feature.</li>
+</ul>
+<hr />
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<ul>
+<li>yage issue #172 — <code>ui: mask all secret fields in xapiri (security)</code></li>
+<li>yage PR #161 (<code>d6e7d0a</code>) — introduced <code>tiProxmoxAdminToken</code> with partial protection</li>
+<li><code>internal/ui/xapiri/dashboard.go</code> — <code>renderField</code> (line 3707), <code>tiProxmoxAdminToken</code> init (line 759), <code>tiIssuingCACert</code>/<code>tiIssuingCAKey</code> init (lines 828–829)</li>
+<li><code>internal/config/config.go</code> — <code>ProxmoxConfig</code>, <code>VsphereConfig</code>, <code>HetznerConfig</code>, <code>CostCredentials</code>, <code>Config.IssuingCARootCert/Key</code>, <code>Config.BootstrapKindBackupPassphrase</code></li>
+<li><code>CODING_STANDARDS.md §Security</code> — secret handling at the shell and config layers</li>
+</ul>
 
 
 
