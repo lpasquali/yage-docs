@@ -62,6 +62,7 @@ nav:
           - "Abstraction Plan (Phase C/E/B/A/D)": architecture/adrs/abstraction-plan.md
           - "0013 TUI Secret-Display Policy": architecture/adrs/0013-tui-secret-display-policy.md
           - "0014 xapiri dashboard.go Split": architecture/adrs/0014-xapiri-dashboard-split.md
+          - "0015 Test Coverage Strategy": architecture/adrs/0015-test-coverage-strategy.md
   - Operations:
       - Capacity Preflight: operations/capacity-preflight.md
       - Cost and Pricing: operations/cost-and-pricing.md
