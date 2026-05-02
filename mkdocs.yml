@@ -60,6 +60,7 @@ nav:
       - Architectures: architecture/architectures.md
       - ADRs:
           - "Abstraction Plan (Phase C/E/B/A/D)": architecture/adrs/abstraction-plan.md
+          - "0013 TUI Secret-Display Policy": architecture/adrs/0013-tui-secret-display-policy.md
   - Operations:
       - Capacity Preflight: operations/capacity-preflight.md
       - Cost and Pricing: operations/cost-and-pricing.md
