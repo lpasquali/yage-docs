@@ -458,6 +458,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#2026-05-03-po-session-11-2-of-4-prs-merged-yage-manifests-10-blocked-on-lint-regex" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2026-05-03 — PO session 11: 2 of 4 PRs merged; yage-manifests #10 blocked on lint regex
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#2026-05-03-po-session-10-adr-0016-user-decisions-3-fresh-issues-opened-196-197-198" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1512,6 +1523,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#2026-05-03-po-session-11-2-of-4-prs-merged-yage-manifests-10-blocked-on-lint-regex" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2026-05-03 — PO session 11: 2 of 4 PRs merged; yage-manifests #10 blocked on lint regex
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#2026-05-03-po-session-10-adr-0016-user-decisions-3-fresh-issues-opened-196-197-198" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1689,10 +1711,10 @@
 
 <h1 id="current_state">CURRENT_STATE<a class="headerlink" href="#current_state" title="Permanent link">&para;</a></h1>
 <h2 id="living-memory">Living Memory<a class="headerlink" href="#living-memory" title="Permanent link">&para;</a></h2>
-<p>yage is in active development. The core bootstrap pipeline is functional for Proxmox. The xapiri TUI is being built out as the primary configuration interface. The provider abstraction plan is fully complete: phases A, B, C, D, and E are all done. Legacy cleanup is complete per ADR 0002. ADR 0007: dashboard is the new default xapiri entry point. CSI driver registry (ADR 0001) complete — all 10 drivers merged. <strong>ADR 0011 (pivot state migration) fully implemented</strong> (PR #166). <strong>Phase H wiring complete on yage side</strong>: EnsureIssuingCA (#163), EnsureRepoSync (#164), EnsureManagementInstall (#160), JobRunner k8s backend (#162), EnsureRegistry (#177). <strong>yage-manifests migration chain (ADR 0008) substantially complete</strong>: Fetcher (#167 / #136), helmvalues (#184 / #137), caaph (#178 / #140), postsync (#192 / #139), CSI Render (#193 / #141). <strong>Only #138 (wlargocd) and #142 (retire packages) remain in the chain.</strong> Phase H epic #120 closed in spirit by #125. Open follow-up: <strong>#168</strong> (migrate inline crypto/x509 in EnsureIssuingCA to JobRunner.Output of yage-tofu/issuing-ca/). <strong>Cross-repo runtime gap discovered (2026-05-03)</strong>: yage default <code>ManifestsRef=v0.2.0</code> ships addons templates only; CSI driver dirs at <code>v0.2.0</code> contain README.md only — runtime CSI deploys would fail until yage-manifests cuts a release with <code>csi/&lt;driver&gt;/values.yaml.tmpl</code> files. yage-manifests PRs #7 and #9 (duplicates of each other) on the <code>init</code> branch hold this content; one must be merged then a <code>v0.3.0</code> tag cut and yage default bumped.</p>
+<p>yage is in active development. The core bootstrap pipeline is functional for Proxmox. The xapiri TUI is being built out as the primary configuration interface. The provider abstraction plan is fully complete: phases A, B, C, D, and E are all done. Legacy cleanup is complete per ADR 0002. ADR 0007: dashboard is the new default xapiri entry point. CSI driver registry (ADR 0001) complete — all 10 drivers merged. <strong>ADR 0011 (pivot state migration) fully implemented</strong> (PR #166). <strong>Phase H wiring complete on yage side</strong>: EnsureIssuingCA (#163), EnsureRepoSync (#164), EnsureManagementInstall (#160), JobRunner k8s backend (#162), EnsureRegistry (#177), and as of session 11 EnsureIssuingCA Go-side migrated to <code>JobRunner</code> against yage-tofu/issuing-ca/ (PR #195 closed #168). <strong>yage-manifests migration chain (ADR 0008)</strong>: Fetcher (#167 / #136), helmvalues (#184 / #137), caaph (#178 / #140), postsync (#192 / #139), CSI Render (#193 / #141) all merged; <strong>#138 (wlargocd) staged in yage PR #199 + yage-manifests PR #10 — both held this session</strong>. yage-manifests <strong>v0.3.0</strong> is tagged and ships CSI templates; <strong>v0.4.0</strong> (wlargocd templates) blocked on yage-manifests PR #10 lint failure (<code>RuneGate/Quality/Templates</code> rejects multiline <code>{{- /* */ -}}</code> comments). yage default <code>ManifestsRef</code> is still <code>v0.2.0</code> at HEAD <code>afa05ab</code> — bump to v0.3.0 (or v0.4.0 once available) tracked as #194.</p>
 <h2 id="freshness-policy">Freshness Policy<a class="headerlink" href="#freshness-policy" title="Permanent link">&para;</a></h2>
 <p>This file must be updated whenever system state evolves (per CODING_STANDARDS.md "Atomic Persistence"). If information here conflicts with what you observe in the code or git history, trust what you observe now — then update this file to match reality.</p>
-<p>Last updated: <strong>2026-05-03</strong> — PO session 10: ADR 0016 user decisions recorded (Fetcher, custom-tf out-of-scope + bug filed, #191 umbrella). Three new issues opened in lpasquali/yage: <strong>#196</strong> (bug — timeframe stepping broken at runtime), <strong>#197</strong> (feat — pricing.Fetcher interface; gates ADR 0016 harness; yage-backend), <strong>#198</strong> (question — tab-cycle binding Ctrl+Arrow vs Ctrl+Alt+Arrow).</p>
+<p>Last updated: <strong>2026-05-03</strong> — PO session 11: merged yage <strong>#195</strong> (EnsureIssuingCA → JobRunner, closes #168) and yage-docs <strong>#20</strong> (ADR 0016 + session 10 record). yage-manifests <strong>#10</strong> (wlargocd templates) <strong>BLOCKED</strong> on <code>RuneGate/Quality/Templates</code> lint regex rejecting multiline <code>{{- /* ... */ -}}</code> comments — yage <strong>#199</strong> (wlargocd consumer) held until #10 lands. <strong>v0.4.0 NOT cut.</strong> PE handoff issued for the lint-fix.</p>
 <p>Session 9 (earlier today): 0 open PRs in <code>lpasquali/yage</code>. Sessions 8 staleness reconciled: 15 PRs (#170, #173, #176, #177, #178, #180, #182, #183, #184, #185, #187, #188, #190, #192, #193) and 16 issues (#119, #125, #136, #137, #139, #140, #141, #167 noted, #169, #171, #172, #174, #175, #179, #181, #186) closed since session 8. Three handoffs dispatched: <strong>yage-backend</strong> on #138 (wlargocd → templates) and #168 (EnsureIssuingCA migration); <strong>yage-platform-engineer</strong> on cross-repo CSI templates gap (yage-manifests PRs #7/#9 dedup + cut v0.3.0 + bump yage default).</p>
 <h2 id="version-baseline">Version Baseline<a class="headerlink" href="#version-baseline" title="Permanent link">&para;</a></h2>
 <table>
@@ -1708,13 +1730,13 @@
 <tr>
 <td>yage</td>
 <td><code>main</code></td>
-<td>#193 (CSI Render → templates, <code>8510836</code>), #192 (postsync templates, <code>353e1ce</code>), #190 (mask cost-tab/token secrets, <code>b0ed230</code>), #188 (Deploy fix, <code>83a13a7</code>), #187 (ManifestsRef → v0.2.0, <code>6aeb498</code>), #185 (dashboard split, <code>d3f19e4</code>), #184 (helmvalues + caaph converge, <code>d97fb77</code>), #183 (Linode PlanDescriber, <code>f410d76</code>), #182 (CI go test, <code>cb398c4</code>), #180 (post-pivot phase-order test, <code>9f4273e</code>), #178 (caaph templates, <code>f5ae1cd</code>), #177 (EnsureRegistry, <code>f895c7b</code>), #176 (UI nav fix, <code>26729f9</code>), #173 (mask secrets, <code>7cbe73c</code>), #170 (wrapper structs, <code>ff9c766</code>), #167 (Fetcher, <code>ca3562f</code>), #166 (label-based handoff, <code>bb60c79</code>)</td>
-<td><strong>0 open PRs</strong>; #138 + #168 dispatched fresh this session</td>
+<td><strong>#195</strong> (EnsureIssuingCA → JobRunner, <code>afa05ab</code>), #193 (CSI Render → templates, <code>8510836</code>), #192 (postsync templates, <code>353e1ce</code>), #190 (mask cost-tab/token secrets, <code>b0ed230</code>), #188 (Deploy fix, <code>83a13a7</code>), #187 (ManifestsRef → v0.2.0, <code>6aeb498</code>), #185, #184, #183, #182, #180, #178, #177, #176, #173, #170, #167, #166</td>
+<td><strong>1 open PR</strong> (#199, held on yage-manifests #10)</td>
 </tr>
 <tr>
 <td>yage-docs</td>
 <td><code>main</code></td>
-<td>PR #13 (Phase H runbook), PR #12 (ADR 0009 E1), PR #11 (ADR 0012)</td>
+<td><strong>PR #20</strong> (ADR 0016 + PO session 10, <code>dea8c84</code>), PR #19 (ADR 0015), PR #13 (Phase H runbook), PR #12 (ADR 0009 E1), PR #11 (ADR 0012)</td>
 <td>0 open PRs</td>
 </tr>
 <tr>
@@ -1725,13 +1747,73 @@
 </tr>
 <tr>
 <td>yage-manifests</td>
-<td><code>init</code> (default) + tag <code>v0.2.0</code></td>
-<td>PR #4 (addons templates → v0.2.0 cut); <strong>PRs #7 + #9 OPEN — duplicates</strong> carrying CSI <code>values.yaml.tmpl</code> files for all 14 drivers</td>
-<td><strong>Runtime gap</strong>: <code>v0.2.0</code> lacks CSI templates → CSI deploys would fail; PE handoff issued</td>
+<td><code>init</code> (default) + tag <code>v0.3.0</code></td>
+<td>PR #4 (addons templates → v0.2.0); CSI templates → v0.3.0 cut; <strong>PR #10 OPEN — wlargocd <code>application.yaml.tmpl</code> for 14 add-ons, BLOCKED on <code>RuneGate/Quality/Templates</code> lint</strong></td>
+<td><strong>v0.4.0 not cut</strong>; PE handoff issued for the lint regex</td>
 </tr>
 </tbody>
 </table>
 <h2 id="recent-changes">Recent Changes<a class="headerlink" href="#recent-changes" title="Permanent link">&para;</a></h2>
+<h3 id="2026-05-03-po-session-11-2-of-4-prs-merged-yage-manifests-10-blocked-on-lint-regex">2026-05-03 — PO session 11: 2 of 4 PRs merged; yage-manifests #10 blocked on lint regex<a class="headerlink" href="#2026-05-03-po-session-11-2-of-4-prs-merged-yage-manifests-10-blocked-on-lint-regex" title="Permanent link">&para;</a></h3>
+<p><strong>Merge events this session:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Repo</th>
+<th>PR</th>
+<th>Title</th>
+<th>Merge sha</th>
+<th>Closed issues</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>yage</td>
+<td><strong>#195</strong></td>
+<td>feat(opentofux): EnsureIssuingCA — JobRunner against yage-tofu/issuing-ca/</td>
+<td><code>afa05ab</code></td>
+<td><strong>#168</strong></td>
+</tr>
+<tr>
+<td>yage-docs</td>
+<td><strong>#20</strong></td>
+<td>docs(adr): ADR 0016 — xapiri UI simulation harness contract (+ PO session 10 record)</td>
+<td><code>dea8c84</code></td>
+<td>(none — docs-only)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>PRs NOT merged (blocked):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Repo</th>
+<th>PR</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>yage-manifests</td>
+<td><strong>#10</strong></td>
+<td><code>RuneGate/Quality/Templates</code> fails — CI grep <code>{{[^}]*$</code> flags every multiline <code>{{- /* ... */ -}}</code> comment header in the 14 addon templates. Real lint failure (whether the regex is too strict or templates need single-line comments is an implementation call). Per workflow safety rules, STOPPED — no fix attempted by PO. See run https://github.com/lpasquali/yage-manifests/actions/runs/25272223243/job/74096414179.</td>
+</tr>
+<tr>
+<td>yage</td>
+<td><strong>#199</strong></td>
+<td>Logically gated on #10 + v0.4.0 tag (the migrated wlargocd code consumes templates that must exist at the default <code>ManifestsRef</code>). Branch is up to date with main and CI is green; held until #10 lands and yage-manifests v0.4.0 is cut.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>v0.4.0 tag NOT cut</strong> — gated on #10 merge.</p>
+<p><strong>yage #194 (<code>chore(config): bump default ManifestsRef</code>)</strong> — left targeting <strong>v0.3.0</strong> as originally filed (v0.4.0 does not exist yet). Added a PO note comment explaining the v0.4.0 sequencing question for the implementer to resolve.</p>
+<p><strong>Cross-repo ordering constraint for the next session.</strong> Before merging yage #199 in any future session, <strong>yage-manifests #10 must land AND v0.4.0 must be tagged AND yage default <code>ManifestsRef</code> must be bumped to v0.4.0</strong>. Otherwise wlargocd in yage <code>main</code> will break at runtime against the operator-default ref. This is the same trap that #194/#187/v0.2.0 fell into for CSI templates.</p>
+<p><strong>Issues auto-closed this session:</strong></p>
+<ul>
+<li>yage <strong>#168</strong> — closed by PR #195.</li>
+</ul>
+<p><strong>Active Work table updates:</strong> removed the <code>feat/168-issuing-ca-jobrunner</code> and <code>docs/0016-ui-sim-harness</code> rows (merged); added the yage-manifests #10 lint-fix row (PE lane); kept #199 row as "held pending #10".</p>
+<hr />
 <h3 id="2026-05-03-po-session-10-adr-0016-user-decisions-3-fresh-issues-opened-196-197-198">2026-05-03 — PO session 10: ADR 0016 user decisions; 3 fresh issues opened (#196, #197, #198)<a class="headerlink" href="#2026-05-03-po-session-10-adr-0016-user-decisions-3-fresh-issues-opened-196-197-198" title="Permanent link">&para;</a></h3>
 <p><strong>User decisions on ADR 0016 open questions</strong> (see "Architect handoff: ADR 0016" entry below — Q1/Q2/Q3 now resolved inline):</p>
 <ol>
@@ -2153,32 +2235,32 @@ yage-tofu top-level has only <code>aws/</code>, <code>azure/</code>, <code>gcp/<
 </thead>
 <tbody>
 <tr>
-<td>#138</td>
-<td><code>feat/138-wlargocd-templates</code> (yage)</td>
-<td><strong>yage-backend</strong></td>
-<td>migrate <code>internal/capi/wlargocd/render.go</code> (409 lines: <code>HelmGit</code>, <code>HelmRegistry</code>, PostSync <code>sources:</code> variants) to <code>addons/argocd/*.yaml.tmpl</code> in yage-manifests. Pattern: PR #184 (helmvalues) + PR #178 (caaph). May need <code>template.FuncMap</code> for <code>shellQuoteEscape</code>. Closes #138; unblocks #142.</td>
-<td><strong>Dispatched</strong> — p2</td>
+<td>yage #199 + yage-manifests #10</td>
+<td><code>feat/138-wlargocd-templates</code> (both repos)</td>
+<td><strong>yage-backend</strong> (consumer side) / <strong>yage-platform-engineer</strong> (lint-fix side)</td>
+<td>yage #199 (<code>afa05ab</code> parent) consumes addon templates added in yage-manifests #10. yage #199 is <strong>CI-green and held</strong>; yage-manifests #10 is <strong>CI-blocked</strong> on <code>RuneGate/Quality/Templates</code> rejecting multiline <code>{{- /* ... */ -}}</code> template comments. Lint-fix dispatched as new PE task (see below). Closes #138; unblocks #142.</td>
+<td><strong>Held</strong> — p2; #199 cannot merge until #10 + v0.4.0 land</td>
 </tr>
 <tr>
-<td>#168</td>
-<td><code>feat/168-issuing-ca-jobrunner</code> (yage)</td>
-<td><strong>yage-backend</strong></td>
-<td>replace inline <code>crypto/x509</code> in <code>internal/platform/opentofux/issuing_ca.go</code> with <code>JobRunner</code> against yage-tofu <code>issuing-ca/</code> module (now on main). Read <code>intermediate_cert_pem</code> / <code>intermediate_key_pem</code> / <code>ca_chain_pem</code> via <code>JobRunner.Output</code>. Plan + acceptance criteria in issue body.</td>
-<td><strong>Dispatched</strong> — p3</td>
-</tr>
-<tr>
-<td>yage-manifests PR #7, #9 + retag</td>
-<td><code>feat/141-csi-templates</code> + <code>feat/141-csi-values-templates</code> (yage-manifests)</td>
+<td>(new — no issue#)</td>
+<td><code>chore/manifests-template-lint-fix</code> (yage-manifests)</td>
 <td><strong>yage-platform-engineer</strong></td>
-<td>(a) pick PR #9 as canonical (CI green), close #7 as duplicate; (b) merge to <code>init</code>; (c) cut tag <code>v0.3.0</code>; (d) open yage follow-up to bump default <code>ManifestsRef v0.2.0 → v0.3.0</code>. Closes runtime CSI gap.</td>
-<td><strong>Dispatched</strong> — p1 (operator-blocking)</td>
+<td>yage-manifests <code>RuneGate/Quality/Templates</code> step uses <code>! grep -rn '{{[^}]*$' --include='*.yaml.tmpl' .</code> which flags every multiline <code>{{- /* ... */ -}}</code> comment header. Choose: (a) relax the regex to allow <code>{{</code> followed by <code>/*</code> or <code>-</code> line-continuation, OR (b) collapse the 14 addon template comment headers to a single line. (a) is preferred — it's a CI-only change and doesn't touch templates that already work. After fix, retrigger CI on PR #10, merge, then cut <code>v0.4.0</code> annotated tag listing the 14 addon templates added.</td>
+<td><strong>Ready to dispatch</strong> — p1 (gates yage #199, #194 v0.4.0 path, and #142 retirement)</td>
+</tr>
+<tr>
+<td>#194</td>
+<td>TBD</td>
+<td><strong>yage-backend</strong></td>
+<td>bump default <code>ManifestsRef</code> from <code>v0.2.0</code> → <strong>v0.3.0</strong> in <code>internal/config/config.go</code> (CSI templates already shipped at v0.3.0). Implementer should consider whether to chain a follow-up bump to v0.4.0 once yage-manifests #10 lands and v0.4.0 is cut, OR hold this issue and bump straight to v0.4.0. PO note added to issue 2026-05-03.</td>
+<td><strong>Ready to dispatch</strong> — p1 (gated unblocked at v0.3.0; v0.4.0 path blocked on yage-manifests #10)</td>
 </tr>
 <tr>
 <td>#142</td>
 <td>TBD</td>
 <td><strong>yage-backend</strong></td>
 <td>retire <code>internal/capi/helmvalues/</code>, <code>wlargocd/</code>, <code>postsync/</code> packages once callers migrated.</td>
-<td><strong>Queued</strong> — gated on #138</td>
+<td><strong>Queued</strong> — gated on yage #199 merge (which is gated on yage-manifests #10)</td>
 </tr>
 <tr>
 <td>#196</td>
@@ -2220,17 +2302,18 @@ yage-tofu top-level has only <code>aws/</code>, <code>azure/</code>, <code>gcp/<
 <hr />
 <h2 id="halt-records">HALT Records<a class="headerlink" href="#halt-records" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>No active HALTs.</strong> All session-8 backend HALTs are cleared by their merged PRs (#148 → PR #166; #125 → PR #177; #136 → PR #167).</li>
-<li><strong>#138</strong> and <strong>#168</strong> were dispatched without an Execute halt because each has a complete plan in its issue body and follows established migration patterns from already-merged PRs (#184 / #178 for #138; the EnsureIssuingCA Step 2/3 contract is unchanged for #168). The receiving agent should still pause at SOP Step 4 (Halt) for any deviation from the issue plan.</li>
-<li><strong>yage-manifests PR #7/#9 dedup + retag</strong> was dispatched to platform-engineer with the explicit instruction to halt before destroying PR #7 and confirm with user that #9 is the chosen canonical.</li>
+<li><strong>No active HALTs.</strong> All session-8 backend HALTs are cleared by their merged PRs (#148 → PR #166; #125 → PR #177; #136 → PR #167). Session-9 dispatches landed: #168 → PR #195 (merged session 11, sha <code>afa05ab</code>); CSI gap → resolved by yage-manifests v0.3.0 cut.</li>
+<li><strong>Session 11 STOP</strong>: yage-manifests PR #10 was NOT merged — <code>RuneGate/Quality/Templates</code> lint failure (multiline <code>{{- /* */ -}}</code> template comment headers tripping a too-strict grep regex). Per workflow safety rules, no fix attempted by PO; PE handoff issued.</li>
+<li><strong>Session 11 HOLD</strong>: yage PR #199 not merged despite green CI, to preserve the cross-repo invariant that the wlargocd consumer cannot land in main while the templates it consumes are absent at the operator-default <code>ManifestsRef</code>.</li>
 </ul>
 <h2 id="critical-path-in-order">Critical Path (in order)<a class="headerlink" href="#critical-path-in-order" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>yage-platform-engineer</strong>: dedup yage-manifests PRs #7/#9, merge canonical, cut <code>v0.3.0</code>. <strong>p1 operator gap</strong> — runtime CSI deploys don't work until this lands.</li>
-<li><strong>yage-backend → #138</strong>: complete the ADR 0008 migration chain.</li>
-<li><strong>yage-backend → #168</strong>: clean up the EnsureIssuingCA stopgap; brings the Phase H Go-side fully aligned with ADR 0009 §3.</li>
-<li><strong>yage-backend → #142</strong>: retire packages once #138 lands.</li>
-<li>After (1) lands: bump yage default <code>ManifestsRef</code> to <code>v0.3.0</code> (small follow-up issue PE will open).</li>
+<li><strong>yage-platform-engineer</strong>: fix yage-manifests <code>RuneGate/Quality/Templates</code> lint regex (or collapse template comment headers); merge yage-manifests #10; cut <code>v0.4.0</code>. <strong>p1 — gates the wlargocd consumer (yage #199) and the operator-default ref bump path.</strong></li>
+<li><strong>yage-backend → yage #199</strong>: merge once #10 + v0.4.0 land. Closes #138; unblocks #142.</li>
+<li><strong>yage-backend → #194</strong>: bump default <code>ManifestsRef</code> (v0.3.0 immediately, or hold for v0.4.0 once available — see PO note on issue).</li>
+<li><strong>yage-backend → #197</strong>: pricing.Fetcher interface — gates the ADR 0016 frontend harness stack (#191 children).</li>
+<li><strong>yage-backend → #142</strong>: retire helmvalues/wlargocd/postsync packages once yage #199 lands.</li>
+<li><strong>yage-frontend → #196</strong>: timeframe stepping bug fix (independent of above).</li>
 </ol>
 <hr />
 <h2 id="known-issues">Known Issues<a class="headerlink" href="#known-issues" title="Permanent link">&para;</a></h2>
