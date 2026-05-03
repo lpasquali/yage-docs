@@ -2,24 +2,132 @@
 
 ## Living Memory
 
-yage is in active development. The core bootstrap pipeline is functional for Proxmox. The xapiri TUI is being built out as the primary configuration interface. The provider abstraction plan is fully complete: phases A, B, C, D, and E are all done. Legacy cleanup is complete per ADR 0002. ADR 0007: dashboard is the new default xapiri entry point. CSI driver registry (ADR 0001) complete — all 10 drivers merged. **ADR 0011 (pivot state migration) is fully implemented** — yage PR #166 (`bb60c79`) merged today closes #148. Phase H (on-prem platform services via OpenTofu) orchestrator wiring is complete on the yage side (EnsureIssuingCA #163, EnsureRepoSync #164, EnsureManagementInstall #160, JobRunner k8s backend #162); only #125 (registry VM orchestrator wiring) remains, HELD pending architect review of the cross-repo modules. **Cross-repo gap is closing, not closed**: yage-tofu PR #6 (`registry/`, closes yage-tofu#5) and PR #7 (`issuing-ca/`, closes yage-tofu#4) are now open and need architect review (5 decisions + 2 contradictions flagged in PR bodies). yage-side wiring stays dormant (`ErrNotApplicable`-guarded) until they merge. ADR 0012 — yage-manifests template layout addendum to ADR 0008 — **merged** as yage-docs PR #11 (`1cdf251`); pins the `missingkey=error` policy + wrapper-struct contract that #136 needs. ADR 0009 erratum E1 (kubernetes backend supersedes local tofu state) **merged** as yage-docs PR #12 (`20cb4b9`). Phase H bootstrap runbook **merged** as yage-docs PR #13 (`c1930af`).
+yage is in active development. The core bootstrap pipeline is functional for Proxmox. The xapiri TUI is being built out as the primary configuration interface. The provider abstraction plan is fully complete: phases A, B, C, D, and E are all done. Legacy cleanup is complete per ADR 0002. ADR 0007: dashboard is the new default xapiri entry point. CSI driver registry (ADR 0001) complete — all 10 drivers merged. **ADR 0011 (pivot state migration) fully implemented** (PR #166). **Phase H wiring complete on yage side**: EnsureIssuingCA (#163), EnsureRepoSync (#164), EnsureManagementInstall (#160), JobRunner k8s backend (#162), EnsureRegistry (#177). **yage-manifests migration chain (ADR 0008) substantially complete**: Fetcher (#167 / #136), helmvalues (#184 / #137), caaph (#178 / #140), postsync (#192 / #139), CSI Render (#193 / #141). **Only #138 (wlargocd) and #142 (retire packages) remain in the chain.** Phase H epic #120 closed in spirit by #125. Open follow-up: **#168** (migrate inline crypto/x509 in EnsureIssuingCA to JobRunner.Output of yage-tofu/issuing-ca/). **Cross-repo runtime gap discovered (2026-05-03)**: yage default `ManifestsRef=v0.2.0` ships addons templates only; CSI driver dirs at `v0.2.0` contain README.md only — runtime CSI deploys would fail until yage-manifests cuts a release with `csi/<driver>/values.yaml.tmpl` files. yage-manifests PRs #7 and #9 (duplicates of each other) on the `init` branch hold this content; one must be merged then a `v0.3.0` tag cut and yage default bumped.
 
 ## Freshness Policy
 
 This file must be updated whenever system state evolves (per CODING_STANDARDS.md "Atomic Persistence"). If information here conflicts with what you observe in the code or git history, trust what you observe now — then update this file to match reality.
 
-Last updated: **2026-05-01** — PO session 8: PR #166 (`bb60c79`) merged — closes #148, fully implements ADR 0011, clears yage-backend (A) HALT. yage-tofu PR #6 (`registry/`, closes yage-tofu#5) and PR #7 (`issuing-ca/`, closes yage-tofu#4) opened for architect review. yage-docs PR #11 (ADR 0012) opened — closes #136 design pick #2. yage-backend (B) rotated from HELD #125 onto now-unblocked #136 and is **executing** on `feat/136-manifests-fetcher`. #125 remains HELD pending review of yage-tofu PRs #6/#7. #137–#141 remain gated on #136 landing.
+Last updated: **2026-05-03** — PO session 9: 0 open PRs in `lpasquali/yage`. Sessions 8 staleness reconciled: 15 PRs (#170, #173, #176, #177, #178, #180, #182, #183, #184, #185, #187, #188, #190, #192, #193) and 16 issues (#119, #125, #136, #137, #139, #140, #141, #167 noted, #169, #171, #172, #174, #175, #179, #181, #186) closed since session 8. Three new handoffs dispatched: **yage-backend** on #138 (wlargocd → templates) and #168 (EnsureIssuingCA migration); **yage-platform-engineer** on cross-repo CSI templates gap (yage-manifests PRs #7/#9 dedup + cut v0.3.0 + bump yage default).
 
 ## Version Baseline
 
 | Repo | Branch | Recent PRs | Status |
 |---|---|---|---|
-| yage | `main` | #166 (label-based yage-system handoff + extended VerifyParity, `bb60c79`), #164 (EnsureRepoSync, `e7d116e`), #163 (EnsureIssuingCA, `7b9d19b`), #161 (admin token TUI, `d6e7d0a`), #162 (JobRunner k8s backend), #160 (EnsureManagementInstall), #159, #158, #157, #156, #150, #149, #143, #132 | Active development; (A) HALT cleared by #166; (B) executing #136; #125 HELD |
-| yage-docs | `main` | PR #13 (Phase H runbook, `c1930af`), PR #12 (ADR 0009 erratum E1, `20cb4b9`), PR #11 (ADR 0012 template layout, `1cdf251`), PR #9 (remove codeql.yml), PR #8 (ADRs 0010+0011+CURRENT_STATE) | PR #11/#12/#13 merged |
-| yage-tofu | `main` + open PRs #6, #7 | PR #2 (kubernetes backend all 8 modules), PR #3 (license) | PRs #6 (registry) + #7 (issuing-ca) awaiting architect review |
-| yage-manifests | `init` | PR #3 (license) | Scaffolded, awaiting templates (#137–#141 gated on #136) |
+| yage | `main` | #193 (CSI Render → templates, `8510836`), #192 (postsync templates, `353e1ce`), #190 (mask cost-tab/token secrets, `b0ed230`), #188 (Deploy fix, `83a13a7`), #187 (ManifestsRef → v0.2.0, `6aeb498`), #185 (dashboard split, `d3f19e4`), #184 (helmvalues + caaph converge, `d97fb77`), #183 (Linode PlanDescriber, `f410d76`), #182 (CI go test, `cb398c4`), #180 (post-pivot phase-order test, `9f4273e`), #178 (caaph templates, `f5ae1cd`), #177 (EnsureRegistry, `f895c7b`), #176 (UI nav fix, `26729f9`), #173 (mask secrets, `7cbe73c`), #170 (wrapper structs, `ff9c766`), #167 (Fetcher, `ca3562f`), #166 (label-based handoff, `bb60c79`) | **0 open PRs**; #138 + #168 dispatched fresh this session |
+| yage-docs | `main` | PR #13 (Phase H runbook), PR #12 (ADR 0009 E1), PR #11 (ADR 0012) | 0 open PRs |
+| yage-tofu | `main` | PRs #6 (registry), #7 (issuing-ca), #2 (k8s backend), #3 (license) — all merged | 0 open PRs |
+| yage-manifests | `init` (default) + tag `v0.2.0` | PR #4 (addons templates → v0.2.0 cut); **PRs #7 + #9 OPEN — duplicates** carrying CSI `values.yaml.tmpl` files for all 14 drivers | **Runtime gap**: `v0.2.0` lacks CSI templates → CSI deploys would fail; PE handoff issued |
 
 ## Recent Changes
+
+### 2026-05-03 — PO session 9: 0 open PRs in yage; staleness reconciled; 3 fresh handoffs
+
+**State at session start:** `gh pr list` (yage) returned `[]`. Sister repos: yage-docs 0 open, yage-tofu 0 open, yage-manifests **2 open** (#7, #9 — duplicates carrying CSI templates for `init` branch).
+
+**Session 8 → 9 staleness reconcile.** The following 15 yage PRs merged between session 8 close and session 9 start; the table in session 8 still listed several of these issues as "in progress / blocked":
+
+| PR | Issue closed | Title |
+|---|---|---|
+| #167 | (#136 follow-on landed earlier) | feat(manifests): implement internal/platform/manifests Fetcher (ADR 0008/0010/0012) |
+| #170 | #169 | feat(templates): add ADR 0012 §3 wrapper structs |
+| #173 | #171, #172 | fix(ui): mask all secret fields in xapiri (security) |
+| #176 | #174 | fix(ui): restore arrow up/down field navigation |
+| #177 | #125 | feat(opentofux): EnsureRegistry — bootstrap registry VM via yage-tofu module |
+| #178 | #140 | feat(caaph): migrate to yage-manifests templates |
+| #180 | #119 | test(orchestrator): add post-pivot phase-order regression test |
+| #182 | #181 | ci: run go test -race -short ./... in quality-gates |
+| #183 | #94 | feat(provider/linode): implement PlanDescriber |
+| #184 | #137 | feat(manifests): add Fetcher.RegisterFunc + migrate helmvalues + converge caaph |
+| #185 | #179 | refactor(xapiri): split dashboard.go per ADR 0014 |
+| #187 | #189 | chore(config): bump default ManifestsRef to v0.2.0 |
+| #188 | #186 | fix(xapiri): Deploy action no longer exits the app on on-prem mode |
+| #190 | #175 | fix(xapiri/security): mask cost-tab + token-overlay secret length per ADR 0013 |
+| #192 | #139 | feat(postsync): migrate to yage-manifests _partials templates |
+| #193 | #141 | feat(csi): migrate Driver.RenderValues → Render + yage-manifests templates |
+
+Net effect on the migration chain (issue #133 epic): **#136, #137, #139, #140, #141 all merged**. Only **#138** (wlargocd → templates) and **#142** (retire helmvalues/wlargocd/postsync packages, gated on #138) remain.
+
+**Cross-repo runtime gap discovered.** PR #187 set the yage default `ManifestsRef` to `v0.2.0`. Verified at session 9 start:
+- `yage-manifests v0.2.0` (annotated tag, sha `4607ee1`, msg "first release with real template content") ships **only addons templates**: `argocd-apps/`, `argocd/`, `cilium/`, `keycloak/`, `metrics-server/`, `observability/` (grafana + victoria-metrics), `opentelemetry/`, `spire/`.
+- `yage-manifests v0.2.0` `csi/<driver>/` directories all contain **README.md only**, no `values.yaml.tmpl`.
+- yage PR #193 (`8510836`) lands the `Render(template, data) (string, error)` migration but its tests use yage-side `internal/csi/<driver>/testdata/` fixtures, so green CI does not exercise the remote fetch path.
+- Result: an operator running yage `main` with default `ManifestsRef=v0.2.0` and any non-Proxmox CSI driver will hit a Fetcher render error at runtime (template file not present in the materialised mount).
+- yage-manifests has **two duplicate open PRs** (#7 on `feat/141-csi-templates` and #9 on `feat/141-csi-values-templates`) that both add the missing `csi/<driver>/values.yaml.tmpl` for all 14 drivers + rename `csi/hcloud/` → `csi/hcloud-csi/`. PR #9 is CI-green; PR #7 has `mergeable: UNKNOWN`. They contain identical content.
+
+**Fresh handoffs dispatched this session:**
+
+1. **yage-backend → #138** — port `internal/capi/wlargocd/render.go` (409 lines: `HelmGit`, `HelmRegistry`, PostSync conditional `sources:` array variants) to `addons/argocd/*.yaml.tmpl` in yage-manifests. Branch suggestion: `feat/138-wlargocd-templates`. Pattern reference: PR #184 (helmvalues) + PR #178 (caaph) — same migration shape. May need `template.FuncMap` for `shellQuoteEscape`. Closes #138; unblocks #142 retirement.
+
+2. **yage-backend → #168** — replace inline `crypto/x509` `generateIntermediateCA` in `internal/platform/opentofux/issuing_ca.go` with `JobRunner` invocation against `yage-tofu/issuing-ca/` module (now merged on yage-tofu main). Read outputs `intermediate_cert_pem`, `intermediate_key_pem`, `ca_chain_pem` via `JobRunner.Output`. Module exists at yage-tofu (PR #7 merged). Issue body has a complete plan and acceptance criteria. Branch suggestion: `feat/168-issuing-ca-jobrunner`.
+
+3. **yage-platform-engineer → cross-repo CSI templates gap** — (a) on `lpasquali/yage-manifests`, pick PR #9 (CI green) as canonical, close PR #7 as duplicate, ensure `csi/hcloud/` → `csi/hcloud-csi/` rename is in the merge (matches Driver `Name()`); (b) merge PR #9 to `init`; (c) cut tag `v0.3.0` with annotated message listing CSI driver coverage; (d) open follow-up yage issue to bump default `ManifestsRef` from `v0.2.0` → `v0.3.0` and hand the bump back to yage-backend. This is sequenced — must complete before any operator-facing CSI deploy from `main` will work.
+
+**Not dispatched this session (left in backlog with rationale):**
+- **#142** (retire helmvalues/wlargocd/postsync packages) — gated on #138; will dispatch once #138 merges.
+- **#191** (xapiri teatest integration suite, p3) — gated on #175 per its body; #175 is closed by #190, so technically unblocked. Holding for explicit user dispatch since it's p3 and frontend lane has no in-flight item — flag for next session.
+- **#95–#101** (7 PlanDescribers, p3 backlog, parallelizable) — only Linode (#94) shipped this session via PR #183. Hold until user signals priority.
+
+---
+
+### 2026-05-03 — Architect handoff: ADR 0016 (xapiri UI simulation harness)
+
+**ADR drafted:** `docs/architecture/adrs/0016-xapiri-ui-simulation-harness.md`
+on yage-docs branch `docs/0016-ui-sim-harness` (PR pending).
+
+**Position vs ADR 0015 / issue #191.** ADR 0015 §"#191" already enumerates the
+per-tab teatest classes and pins `//go:build integration` + `make test-integration`.
+ADR 0016 **refines** that section: it specifies the harness *contract* (three-layer
+file structure, deterministic seams, assertion surface, cost-tab two-lane testing).
+ADR 0015 stays the source of truth for *which* test classes exist; ADR 0016 is the
+source of truth for *how* each class is built. Issue #191 stays open as the
+umbrella implementation issue and gains a "see ADR 0016 for harness contract"
+note in its body.
+
+**Implementation issues to open (PO action — architect does not open issues).**
+Frontend/backend lanes; suggest opening as an epic (#191 stays as the umbrella)
+with the children below. All gated on the pricing-fetcher seam landing first.
+
+| Suggested # | Lane | Title | Notes |
+|---|---|---|---|
+| (new) | yage-backend | `pricing.Fetcher` interface + context plumbing; migrate `Provider.EstimateMonthlyCostUSD(ctx, *cfg)` for all 12 providers | **p2** — gates the harness; breaking signature change; mechanical across providers + `internal/cost/`. Triggers `govulncheck` audit row. |
+| (new) | yage-frontend | `internal/ui/xapiri/harness_test.go` skeleton (Layer Low) — wraps teatest, `Send`/`Type`/`Key`/`Frame`/`Model`/`Quit`/`AssertNoSecretLeak` | **p2** — adds `github.com/charmbracelet/x/exp/teatest` to `go.mod` (+ `govulncheck`). Pin `WithInitialTermSize(120,40)`. |
+| (new) | yage-frontend | `internal/ui/xapiri/harness_dsl_test.go` (Layer Mid) — `Tick`, `Edit`, `NavDown/Up`, `NextTab/PrevTab/OpenTab`, `StepTimeframeForward/Back`, `SetTimeframeIdx`, `EstimateMonthlyToDuration` | **p3** — depends on Layer Low. |
+| (new) | yage-frontend | Optional `var Clock = time.Now` package seam in `dashboard.go` for log-ring + sysStatsTickCmd timestamp pinning | **p4** — only if scenarios need wall-clock pinning; cost math does not. |
+| (new) | yage-frontend | Golden-frame fixtures for initial render of every tab (`testdata/golden/<tab>_initial.golden`) | **p3** — enabled by Layer Low; one fixture per tab from ADR 0015 §"#191" table. |
+| (new) | yage-frontend | Cost-tab arbitrary-timeframe scenarios (Lane A math + Lane B keypress; both `[`/`]` and direct `costForPeriod`) | **p3** — addresses the user's "estimate any timeframe" requirement explicitly. |
+| (new) | yage-frontend | Per-tab acceptance scenarios (one per ADR 0015 §"#191" table row) | **p3** — N issues, one per tab, parallelizable across the frontend lane. |
+| #191 | yage-frontend | Umbrella: keep open as the integration-suite tracker; closed when all children land | **p3** — body to be updated to reference ADR 0016. |
+
+**Open design questions to resolve before backend picks up the pricing seam:**
+
+1. **Pricing seam shape — context-scoped `Fetcher` (recommended) vs per-provider
+   `SetPricingFetcher` setter.** ADR 0016 picks context-scoped because it
+   composes across parallel scenarios; if backend prefers the setter form for
+   delta-minimisation reasons, ADR 0016 needs a one-line erratum before the
+   first PR.
+2. **Custom-timeframe in the UI (open-ended duration field).** ADR 0016 marks
+   this **out of scope** — Lane A already enables math testing for any
+   duration. If product wants this as a real feature, open a separate
+   feature issue; the harness will not need extension until then.
+3. **Issue #191 disposition.** ADR 0016 recommends keeping #191 open as the
+   umbrella. Alternative is closing #191 as superseded and re-opening one
+   per-tab issue. PO call.
+
+**Discrepancy with the original brief (logged for the record).** The brief
+described the tab-switch shortcut as `Ctrl+Alt+Left/Right`. The actual binding
+in `internal/ui/xapiri/dashboard.go:888` is `Ctrl+Left/Right`. PR #156 removed
+`Ctrl+Alt+<Number>` shortcuts but the arrow cycle was never gated on `Alt`.
+ADR 0016 documents the actual binding so issue bodies opened from this handoff
+do not propagate the wrong shortcut.
+
+**No contradictions discovered with PRs #190 / #185 / #176 / #156.** PR #185
+(dashboard split) gives ADR 0016 the per-file structure it relies on. PR #176
+fixed the arrow-nav regression that ADR 0016 mandates be guarded by the
+`AssertNoSecretLeak` + per-tab scenario class. PR #156's `[` / `]` dispatch
+fix is the exact regression Lane B is designed to detect.
+
+---
 
 ### 2026-05-01 — PO session 8: #148 merged; cross-repo PRs opened; ADR 0012 in review; (B) rotated onto #136
 
@@ -163,37 +271,28 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 
 | Issue / PR | Branch | Agent | Description | Status |
 |---|---|---|---|---|
-| yage-tofu PR #6 | `registry-module` (yage-tofu) | **yage-architect** review | `registry/` OpenTofu module — Phase H bootstrap registry; closes yage-tofu#5; 5 decisions flagged in PR body | **Awaiting architect review** — p2 |
-| yage-tofu PR #7 | `feat/4-issuing-ca-module` (yage-tofu) | **yage-architect** review | `issuing-ca/` OpenTofu module — online intermediate CA; closes yage-tofu#4; 2 contradictions surfaced in PR body | **Awaiting architect review** — p2 |
-| yage-docs PR #11 | `docs/adr-0008-addendum-template-layout` (yage-docs) | merged | ADR 0012 — yage-manifests template layout + data contract; addendum to ADR 0008; closes #136 design pick #2 | **Merged** (`1cdf251`) |
-| yage-docs PR #12 | `docs/adr-0009-erratum-kubernetes-backend` (yage-docs) | merged | ADR 0009 erratum E1 — kubernetes backend supersedes local tofu state | **Merged** (`20cb4b9`) |
-| yage-docs PR #13 | `docs/operations-phase-h-runbook` (yage-docs) | merged | Phase H bootstrap runbook (registry + issuing CA) | **Merged** (`c1930af`) |
-| #136 | `feat/136-manifests-fetcher` (yage) | **yage-backend (B)** | `internal/platform/manifests` Fetcher package (MountRoot-based, no local clone); ADR 0008 step 2 | **In progress** — p2; constructor-shape pick still open (not blocking) |
-| #125 | `feat/125-registry-vm` (yage) | **yage-backend** (TBD) | provision bootstrap registry VM via OpenTofu; mirror `EnsureIssuingCA` shape; auto-wire `ImageRegistryMirror` | **HELD** — code unblocked, awaiting architect on yage-tofu PR #6 |
-| #137 | TBD | **yage-backend** | migrate `internal/capi/helmvalues/` to yage-manifests templates | **Blocked** on #136 |
-| #138 | TBD | **yage-backend** | migrate `internal/capi/wlargocd/` renderers to yage-manifests templates | **Blocked** on #136 |
-| #139 | TBD | **yage-backend** | migrate `internal/capi/postsync/` renderers to yage-manifests templates | **Blocked** on #136 |
-| #140 | TBD | **yage-backend** | migrate `internal/capi/caaph/` string renderers to yage-manifests templates | **Blocked** on #136 |
-| #141 | TBD | **yage-backend** | CSI `RenderValues` → `Render` + port all 14 drivers to yage-manifests (atomic) | **Blocked** on #136 |
-| #142 | TBD | **yage-backend** | retire `helmvalues/`, `wlargocd/`, `postsync/` packages | **Blocked** on #137–#141 |
-| #119 | TBD | **yage-backend** | D4: CAPD smoke E2E test for bootstrap pipeline | **Backlog** — p3 |
-| #94–#101 | TBD | **yage-backend** | PlanDescriber for 8 providers (Linode, CAPD, OpenStack, vSphere, Azure, IBM, GCP, DO) | **Backlog** — p3 (epic #78); parallelizable across multiple backend instances |
+| #138 | `feat/138-wlargocd-templates` (yage) | **yage-backend** | migrate `internal/capi/wlargocd/render.go` (409 lines: `HelmGit`, `HelmRegistry`, PostSync `sources:` variants) to `addons/argocd/*.yaml.tmpl` in yage-manifests. Pattern: PR #184 (helmvalues) + PR #178 (caaph). May need `template.FuncMap` for `shellQuoteEscape`. Closes #138; unblocks #142. | **Dispatched** — p2 |
+| #168 | `feat/168-issuing-ca-jobrunner` (yage) | **yage-backend** | replace inline `crypto/x509` in `internal/platform/opentofux/issuing_ca.go` with `JobRunner` against yage-tofu `issuing-ca/` module (now on main). Read `intermediate_cert_pem` / `intermediate_key_pem` / `ca_chain_pem` via `JobRunner.Output`. Plan + acceptance criteria in issue body. | **Dispatched** — p3 |
+| yage-manifests PR #7, #9 + retag | `feat/141-csi-templates` + `feat/141-csi-values-templates` (yage-manifests) | **yage-platform-engineer** | (a) pick PR #9 as canonical (CI green), close #7 as duplicate; (b) merge to `init`; (c) cut tag `v0.3.0`; (d) open yage follow-up to bump default `ManifestsRef v0.2.0 → v0.3.0`. Closes runtime CSI gap. | **Dispatched** — p1 (operator-blocking) |
+| #142 | TBD | **yage-backend** | retire `internal/capi/helmvalues/`, `wlargocd/`, `postsync/` packages once callers migrated. | **Queued** — gated on #138 |
+| #191 | TBD | **yage-frontend** | xapiri teatest integration suite for all tabs and cross-cutting surfaces (ADR 0015 §"#191" defines class table; ADR 0016 defines harness contract) | **Backlog** — p3; #175 precondition met by #190; ADR 0016 dispatched 2026-05-03 — see "Architect handoff" entry below for the implementation-issue list to open |
+| #95–#101 | TBD | **yage-backend** | PlanDescriber for 7 remaining providers (CAPD, OpenStack, vSphere, Azure, IBM, GCP, DO). Linode (#94) shipped in #183. | **Backlog** — p3 (epic #78); parallelizable |
 
 ---
 
 ## HALT Records
 
-- **yage-backend (A) HALT — CLEARED** by PR #166 merge (`bb60c79`, 2026-05-01T11:12:11Z). Agent rolls off; #148 closed.
-- **yage-backend (B) HALT — CLEARED**. (B) rotated from HELD #125 onto #136 (now unblocked); executing on `feat/136-manifests-fetcher`.
-- **yage-backend (C) HALT — N/A** (rolled into the (B) #136 thread; only one agent on #136).
+- **No active HALTs.** All session-8 backend HALTs are cleared by their merged PRs (#148 → PR #166; #125 → PR #177; #136 → PR #167).
+- **#138** and **#168** were dispatched without an Execute halt because each has a complete plan in its issue body and follows established migration patterns from already-merged PRs (#184 / #178 for #138; the EnsureIssuingCA Step 2/3 contract is unchanged for #168). The receiving agent should still pause at SOP Step 4 (Halt) for any deviation from the issue plan.
+- **yage-manifests PR #7/#9 dedup + retag** was dispatched to platform-engineer with the explicit instruction to halt before destroying PR #7 and confirm with user that #9 is the chosen canonical.
 
 ## Critical Path (in order)
 
-1. **Architect**: review yage-tofu PR #6 (5 decisions — decision #1 already settled by ADR 0009 erratum E1 merged in yage-docs PR #12 `20cb4b9`), yage-tofu PR #7 (2 contradictions). yage-docs PR #11 (ADR 0012, `1cdf251`), PR #12 (`20cb4b9`), PR #13 (`c1930af`) all merged.
-2. **Programmer**: merge yage-tofu PRs #6 and #7 once accepted — unblocks #125 Execute.
-3. **yage-backend (B)**: land #136 (in progress) — unblocks the #137–#141 manifests migration chain.
-4. **yage-backend** (TBD): start #125 once yage-tofu PR #6 is merged and architect direction is clear.
-5. **Phase H epic #120** closes once #125 lands AND yage-tofu PRs #6/#7 ship.
+1. **yage-platform-engineer**: dedup yage-manifests PRs #7/#9, merge canonical, cut `v0.3.0`. **p1 operator gap** — runtime CSI deploys don't work until this lands.
+2. **yage-backend → #138**: complete the ADR 0008 migration chain.
+3. **yage-backend → #168**: clean up the EnsureIssuingCA stopgap; brings the Phase H Go-side fully aligned with ADR 0009 §3.
+4. **yage-backend → #142**: retire packages once #138 lands.
+5. After (1) lands: bump yage default `ManifestsRef` to `v0.3.0` (small follow-up issue PE will open).
 
 ---
 
@@ -219,3 +318,7 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 | 0010 | In-cluster repository cache (zero workstation residue) | Accepted |
 | 0011 | Pivot: yage state migration to management cluster | Accepted (fully implemented as of PR #166) |
 | 0012 | yage-manifests template layout and data contract (addendum to 0008) | Accepted (yage-docs PR #11 merged `1cdf251`) |
+| 0013 | TUI secret-display policy | Accepted |
+| 0014 | xapiri dashboard.go split | Proposed (mechanical refactor landed via PR #185) |
+| 0015 | Test coverage strategy and targets | Proposed |
+| 0016 | xapiri UI simulation harness (deterministic teatest contract) | Proposed (yage-docs branch `docs/0016-ui-sim-harness`) |
