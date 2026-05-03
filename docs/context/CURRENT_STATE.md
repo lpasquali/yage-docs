@@ -8,7 +8,9 @@ yage is in active development. The core bootstrap pipeline is functional for Pro
 
 This file must be updated whenever system state evolves (per CODING_STANDARDS.md "Atomic Persistence"). If information here conflicts with what you observe in the code or git history, trust what you observe now — then update this file to match reality.
 
-Last updated: **2026-05-03** — PO session 9: 0 open PRs in `lpasquali/yage`. Sessions 8 staleness reconciled: 15 PRs (#170, #173, #176, #177, #178, #180, #182, #183, #184, #185, #187, #188, #190, #192, #193) and 16 issues (#119, #125, #136, #137, #139, #140, #141, #167 noted, #169, #171, #172, #174, #175, #179, #181, #186) closed since session 8. Three new handoffs dispatched: **yage-backend** on #138 (wlargocd → templates) and #168 (EnsureIssuingCA migration); **yage-platform-engineer** on cross-repo CSI templates gap (yage-manifests PRs #7/#9 dedup + cut v0.3.0 + bump yage default).
+Last updated: **2026-05-03** — PO session 10: ADR 0016 user decisions recorded (Fetcher, custom-tf out-of-scope + bug filed, #191 umbrella). Three new issues opened in lpasquali/yage: **#196** (bug — timeframe stepping broken at runtime), **#197** (feat — pricing.Fetcher interface; gates ADR 0016 harness; yage-backend), **#198** (question — tab-cycle binding Ctrl+Arrow vs Ctrl+Alt+Arrow).
+
+Session 9 (earlier today): 0 open PRs in `lpasquali/yage`. Sessions 8 staleness reconciled: 15 PRs (#170, #173, #176, #177, #178, #180, #182, #183, #184, #185, #187, #188, #190, #192, #193) and 16 issues (#119, #125, #136, #137, #139, #140, #141, #167 noted, #169, #171, #172, #174, #175, #179, #181, #186) closed since session 8. Three handoffs dispatched: **yage-backend** on #138 (wlargocd → templates) and #168 (EnsureIssuingCA migration); **yage-platform-engineer** on cross-repo CSI templates gap (yage-manifests PRs #7/#9 dedup + cut v0.3.0 + bump yage default).
 
 ## Version Baseline
 
@@ -20,6 +22,30 @@ Last updated: **2026-05-03** — PO session 9: 0 open PRs in `lpasquali/yage`. S
 | yage-manifests | `init` (default) + tag `v0.2.0` | PR #4 (addons templates → v0.2.0 cut); **PRs #7 + #9 OPEN — duplicates** carrying CSI `values.yaml.tmpl` files for all 14 drivers | **Runtime gap**: `v0.2.0` lacks CSI templates → CSI deploys would fail; PE handoff issued |
 
 ## Recent Changes
+
+### 2026-05-03 — PO session 10: ADR 0016 user decisions; 3 fresh issues opened (#196, #197, #198)
+
+**User decisions on ADR 0016 open questions** (see "Architect handoff: ADR 0016" entry below — Q1/Q2/Q3 now resolved inline):
+
+1. **Pricing seam shape** → **Fetcher** (context-scoped). Matches the ADR's recommended option, so **no erratum needed**. Dispatched as new issue **#197** to **yage-backend** (see Active Work).
+2. **"Custom timeframe" UI control** → **out of scope confirmed**. The user added: "what we have is not working as of now" — meaning the *existing* timeframe stepping in the cost tab is broken at runtime (separate bug from any new "custom" control). Filed as new bug **#196** (xapiri/cost, p2). PR #156 was supposed to have fixed this; either regressed or incomplete coverage. This bug is the **Lane B regression target** explicitly named in ADR 0016 §4 — the harness suite, when built, must guard against it.
+3. **Issue #191 disposition** → **keep open as the umbrella** for the integration-suite tracker, with body to be updated to reference ADR 0016 (note: body update has not yet been committed to GitHub — defer to whoever picks up #191 next).
+
+**Discrepancy NOT resolved this session.** The architect flagged that the user's brief described the tab-cycle shortcut as `Ctrl+Alt+Left/Right` but the actual binding at `internal/ui/xapiri/dashboard.go:888` is `Ctrl+Left/Right` (PR #156 removed `Ctrl+Alt+<Number>` shortcuts but the arrow cycle was never `Alt`-gated). The user did not explicitly confirm preferred binding. Filed as low-priority question issue **#198** (`type: question`, p3); no binding change made.
+
+**Issues opened this session:**
+
+| # | Type | Title | Lane | Priority |
+|---|---|---|---|---|
+| **#196** | bug | bug(xapiri/cost): timeframe stepping broken at runtime | yage-frontend | p2 |
+| **#197** | feat | feat(pricing): introduce context-scoped pricing.Fetcher interface (gates ADR 0016 harness) | yage-backend | p2 |
+| **#198** | question | question(xapiri): should tab cycle binding be Ctrl+Arrow or Ctrl+Alt+Arrow? | (n/a) | p3 |
+
+**Not dispatched this session (gated on #197 landing first).** The remaining ADR 0016 frontend work — harness skeleton (Layer Low), DSL (Layer Mid), optional `Clock` seam, golden-frame fixtures, cost-tab arbitrary-timeframe scenarios, per-tab acceptance scenarios — all wait for the pricing.Fetcher interface to merge. Once #197 ships, PO session 11 dispatches the frontend stack as a parallel batch.
+
+**No PR merge events this session** (yage `main` HEAD remains `8510836`; same as session 9 close).
+
+---
 
 ### 2026-05-03 — PO session 9: 0 open PRs in yage; staleness reconciled; 3 fresh handoffs
 
@@ -99,20 +125,22 @@ with the children below. All gated on the pricing-fetcher seam landing first.
 | (new) | yage-frontend | Per-tab acceptance scenarios (one per ADR 0015 §"#191" table row) | **p3** — N issues, one per tab, parallelizable across the frontend lane. |
 | #191 | yage-frontend | Umbrella: keep open as the integration-suite tracker; closed when all children land | **p3** — body to be updated to reference ADR 0016. |
 
-**Open design questions to resolve before backend picks up the pricing seam:**
+**Open design questions — RESOLVED 2026-05-03 (PO session 10):**
 
-1. **Pricing seam shape — context-scoped `Fetcher` (recommended) vs per-provider
-   `SetPricingFetcher` setter.** ADR 0016 picks context-scoped because it
-   composes across parallel scenarios; if backend prefers the setter form for
-   delta-minimisation reasons, ADR 0016 needs a one-line erratum before the
-   first PR.
-2. **Custom-timeframe in the UI (open-ended duration field).** ADR 0016 marks
-   this **out of scope** — Lane A already enables math testing for any
-   duration. If product wants this as a real feature, open a separate
-   feature issue; the harness will not need extension until then.
-3. **Issue #191 disposition.** ADR 0016 recommends keeping #191 open as the
-   umbrella. Alternative is closing #191 as superseded and re-opening one
-   per-tab issue. PO call.
+1. **Pricing seam shape** — **RESOLVED: Fetcher (context-scoped).** User
+   confirmed the ADR's recommended option. **No erratum needed.** Dispatched
+   to yage-backend as issue **#197**.
+2. **Custom-timeframe in the UI** — **RESOLVED: out of scope confirmed.** User
+   added the rider "what we have is not working as of now" — i.e. the
+   *existing* `[`/`]` stepping is broken at runtime, separate bug. Filed as
+   **#196** (xapiri/cost, p2). The harness, when built, must include this
+   regression as its Lane B canary.
+3. **Issue #191 disposition** — **RESOLVED: keep open as umbrella.** Body to
+   be updated to reference ADR 0016 when #191 is next worked.
+
+**Discrepancy with the original brief** (Ctrl+Arrow vs Ctrl+Alt+Arrow tab
+cycle) — **NOT resolved.** User did not explicitly confirm preferred binding.
+Filed as **#198** (question, p3). No binding change made.
 
 **Discrepancy with the original brief (logged for the record).** The brief
 described the tab-switch shortcut as `Ctrl+Alt+Left/Right`. The actual binding
@@ -275,7 +303,10 @@ Tracked in [yage-docs ADR](https://lpasquali.github.io/yage-docs/architecture/ad
 | #168 | `feat/168-issuing-ca-jobrunner` (yage) | **yage-backend** | replace inline `crypto/x509` in `internal/platform/opentofux/issuing_ca.go` with `JobRunner` against yage-tofu `issuing-ca/` module (now on main). Read `intermediate_cert_pem` / `intermediate_key_pem` / `ca_chain_pem` via `JobRunner.Output`. Plan + acceptance criteria in issue body. | **Dispatched** — p3 |
 | yage-manifests PR #7, #9 + retag | `feat/141-csi-templates` + `feat/141-csi-values-templates` (yage-manifests) | **yage-platform-engineer** | (a) pick PR #9 as canonical (CI green), close #7 as duplicate; (b) merge to `init`; (c) cut tag `v0.3.0`; (d) open yage follow-up to bump default `ManifestsRef v0.2.0 → v0.3.0`. Closes runtime CSI gap. | **Dispatched** — p1 (operator-blocking) |
 | #142 | TBD | **yage-backend** | retire `internal/capi/helmvalues/`, `wlargocd/`, `postsync/` packages once callers migrated. | **Queued** — gated on #138 |
-| #191 | TBD | **yage-frontend** | xapiri teatest integration suite for all tabs and cross-cutting surfaces (ADR 0015 §"#191" defines class table; ADR 0016 defines harness contract) | **Backlog** — p3; #175 precondition met by #190; ADR 0016 dispatched 2026-05-03 — see "Architect handoff" entry below for the implementation-issue list to open |
+| #196 | TBD | **yage-frontend** | bug — costs-tab `[`/`]` timeframe stepping broken at runtime (PR #156 regressed/incomplete). User-reported 2026-05-03. Lane B regression target for ADR 0016 harness. | **Dispatched** — p2 |
+| #197 | TBD | **yage-backend** | introduce context-scoped `pricing.Fetcher` interface + `WithFetcher`/`FetcherFrom`; migrate `Provider.EstimateMonthlyCostUSD(ctx, *cfg)` for all 12 providers + `internal/cost/` callers. **Gates ADR 0016 harness work** — frontend stack waits on this. | **Dispatched** — p2 |
+| #198 | (n/a) | (question) | tab-cycle binding ambiguity: Ctrl+Arrow (current) vs Ctrl+Alt+Arrow (per brief). Awaiting user confirmation; no binding change pending. | **Open question** — p3 |
+| #191 | TBD | **yage-frontend** | xapiri teatest integration suite for all tabs and cross-cutting surfaces (ADR 0015 §"#191" defines class table; ADR 0016 defines harness contract) | **Backlog** — p3; #175 precondition met by #190; ADR 0016 dispatched 2026-05-03; **gated on #197 landing** before harness skeleton + DSL + scenarios can be opened as child issues |
 | #95–#101 | TBD | **yage-backend** | PlanDescriber for 7 remaining providers (CAPD, OpenStack, vSphere, Azure, IBM, GCP, DO). Linode (#94) shipped in #183. | **Backlog** — p3 (epic #78); parallelizable |
 
 ---
